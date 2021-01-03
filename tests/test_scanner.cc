@@ -69,4 +69,14 @@ void test_scanner(void **state) {
     // TODO finish tests
 
     it++;
+    {
+        lasm::Token t = *it;
+        assert_int_equal(t.getLine(), 1);
+        assert_cc_string_equal(t.getLexeme(), std::string(")"));
+        assert_int_equal(t.getType(), lasm::RIGHT_PAREN);
+        assert_int_equal(t.getLiteral().getType(), lasm::NIL);
+        assert_null(t.getLiteral().castTo<std::nullptr_t>());
+    }
+
+    it++;
 }

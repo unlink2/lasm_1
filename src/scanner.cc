@@ -168,7 +168,7 @@ namespace lasm {
     }
 
     void Scanner::addToken(TokenType type, LasmLiteral literal) {
-        std::string text = source.substr(start, current);
+        std::string text = source.substr(start, current-start);
         tokens.push_back(Token(type, text, literal, line, path));
     }
 
