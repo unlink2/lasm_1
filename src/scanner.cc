@@ -202,7 +202,7 @@ namespace lasm {
         // closing "
         advance();
 
-        std::string value = source.substr(start + 1, current - 1);
+        std::string value = source.substr(start+1, current-start-1);
 
         // TODO unescape string
         addToken(STRING, LasmLiteral(STRING, value));
@@ -243,7 +243,7 @@ namespace lasm {
 
         try {
             std::any value;
-            auto number = source.substr(start, current);
+            auto number = source.substr(start, current-start);
             if (isFloat) {
                 value = std::any(stringToNumber<double>(number));
             } else {
@@ -260,7 +260,7 @@ namespace lasm {
             advance();
         }
 
-        std::string text = source.substr(start, current);
+        std::string text = source.substr(start, current-start);
         // is it an opcode from the opcode table?
         auto opIt = instructions.getInstructions().find(text);
         auto keywordIt = keywords.find(text);
