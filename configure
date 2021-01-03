@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# get libraries
+mkdir -p libs
+cd libs
+if [ -d "argcc" ]; then
+    cd argcc
+    git pull
+else
+    git clone https://github.com/unlink2/argcc
+fi
