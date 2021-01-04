@@ -2,6 +2,7 @@
 #include "test_token.h"
 #include "test_object.h"
 #include "test_instruction.h"
+#include "test_utility.h"
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -19,6 +20,8 @@ extern "C" {
 extern "C" {
     int main(int argc, char **argv) {
         const struct CMUnitTest tests[] = {
+            // utility
+            cmocka_unit_test(test_unescape),
             // scanner
             cmocka_unit_test(test_scanner),
             cmocka_unit_test(test_scannerIsAlphaNumeric),

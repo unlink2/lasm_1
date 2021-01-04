@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "utility.h"
 
 namespace lasm {
     Scanner::Scanner(BaseError &error, BaseInstructionSet &instructions, std::string source, std::string path):
@@ -114,6 +115,7 @@ namespace lasm {
                 if (isDigit(c)) {
                     scanNumber(c);
                 } else if (isAlpha(c)) {
+                    scanIdentifier();
                 } else {
                     error.onError(UNEXPECTED_CHAR, line, path);
                 }
@@ -202,9 +204,7 @@ namespace lasm {
         // closing "
         advance();
 
-        std::string value = source.substr(start+1, current-start-1);
-
-        // TODO unescape string
+        std::string value = unescape(source.substr(start+1, current-start-2));
         addToken(STRING, LasmLiteral(STRING, value));
     }
 
@@ -243,11 +243,18 @@ namespace lasm {
 
         try {
             std::any value;
-            auto number = source.substr(start, current-start);
             if (isFloat) {
-                value = std::any(stringToNumber<double>(number));
+                auto number = source.substr(start, current-start);
+                value = std::any(stringToReal(number));
+            } else if (isBin) {
+                auto number = source.substr(start+2, current-start);
+                value = std::any(stringToNumber(number, 2));
+            } else if (isHex) {
+                auto number = source.substr(start, current-start);
+                value = std::any(stringToNumber(number, 16));
             } else {
-                value = std::any(stringToNumber<long>(number));
+                auto number = source.substr(start, current-start);
+                value = std::any(stringToNumber(number));
             }
             addToken(type, LasmLiteral(type, value));
         } catch (...) {
@@ -275,17 +282,12 @@ namespace lasm {
         addToken(type);
     }
 
-    template<typename T>
-    T Scanner::stringToNumber(const std::string& number) {
-        T value;
+    double Scanner::stringToReal(const std::string& number) {
+        return std::stod(number);
+    }
 
-        std::stringstream stream(number);
-        stream >> value;
-        if (stream.fail()) {
-            std::runtime_error e(number);
-            throw e;
-        }
-        return value;
+    long Scanner::stringToNumber(const std::string& number, int base) {
+        return std::stol(number, nullptr, base);
     }
 
     void Scanner::addKeyword(std::string name, TokenType type) {

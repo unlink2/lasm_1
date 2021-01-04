@@ -37,8 +37,8 @@ namespace lasm {
             void scanNumber(char c);
             void scanIdentifier();
 
-            template<typename T>
-            T stringToNumber(const std::string& number);
+            double stringToReal(const std::string& number);
+            long stringToNumber(const std::string& number, int base=10);
 
             void addKeyword(std::string name, TokenType type);
 
