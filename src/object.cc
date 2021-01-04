@@ -1,7 +1,7 @@
 #include "object.h"
 
 namespace lasm {
-    LasmLiteral::LasmLiteral(TokenType type, std::any value):
+    LasmLiteral::LasmLiteral(ObjectType type, std::any value):
         type(type), value(value) {}
 
     std::string LasmLiteral::toString() {

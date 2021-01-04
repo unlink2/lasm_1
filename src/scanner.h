@@ -37,8 +37,8 @@ namespace lasm {
             void scanNumber(char c);
             void scanIdentifier();
 
-            double stringToReal(const std::string& number);
-            long stringToNumber(const std::string& number, int base=10);
+            lasmReal stringToReal(const std::string& number);
+            lasmNumber stringToNumber(const std::string& number, int base=10);
 
             void addKeyword(std::string name, TokenType type);
 

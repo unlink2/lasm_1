@@ -3,6 +3,7 @@
 #include "test_object.h"
 #include "test_instruction.h"
 #include "test_utility.h"
+#include "test_expr.h"
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -33,7 +34,10 @@ extern "C" {
             cmocka_unit_test(test_object),
 
             // instruction
-            cmocka_unit_test(test_instruction)
+            cmocka_unit_test(test_instruction),
+
+            // expr
+            cmocka_unit_test(test_expr)
         };
         return cmocka_run_group_tests(tests, NULL, NULL);
     }

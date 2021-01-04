@@ -8,9 +8,21 @@
 // TODO test
 
 namespace lasm {
+    typedef long lasmNumber;
+    typedef double lasmReal;
+    typedef std::string lasmString;
+    typedef char lasmChar;
+
+    enum ObjectType {
+        NIL_O,
+        NUMBER_O,
+        REAL_O,
+        STRING_O
+    };
+
     class LasmLiteral {
         public:
-            LasmLiteral(TokenType type, std::any value);
+            LasmLiteral(ObjectType type, std::any value);
             std::string toString();
 
             template<typename T>
@@ -18,11 +30,11 @@ namespace lasm {
                 return std::any_cast<T>(value);
             }
 
-            TokenType getType() {
+            ObjectType getType() {
                 return type;
             }
         private:
-            TokenType type;
+            ObjectType type;
             std::any value;
     };
 

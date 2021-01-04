@@ -22,7 +22,7 @@ namespace lasm {
             start = current;
             scanToken();
         }
-        tokens.push_back(Token(EOF_T, "", LasmLiteral(NIL, nullptr), line, path));
+        tokens.push_back(Token(EOF_T, "", LasmLiteral(NIL_O, nullptr), line, path));
 
         return tokens;
     }
@@ -166,7 +166,7 @@ namespace lasm {
     }
 
     void Scanner::addToken(TokenType type) {
-        addToken(type, LasmLiteral(NIL, nullptr));
+        addToken(type, LasmLiteral(NIL_O, nullptr));
     }
 
     void Scanner::addToken(TokenType type, LasmLiteral literal) {
@@ -205,7 +205,7 @@ namespace lasm {
         advance();
 
         std::string value = unescape(source.substr(start+1, current-start-2));
-        addToken(STRING, LasmLiteral(STRING, value));
+        addToken(STRING, LasmLiteral(STRING_O, value));
     }
 
     void Scanner::scanNumber(char c) {
@@ -213,6 +213,7 @@ namespace lasm {
         bool isHex = c == '0' && peek() == 'x';
         bool isBin = c == '0' && peek() == 'b';
         TokenType type = NUMBER;
+        ObjectType objType = NUMBER_O;
 
         if (isHex) {
             advance();
@@ -235,6 +236,7 @@ namespace lasm {
                 advance();
                 isFloat = true;
                 type = REAL;
+                objType = REAL_O;
                 while (isDigit(peek())) {
                     advance();
                 }
@@ -256,7 +258,7 @@ namespace lasm {
                 auto number = source.substr(start, current-start);
                 value = std::any(stringToNumber(number));
             }
-            addToken(type, LasmLiteral(type, value));
+            addToken(type, LasmLiteral(objType, value));
         } catch (...) {
             error.onError(NUMBER_PARSE_ERROR, line, path);
         }
@@ -282,11 +284,11 @@ namespace lasm {
         addToken(type);
     }
 
-    double Scanner::stringToReal(const std::string& number) {
+    lasmReal Scanner::stringToReal(const std::string& number) {
         return std::stod(number);
     }
 
-    long Scanner::stringToNumber(const std::string& number, int base) {
+    lasmNumber Scanner::stringToNumber(const std::string& number, int base) {
         return std::stol(number, nullptr, base);
     }
 
