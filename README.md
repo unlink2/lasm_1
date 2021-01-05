@@ -6,3 +6,7 @@
 - each architecture can implement a matcher. Arch must be chosen at compile time!
 - the matcher will determine the size of an instruction
 - the matcher is in charge of translating the actual opcodes to binary
+
+Steps:
+
+Scan -> Parse -> Interpret -> output to binary or listing
