@@ -4,6 +4,7 @@
 #include "object.h"
 #include "token.h"
 #include <any>
+#include <memory>
 
 namespace lasm {
     enum ExprType {
@@ -36,45 +37,48 @@ namespace lasm {
 
     class BinaryExpr: public Expr {
         public:
-            BinaryExpr(Expr *left=nullptr, Token *op=nullptr, Expr *right=nullptr):
+            BinaryExpr(std::shared_ptr<Expr> left=std::shared_ptr<Expr>(nullptr),
+                    std::shared_ptr<Token> op=std::shared_ptr<Token>(nullptr),
+                    std::shared_ptr<Expr> right=std::shared_ptr<Expr>(nullptr)):
                 Expr::Expr(BINARY_EXPR), left(left), op(op), right(right) {}
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            Expr *left;
-            Token *op;
-            Expr *right;
+            std::shared_ptr<Expr> left;
+            std::shared_ptr<Token> op;
+            std::shared_ptr<Expr> right;
     };
 
     class GroupingExpr: public Expr {
         public:
-            GroupingExpr(Expr *expression=nullptr):
+            GroupingExpr(std::shared_ptr<Expr> expression=std::shared_ptr<Expr>(nullptr)):
                 Expr::Expr(GROUPING_EXPR), expression(expression) {}
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            Expr *expression;
+            std::shared_ptr<Expr> expression;
     };
 
     class LiteralExpr: public Expr {
         public:
-            LiteralExpr(LasmLiteral *value=nullptr):
+            LiteralExpr(std::shared_ptr<LasmLiteral> value=std::shared_ptr<LasmLiteral>(nullptr)):
                 Expr::Expr(LITERAL_EXPR), value(value) {}
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            LasmLiteral *value;
+            std::shared_ptr<LasmLiteral> value;
     };
 
     class UnaryExpr: public Expr {
         public:
-            UnaryExpr(Token *op=nullptr, Expr *right=nullptr):
+            UnaryExpr(std::shared_ptr<Token> op=std::shared_ptr<Token>(nullptr),
+                    std::shared_ptr<Expr> right=std::shared_ptr<Expr>(nullptr)):
                 Expr::Expr(UNARY_EXPR), op(op), right(right) {}
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            Token *op;
-            Expr *right;
+            std::shared_ptr<Token> op;
+            std::shared_ptr<Expr> right;
     };
 
     class ExprVisitor {

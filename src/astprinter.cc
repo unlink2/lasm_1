@@ -8,15 +8,15 @@ namespace lasm {
 
     std::any AstPrinter::visitBinary(BinaryExpr *expr) {
         std::vector<Expr*> v;
-        v.push_back(expr->left);
-        v.push_back(expr->right);
+        v.push_back(expr->left.get());
+        v.push_back(expr->right.get());
 
         return parenthesize(expr->op->getLexeme(), v);
     }
 
     std::any AstPrinter::visitGrouping(GroupingExpr *expr) {
         std::vector<Expr*> v;
-        v.push_back(expr->expression);
+        v.push_back(expr->expression.get());
 
         return parenthesize("Group", v);
     }
@@ -44,7 +44,7 @@ namespace lasm {
 
     std::any AstPrinter::visitUnary(UnaryExpr *expr) {
         std::vector<Expr*> v;
-        v.push_back(expr->right);
+        v.push_back(expr->right.get());
 
         return parenthesize(expr->op->getLexeme(), v);
     }

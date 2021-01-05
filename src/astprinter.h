@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <memory>
 
 namespace lasm {
     class AstPrinter: public ExprVisitor {

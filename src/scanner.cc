@@ -17,12 +17,12 @@ namespace lasm {
             addKeyword("while", WHILE);
     }
 
-    std::vector<Token> Scanner::scanTokens() {
+    std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {
         while (!isAtEnd()) {
             start = current;
             scanToken();
         }
-        tokens.push_back(Token(EOF_T, "", LasmLiteral(NIL_O, nullptr), line, path));
+        tokens.push_back(std::make_shared<Token>(Token(EOF_T, "", LasmLiteral(NIL_O, nullptr), line, path)));
 
         return tokens;
     }
@@ -171,7 +171,7 @@ namespace lasm {
 
     void Scanner::addToken(TokenType type, LasmLiteral literal) {
         std::string text = source.substr(start, current-start);
-        tokens.push_back(Token(type, text, literal, line, path));
+        tokens.push_back(std::make_shared<Token>(Token(type, text, literal, line, path)));
     }
 
     bool Scanner::match(char expected) {

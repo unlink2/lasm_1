@@ -8,13 +8,14 @@
 #include "error.h"
 #include "common.h"
 #include "instruction.h"
+#include <memory>
 
 namespace lasm {
     class Scanner: public LasmCommon {
         public:
             Scanner(BaseError &error, BaseInstructionSet &instructions, std::string source, std::string path);
 
-            std::vector<Token> scanTokens();
+            std::vector<std::shared_ptr<Token>> scanTokens();
 
             bool isAlpha(char c);
             bool isDigit(char c);
@@ -44,7 +45,7 @@ namespace lasm {
 
             std::string source;
             std::string path;
-            std::vector<Token> tokens;
+            std::vector<std::shared_ptr<Token>> tokens;
 
             unsigned long start = 0;
             unsigned long current = 0;
