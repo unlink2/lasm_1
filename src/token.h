@@ -6,13 +6,12 @@
 #include <any>
 #include "object.h"
 #include "types.h"
-
-// TODO test
+#include <memory>
 
 namespace lasm {
     class Token {
         public:
-            Token(TokenType type, std::string lexeme, LasmLiteral literal, int line,
+            Token(TokenType type, std::string lexeme, std::shared_ptr<LasmLiteral> literal, int line,
                     std::string path);
 
             std::string toString();
@@ -25,7 +24,7 @@ namespace lasm {
                 return lexeme;
             }
 
-            LasmLiteral getLiteral() {
+            std::shared_ptr<LasmLiteral> getLiteral() {
                 return literal;
             }
 
@@ -40,7 +39,7 @@ namespace lasm {
         private:
             TokenType type;
             std::string lexeme;
-            LasmLiteral literal;
+            std::shared_ptr<LasmLiteral> literal;
             unsigned long line;
             std::string path;
     };

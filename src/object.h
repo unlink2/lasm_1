@@ -12,12 +12,14 @@ namespace lasm {
     typedef double lasmReal;
     typedef std::string lasmString;
     typedef char lasmChar;
+    typedef bool lasmBool;
 
     enum ObjectType {
         NIL_O,
         NUMBER_O,
         REAL_O,
-        STRING_O
+        STRING_O,
+        BOOLEAN_O
     };
 
     class LasmLiteral {

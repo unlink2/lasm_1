@@ -22,7 +22,8 @@ namespace lasm {
             start = current;
             scanToken();
         }
-        tokens.push_back(std::make_shared<Token>(Token(EOF_T, "", LasmLiteral(NIL_O, nullptr), line, path)));
+        tokens.push_back(std::make_shared<Token>(Token(EOF_T, "",
+                        std::make_shared<LasmLiteral>(LasmLiteral(NIL_O, nullptr)), line, path)));
 
         return tokens;
     }
@@ -166,10 +167,10 @@ namespace lasm {
     }
 
     void Scanner::addToken(TokenType type) {
-        addToken(type, LasmLiteral(NIL_O, nullptr));
+        addToken(type, std::make_shared<LasmLiteral>(LasmLiteral(NIL_O, nullptr)));
     }
 
-    void Scanner::addToken(TokenType type, LasmLiteral literal) {
+    void Scanner::addToken(TokenType type, std::shared_ptr<LasmLiteral> literal) {
         std::string text = source.substr(start, current-start);
         tokens.push_back(std::make_shared<Token>(Token(type, text, literal, line, path)));
     }
@@ -205,7 +206,7 @@ namespace lasm {
         advance();
 
         std::string value = unescape(source.substr(start+1, current-start-2));
-        addToken(STRING, LasmLiteral(STRING_O, value));
+        addToken(STRING, std::make_shared<LasmLiteral>(LasmLiteral(STRING_O, value)));
     }
 
     void Scanner::scanNumber(char c) {
@@ -258,7 +259,7 @@ namespace lasm {
                 auto number = source.substr(start, current-start);
                 value = std::any(stringToNumber(number));
             }
-            addToken(type, LasmLiteral(objType, value));
+            addToken(type, std::make_shared<LasmLiteral>(LasmLiteral(objType, value)));
         } catch (...) {
             error.onError(NUMBER_PARSE_ERROR, line, path);
         }
