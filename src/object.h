@@ -4,6 +4,7 @@
 #include <iostream>
 #include <any>
 #include "types.h"
+#include <vector>
 
 // TODO test
 
@@ -22,9 +23,9 @@ namespace lasm {
         BOOLEAN_O
     };
 
-    class LasmLiteral {
+    class LasmObject {
         public:
-            LasmLiteral(ObjectType type, std::any value);
+            LasmObject(ObjectType type, std::any value);
             std::string toString();
 
             template<typename T>
@@ -32,21 +33,46 @@ namespace lasm {
                 return std::any_cast<T>(value);
             }
 
+            lasmReal toReal();
+            lasmNumber toNumber();
+
+            bool isTruthy() {
+                if (isNil()) {
+                    return false;
+                } else if (isBool()) {
+                    return castTo<bool>();
+                }
+                return true;
+            }
+
             ObjectType getType() {
                 return type;
+            }
+
+            bool isNumber() {
+                return type == NUMBER_O;
+            }
+
+            bool isReal() {
+                return type == REAL_O;
+            }
+
+            bool isBool() {
+                return type == BOOLEAN_O;
+            }
+
+            bool isNil() {
+                return type == NIL_O;
+            }
+
+            bool isString() {
+                return type == STRING_O;
             }
         private:
             ObjectType type;
             std::any value;
     };
 
-    class LasmObject {
-        public:
-            LasmObject(std::any value);
-            std::string toString();
-        private:
-            std::any value;
-    };
 }
 
 #endif

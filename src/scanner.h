@@ -30,7 +30,7 @@ namespace lasm {
             char peekNext();
 
             void addToken(TokenType type);
-            void addToken(TokenType type, std::shared_ptr<LasmLiteral> literal);
+            void addToken(TokenType type, LasmObject literal);
 
             bool match(char expected);
 

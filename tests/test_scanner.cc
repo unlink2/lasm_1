@@ -63,8 +63,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 1);
         assert_cc_string_equal(t->getLexeme(), std::string("("));
         assert_int_equal(t->getType(), lasm::LEFT_PAREN);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
     // TODO finish tests
 
@@ -74,8 +74,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 1);
         assert_cc_string_equal(t->getLexeme(), std::string(")"));
         assert_int_equal(t->getType(), lasm::RIGHT_PAREN);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -84,8 +84,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 1);
         assert_cc_string_equal(t->getLexeme(), std::string("["));
         assert_int_equal(t->getType(), lasm::LEFT_BRACKET);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -94,8 +94,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 1);
         assert_cc_string_equal(t->getLexeme(), std::string("]"));
         assert_int_equal(t->getType(), lasm::RIGHT_BRACKET);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -104,8 +104,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 1);
         assert_cc_string_equal(t->getLexeme(), std::string(","));
         assert_int_equal(t->getType(), lasm::COMMA);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -114,8 +114,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("."));
         assert_int_equal(t->getType(), lasm::DOT);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -124,8 +124,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("\"Hello\\\"\\t \\\"World\""));
         assert_int_equal(t->getType(), lasm::STRING);
-        assert_int_equal(t->getLiteral()->getType(), lasm::STRING_O);
-        assert_cc_string_equal(t->getLiteral()->castTo<std::string>(), std::string("Hello\"\t \"World"));
+        assert_int_equal(t->getLiteral().getType(), lasm::STRING_O);
+        assert_cc_string_equal(t->getLiteral().castTo<std::string>(), std::string("Hello\"\t \"World"));
     }
 
     it++;
@@ -134,8 +134,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("'Hello World!'"));
         assert_int_equal(t->getType(), lasm::STRING);
-        assert_int_equal(t->getLiteral()->getType(), lasm::STRING_O);
-        assert_cc_string_equal(t->getLiteral()->castTo<std::string>(), std::string("Hello World!"));
+        assert_int_equal(t->getLiteral().getType(), lasm::STRING_O);
+        assert_cc_string_equal(t->getLiteral().castTo<std::string>(), std::string("Hello World!"));
     }
 
     it++;
@@ -144,8 +144,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("-"));
         assert_int_equal(t->getType(), lasm::MINUS);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -154,8 +154,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("+"));
         assert_int_equal(t->getType(), lasm::PLUS);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -164,8 +164,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string(";"));
         assert_int_equal(t->getType(), lasm::SEMICOLON);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -174,8 +174,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("*"));
         assert_int_equal(t->getType(), lasm::STAR);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -184,8 +184,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("/"));
         assert_int_equal(t->getType(), lasm::SLASH);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -194,8 +194,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("!"));
         assert_int_equal(t->getType(), lasm::BANG);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -204,8 +204,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("!="));
         assert_int_equal(t->getType(), lasm::BANG_EQUAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -214,8 +214,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("="));
         assert_int_equal(t->getType(), lasm::EQUAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -224,8 +224,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("=="));
         assert_int_equal(t->getType(), lasm::EQUAL_EQUAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -234,8 +234,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("<"));
         assert_int_equal(t->getType(), lasm::LESS);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -244,8 +244,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string(">"));
         assert_int_equal(t->getType(), lasm::GREATER);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -254,8 +254,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string("<="));
         assert_int_equal(t->getType(), lasm::LESS_EQUAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -264,8 +264,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 2);
         assert_cc_string_equal(t->getLexeme(), std::string(">="));
         assert_int_equal(t->getType(), lasm::GREATER_EQUAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -274,8 +274,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 4);
         assert_cc_string_equal(t->getLexeme(), std::string("1234"));
         assert_int_equal(t->getType(), lasm::NUMBER);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NUMBER_O);
-        assert_int_equal(t->getLiteral()->castTo<long>(), 1234);
+        assert_int_equal(t->getLiteral().getType(), lasm::NUMBER_O);
+        assert_int_equal(t->getLiteral().castTo<long>(), 1234);
     }
 
     it++;
@@ -284,8 +284,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 4);
         assert_cc_string_equal(t->getLexeme(), std::string("3.1415"));
         assert_int_equal(t->getType(), lasm::REAL);
-        assert_int_equal(t->getLiteral()->getType(), lasm::REAL_O);
-        assert_float_equal(t->getLiteral()->castTo<double>(), 3.1415, 0.001);
+        assert_int_equal(t->getLiteral().getType(), lasm::REAL_O);
+        assert_float_equal(t->getLiteral().castTo<double>(), 3.1415, 0.001);
     }
 
     it++;
@@ -294,8 +294,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 5);
         assert_cc_string_equal(t->getLexeme(), std::string("and"));
         assert_int_equal(t->getType(), lasm::AND);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -304,8 +304,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 6);
         assert_cc_string_equal(t->getLexeme(), std::string("orange"));
         assert_int_equal(t->getType(), lasm::IDENTIFIER);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     it++;
@@ -314,8 +314,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 7);
         assert_cc_string_equal(t->getLexeme(), std::string("0b101"));
         assert_int_equal(t->getType(), lasm::NUMBER);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NUMBER_O);
-        assert_int_equal(t->getLiteral()->castTo<long>(), 0b101);
+        assert_int_equal(t->getLiteral().getType(), lasm::NUMBER_O);
+        assert_int_equal(t->getLiteral().castTo<long>(), 0b101);
     }
 
     it++;
@@ -324,8 +324,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 8);
         assert_cc_string_equal(t->getLexeme(), std::string("0xFF1"));
         assert_int_equal(t->getType(), lasm::NUMBER);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NUMBER_O);
-        assert_int_equal(t->getLiteral()->castTo<long>(), 0xFF1);
+        assert_int_equal(t->getLiteral().getType(), lasm::NUMBER_O);
+        assert_int_equal(t->getLiteral().castTo<long>(), 0xFF1);
     }
 
     it++;
@@ -334,8 +334,8 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 8);
         assert_cc_string_equal(t->getLexeme(), std::string("lda"));
         assert_int_equal(t->getType(), lasm::INSTRUCTION);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 
     // EOF
@@ -345,7 +345,7 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 8);
         assert_cc_string_equal(t->getLexeme(), std::string(""));
         assert_int_equal(t->getType(), lasm::EOF_T);
-        assert_int_equal(t->getLiteral()->getType(), lasm::NIL_O);
-        assert_null(t->getLiteral()->castTo<std::nullptr_t>());
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }
 }

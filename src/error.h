@@ -5,6 +5,8 @@
 #include <exception>
 #include <memory>
 #include "token.h"
+#include "object.h"
+#include <vector>
 
 namespace lasm {
     typedef enum {
@@ -22,6 +24,19 @@ namespace lasm {
         public:
             ~LasmException() {}
             virtual const char* what() const throw() = 0;
+    };
+
+    class LasmTypeError: public LasmException {
+        public:
+            LasmTypeError(std::vector<ObjectType> expected, ObjectType got):
+                expected(expected), got(got) {}
+            ~LasmTypeError() {}
+            virtual const char* what() const throw()  {
+                return "Type error";
+            }
+        private:
+            std::vector<ObjectType> expected;
+            ObjectType got;
     };
 
     class ParserException: public LasmException {

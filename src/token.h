@@ -11,7 +11,7 @@
 namespace lasm {
     class Token {
         public:
-            Token(TokenType type, std::string lexeme, std::shared_ptr<LasmLiteral> literal, int line,
+            Token(TokenType type, std::string lexeme, LasmObject literal, int line,
                     std::string path);
 
             std::string toString();
@@ -24,7 +24,7 @@ namespace lasm {
                 return lexeme;
             }
 
-            std::shared_ptr<LasmLiteral> getLiteral() {
+            LasmObject getLiteral() {
                 return literal;
             }
 
@@ -39,7 +39,7 @@ namespace lasm {
         private:
             TokenType type;
             std::string lexeme;
-            std::shared_ptr<LasmLiteral> literal;
+            LasmObject literal;
             unsigned long line;
             std::string path;
     };

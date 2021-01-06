@@ -61,12 +61,12 @@ namespace lasm {
 
     class LiteralExpr: public Expr {
         public:
-            LiteralExpr(std::shared_ptr<LasmLiteral> value=std::shared_ptr<LasmLiteral>(nullptr)):
+            LiteralExpr(LasmObject value=LasmObject(NIL_O, nullptr)):
                 Expr::Expr(LITERAL_EXPR), value(value) {}
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            std::shared_ptr<LasmLiteral> value;
+            LasmObject value;
     };
 
     class UnaryExpr: public Expr {

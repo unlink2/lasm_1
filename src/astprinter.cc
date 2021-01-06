@@ -24,15 +24,15 @@ namespace lasm {
     std::any AstPrinter::visitLiteral(LiteralExpr *expr) {
         std::stringstream strstream;
         // cast based on what is it
-        switch (expr->value->getType()) {
+        switch (expr->value.getType()) {
             case NUMBER_O:
-                strstream << expr->value->castTo<lasmNumber>();
+                strstream << expr->value.castTo<lasmNumber>();
                 break;
             case REAL_O:
-                strstream << expr->value->castTo<lasmReal>();
+                strstream << expr->value.castTo<lasmReal>();
                 break;
             case STRING_O:
-                strstream << expr->value->castTo<lasmString>();
+                strstream << expr->value.castTo<lasmString>();
                 break;
             default:
                 strstream << "nil";

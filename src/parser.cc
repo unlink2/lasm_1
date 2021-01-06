@@ -76,11 +76,11 @@ namespace lasm {
 
     std::shared_ptr<Expr> Parser::primary() {
         if (match(std::vector<TokenType> {FALSE})) {
-            return std::make_shared<Expr>(LiteralExpr(std::make_shared<LasmLiteral>(LasmLiteral(BOOLEAN_O, false))));
+            return std::make_shared<Expr>(LiteralExpr(LasmObject(BOOLEAN_O, false)));
         } else if (match(std::vector<TokenType> {TRUE})) {
-            return std::make_shared<Expr>(LiteralExpr(std::make_shared<LasmLiteral>(LasmLiteral(BOOLEAN_O, true))));
+            return std::make_shared<Expr>(LiteralExpr(LasmObject(BOOLEAN_O, true)));
         } else if (match(std::vector<TokenType> {NIL})) {
-            return std::make_shared<Expr>(LiteralExpr(std::make_shared<LasmLiteral>(LasmLiteral(NIL_O, nullptr))));
+            return std::make_shared<Expr>(LiteralExpr(LasmObject(NIL_O, nullptr)));
         } else if (match(std::vector<TokenType> {NUMBER, STRING})) {
             return std::make_shared<Expr>(LiteralExpr(previous()->getLiteral()));
         }

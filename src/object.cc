@@ -1,15 +1,26 @@
 #include "object.h"
+#include "error.h"
 
 namespace lasm {
-    LasmLiteral::LasmLiteral(ObjectType type, std::any value):
+    LasmObject::LasmObject(ObjectType type, std::any value):
         type(type), value(value) {}
 
-    std::string LasmLiteral::toString() {
-        return ""; // TODO
+    lasmReal LasmObject::toReal() {
+        if (isNumber()) {
+            return (lasmReal)castTo<lasmNumber>();
+        } else if (isReal()) {
+            return (lasmReal)castTo<lasmReal>();
+        }
+        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type);
     }
 
-    LasmObject::LasmObject(std::any value):
-        value(value) {
+    lasmNumber LasmObject::toNumber() {
+        if (isNumber()) {
+            return (lasmNumber)castTo<lasmNumber>();
+        } else if (isReal()) {
+            return (lasmNumber)castTo<lasmReal>();
+        }
+        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type);
     }
 
     std::string LasmObject::toString() {
