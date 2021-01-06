@@ -5,13 +5,19 @@ namespace lasm {
     LasmObject::LasmObject(ObjectType type, std::any value):
         type(type), value(value) {}
 
+    bool LasmObject::isScalar() {
+        return type == NUMBER_O || type == REAL_O;
+    }
+
     lasmReal LasmObject::toReal() {
         if (isNumber()) {
             return (lasmReal)castTo<lasmNumber>();
         } else if (isReal()) {
             return (lasmReal)castTo<lasmReal>();
         }
-        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type);
+
+        // this exception should be caught by checking with isScalar to throw a token
+        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type, std::shared_ptr<Token>(nullptr));
     }
 
     lasmNumber LasmObject::toNumber() {
@@ -20,11 +26,21 @@ namespace lasm {
         } else if (isReal()) {
             return (lasmNumber)castTo<lasmReal>();
         }
-        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type);
+
+        // this exception should be caught by checking with isScalar to throw a token
+        throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type, std::shared_ptr<Token>(nullptr));
     }
 
-    std::string LasmObject::toString() {
-        return ""; // TODO
+    lasmString LasmObject::toString() {
+        return castTo<lasmString>();
+    }
+
+    lasmBool LasmObject::toBool() {
+        return castTo<bool>();
+    }
+
+    lasmNil LasmObject::toNil() {
+        return castTo<nullptr_t>();
     }
 }
 

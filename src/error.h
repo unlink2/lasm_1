@@ -15,58 +15,83 @@ namespace lasm {
         UNTERMINATED_STRING,
         NUMBER_PARSE_ERROR,
         MISSING_RIHGT_PAREN,
-        EXPECTED_EXPRESSION
+        EXPECTED_EXPRESSION,
+        TYPE_ERROR,
+        DIVISION_BY_ZERO
     } ErrorType;
 
     std::string errorToString(ErrorType error);
 
     class LasmException: public std::exception {
         public:
+            LasmException(ErrorType type, std::shared_ptr<Token> token=std::shared_ptr<Token>(nullptr)):
+                type(type), token(token) {}
             ~LasmException() {}
-            virtual const char* what() const throw() = 0;
+
+            virtual const char* what() const throw()  {
+                return errorToString(type).c_str();
+            }
+
+            ErrorType getType() { return type; }
+
+            std::shared_ptr<Token> getToken() {
+                return token;
+            }
+        private:
+            ErrorType type;
+            std::shared_ptr<Token> token;
     };
 
     class LasmTypeError: public LasmException {
         public:
-            LasmTypeError(std::vector<ObjectType> expected, ObjectType got):
-                expected(expected), got(got) {}
+            LasmTypeError(std::vector<ObjectType> expected, ObjectType got, std::shared_ptr<Token> token):
+                LasmException(TYPE_ERROR, token), expected(expected), got(got) {}
             ~LasmTypeError() {}
-            virtual const char* what() const throw()  {
-                return "Type error";
-            }
+
         private:
             std::vector<ObjectType> expected;
             ObjectType got;
     };
 
+    class LasmDivisionByZero: public LasmException {
+        public:
+            LasmDivisionByZero(std::shared_ptr<Token> token):
+                LasmException::LasmException(DIVISION_BY_ZERO, token) {}
+            ~LasmDivisionByZero() {}
+    };
+
     class ParserException: public LasmException {
         public:
             ParserException(std::shared_ptr<Token> token, ErrorType type):
-                token(token), type(type) {}
+               LasmException::LasmException(type), token(token) {}
             ~ParserException() {}
-            virtual const char* what() const throw()  {
-                return errorToString(type).c_str();
-            }
 
             std::shared_ptr<Token> getToken() {
                 return token;
             }
         private:
             std::shared_ptr<Token> token;
-            ErrorType type;
     };
 
+    /**
+     * Error handler class
+     * This is called when an exception occurs during scanning, parsing, interpreting
+     * or code-gen
+     * Generally exceptions are thrown inside the modules, but they are handeled internally and
+     * then passed to this callback to allow the modules to handle more than
+     * one syntax error at once
+     */
     class BaseError {
         public:
             BaseError() {}
-            virtual void onError(ErrorType type, unsigned long line, std::string path) {
+            virtual void onError(ErrorType type, unsigned long line, std::string path, LasmException *e=nullptr) {
                 hasErrored = true;
                 this->type = type;
                 this->path = path;
                 this->line = line;
             }
 
-            virtual void onError(ErrorType type, std::shared_ptr<Token> token) {
+            virtual void onError(ErrorType type, std::shared_ptr<Token> token, LasmException *e=nullptr) {
                 hasErrored = true;
                 this->type = type;
                 this->path = token->getPath();

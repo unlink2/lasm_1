@@ -14,6 +14,11 @@ namespace lasm {
         public:
             Interpreter(BaseError &onError);
 
+            // TODO make this return a list of opcode results
+            // this can then be consumed by a code generator
+            // or be converted to a list file
+            void interprete(std::shared_ptr<Expr> expr);
+
             LasmObject evaluate(std::shared_ptr<Expr> expr);
 
             std::any visitBinary(BinaryExpr *expr);

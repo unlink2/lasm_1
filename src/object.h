@@ -14,6 +14,7 @@ namespace lasm {
     typedef std::string lasmString;
     typedef char lasmChar;
     typedef bool lasmBool;
+    typedef nullptr_t lasmNil;
 
     enum ObjectType {
         NIL_O,
@@ -26,8 +27,6 @@ namespace lasm {
     class LasmObject {
         public:
             LasmObject(ObjectType type, std::any value);
-            std::string toString();
-
             template<typename T>
             T castTo() {
                 return std::any_cast<T>(value);
@@ -35,6 +34,9 @@ namespace lasm {
 
             lasmReal toReal();
             lasmNumber toNumber();
+            lasmString toString();
+            lasmBool toBool();
+            lasmNil toNil();
 
             bool isTruthy() {
                 if (isNil()) {
@@ -43,6 +45,29 @@ namespace lasm {
                     return castTo<bool>();
                 }
                 return true;
+            }
+
+            bool isEqual(LasmObject &second) {
+                if (type != second.getType()) {
+                    return false; // not same type?
+                }
+
+                // same type comparse
+                switch (type) {
+                    case NIL_O:
+                        return true;
+                    case NUMBER_O:
+                        return toNumber() == second.toNumber();
+                    case REAL_O:
+                        return toReal() == second.toReal();
+                    case STRING_O:
+                        return toString() == second.toString();
+                    case BOOLEAN_O:
+                        return toBool() == second.toBool();
+                }
+
+                // should be unreacbable
+                return false;
             }
 
             ObjectType getType() {
@@ -68,6 +93,8 @@ namespace lasm {
             bool isString() {
                 return type == STRING_O;
             }
+
+            bool isScalar();
         private:
             ObjectType type;
             std::any value;
