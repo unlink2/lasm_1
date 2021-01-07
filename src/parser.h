@@ -7,13 +7,17 @@
 #include "token.h"
 #include "expr.h"
 #include "error.h"
+#include "stmt.h"
 
 namespace lasm {
     class Parser {
         public:
             Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens);
+            std::vector<std::shared_ptr<Stmt>> parse();
         private:
-            std::shared_ptr<Expr> parse();
+            std::shared_ptr<Stmt> statement();
+
+            std::shared_ptr<Stmt> expressionStatement();
 
             std::shared_ptr<Expr> expression();
 

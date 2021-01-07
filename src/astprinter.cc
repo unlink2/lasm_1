@@ -6,6 +6,10 @@ namespace lasm {
         return std::any_cast<std::string>(expr.accept(this));
     }
 
+    std::string AstPrinter::toString(Expr *expr) {
+        return std::any_cast<std::string>(expr->accept(this));
+    }
+
     std::any AstPrinter::visitBinary(BinaryExpr *expr) {
         std::vector<Expr*> v;
         v.push_back(expr->left.get());
@@ -33,6 +37,9 @@ namespace lasm {
                 break;
             case STRING_O:
                 strstream << expr->value.castTo<lasmString>();
+                break;
+            case BOOLEAN_O:
+                strstream << (expr->value.castTo<lasmBool>() ? "true" : "false");
                 break;
             default:
                 strstream << "nil";

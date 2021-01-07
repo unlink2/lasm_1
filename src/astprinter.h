@@ -13,11 +13,12 @@ namespace lasm {
     class AstPrinter: public ExprVisitor {
         public:
             std::string toString(Expr &expr);
+            std::string toString(Expr *expr);
 
-            std::any visitBinary(BinaryExpr *expr);
-            std::any visitGrouping(GroupingExpr *expr);
-            std::any visitLiteral(LiteralExpr *expr);
-            std::any visitUnary(UnaryExpr *expr);
+            virtual std::any visitBinary(BinaryExpr *expr);
+            virtual std::any visitGrouping(GroupingExpr *expr);
+            virtual std::any visitLiteral(LiteralExpr *expr);
+            virtual std::any visitUnary(UnaryExpr *expr);
         private:
             std::string parenthesize(std::string name, std::vector<Expr*> exprs);
     };

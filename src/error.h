@@ -17,7 +17,8 @@ namespace lasm {
         MISSING_RIHGT_PAREN,
         EXPECTED_EXPRESSION,
         TYPE_ERROR,
-        DIVISION_BY_ZERO
+        DIVISION_BY_ZERO,
+        MISSING_SEMICOLON
     } ErrorType;
 
     std::string errorToString(ErrorType error);
