@@ -27,6 +27,12 @@ namespace lasm {
     class LasmObject {
         public:
             LasmObject(ObjectType type, std::any value);
+
+            /**
+             * Copy constructor
+             */
+            LasmObject(LasmObject *original);
+
             template<typename T>
             T castTo() {
                 return std::any_cast<T>(value);

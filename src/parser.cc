@@ -93,7 +93,7 @@ namespace lasm {
             return std::make_shared<LiteralExpr>(LiteralExpr(LasmObject(BOOLEAN_O, true)));
         } else if (match(std::vector<TokenType> {NIL})) {
             return std::make_shared<LiteralExpr>(LiteralExpr(LasmObject(NIL_O, nullptr)));
-        } else if (match(std::vector<TokenType> {NUMBER, STRING})) {
+        } else if (match(std::vector<TokenType> {NUMBER, REAL, STRING})) {
             return std::make_shared<LiteralExpr>(LiteralExpr(previous()->getLiteral()));
         }
 

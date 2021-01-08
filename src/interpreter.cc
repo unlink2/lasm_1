@@ -1,15 +1,23 @@
 #include "interpreter.h"
 
 namespace lasm {
-    Interpreter::Interpreter(BaseError &onError):
-        onError(onError) {
+    Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
+        onError(onError), instructions(is), callback(callback) {
     }
 
-    void Interpreter::interprete(std::shared_ptr<Expr> expr) {
+
+    void Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts) {
         try {
+            for (auto stmt : stmts) {
+                execute(stmt);
+            }
         } catch (LasmException &e) {
             onError.onError(e.getType(), e.getToken(), &e);
         }
+    }
+
+    void Interpreter::execute(std::shared_ptr<Stmt> stmt) {
+        stmt->accept(this);
     }
 
     LasmObject Interpreter::evaluate(std::shared_ptr<Expr> expr) {
@@ -57,9 +65,9 @@ namespace lasm {
             case PLUS:
                 // first number decides auto-cast
                 if (left.isNumber() && left.isScalar()) {
-                    return LasmObject(NUMBER_O, left.toNumber() - right.toNumber());
+                    return LasmObject(NUMBER_O, left.toNumber() + right.toNumber());
                 } else if (left.isReal() && left.isScalar()) {
-                    return LasmObject(REAL_O, left.toReal() - right.toReal());
+                    return LasmObject(REAL_O, left.toReal() + right.toReal());
                 } else if (left.isString() && right.isString()) {
                     // string cat
                     return LasmObject(STRING_O, left.toString() + right.toString());
@@ -143,5 +151,15 @@ namespace lasm {
 
     std::any Interpreter::visitGrouping(GroupingExpr *expr) {
         return evaluate(expr->expression);
+    }
+
+    std::any Interpreter::visitExpression(ExpressionStmt *stmt) {
+        auto obj = std::any_cast<LasmObject>(evaluate(stmt->expr));
+
+        if (callback) {
+            callback->onStatementExecuted(&obj);
+        }
+
+        return std::any();
     }
 }

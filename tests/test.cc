@@ -45,7 +45,8 @@ extern "C" {
             cmocka_unit_test(test_parser),
 
             // interpreter
-            cmocka_unit_test(test_interpreter)
+            cmocka_unit_test(test_interpreter),
+            cmocka_unit_test(test_interpreter_errors)
         };
         return cmocka_run_group_tests(tests, NULL, NULL);
     }

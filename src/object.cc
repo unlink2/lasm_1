@@ -5,6 +5,11 @@ namespace lasm {
     LasmObject::LasmObject(ObjectType type, std::any value):
         type(type), value(value) {}
 
+    LasmObject::LasmObject(LasmObject *original) {
+        type = original->type;
+        value = original->value;
+    }
+
     bool LasmObject::isScalar() {
         return type == NUMBER_O || type == REAL_O;
     }
