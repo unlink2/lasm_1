@@ -9,10 +9,35 @@ namespace lasm {
         std::vector<std::shared_ptr<Stmt>> statements;
 
         while (!isAtEnd()) {
-            statements.push_back(statement());
+            statements.push_back(declaration());
         }
 
         return statements;
+    }
+
+    std::shared_ptr<Stmt> Parser::declaration() {
+        try {
+            if (match(std::vector<TokenType> {LET})) {
+                return letDeclaration();
+            }
+            return statement();
+        } catch (ParserException &e) {
+            sync();
+            onError.onError(e.getType(), peek(), &e);
+            return std::shared_ptr<Stmt>(nullptr);
+        }
+    }
+
+    std::shared_ptr<Stmt> Parser::letDeclaration() {
+        auto name = consume(IDENTIFIER, MISSING_IDENTIFIER);
+
+        std::shared_ptr<Expr> init = std::shared_ptr<Expr>(nullptr);
+        if (match(std::vector<TokenType> {EQUAL})) {
+            init = expression();
+        }
+
+        consume(SEMICOLON, MISSING_SEMICOLON);
+        return std::make_shared<LetStmt>(LetStmt(name, init));
     }
 
     std::shared_ptr<Stmt> Parser::statement() {
@@ -95,6 +120,8 @@ namespace lasm {
             return std::make_shared<LiteralExpr>(LiteralExpr(LasmObject(NIL_O, nullptr)));
         } else if (match(std::vector<TokenType> {NUMBER, REAL, STRING})) {
             return std::make_shared<LiteralExpr>(LiteralExpr(previous()->getLiteral()));
+        } else if (match(std::vector<TokenType> { IDENTIFIER })) {
+            return std::make_shared<VariableExpr>(VariableExpr(previous()));
         }
 
         if (match(std::vector<TokenType> {LEFT_PAREN})) {
@@ -106,10 +133,9 @@ namespace lasm {
         throw handleError(EXPECTED_EXPRESSION);
     }
 
-    void Parser::consume(TokenType token, ErrorType error) {
+    std::shared_ptr<Token> Parser::consume(TokenType token, ErrorType error) {
         if (check(token)) {
-            advance();
-            return;
+            return advance();
         }
 
         throw handleError(error);

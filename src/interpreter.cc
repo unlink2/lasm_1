@@ -3,6 +3,7 @@
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
         onError(onError), instructions(is), callback(callback) {
+            enviorment = std::make_shared<Enviorment>(Enviorment());
     }
 
 
@@ -153,6 +154,11 @@ namespace lasm {
         return evaluate(expr->expression);
     }
 
+    std::any Interpreter::visitVariable(VariableExpr *expr) {
+        // TODO can we avoid copy constructor? does it matter?
+        return LasmObject(enviorment->get(expr->name).get());
+    }
+
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {
         auto obj = std::any_cast<LasmObject>(evaluate(stmt->expr));
 
@@ -160,6 +166,16 @@ namespace lasm {
             callback->onStatementExecuted(&obj);
         }
 
+        return std::any();
+    }
+
+    std::any Interpreter::visitLet(LetStmt *stmt) {
+        LasmObject value = LasmObject(NIL_O, nullptr);
+        if (stmt->init.get() != nullptr) {
+            value = evaluate(stmt->init);
+        }
+
+        enviorment->define(stmt->name->getLexeme(), value);
         return std::any();
     }
 }

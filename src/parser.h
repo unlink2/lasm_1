@@ -15,10 +15,12 @@ namespace lasm {
             Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens);
             std::vector<std::shared_ptr<Stmt>> parse();
         private:
+            std::shared_ptr<Stmt> declaration();
+            std::shared_ptr<Stmt> letDeclaration();
             std::shared_ptr<Stmt> statement();
 
             std::shared_ptr<Stmt> expressionStatement();
-
+            
             std::shared_ptr<Expr> expression();
 
             std::shared_ptr<Expr> equality();
@@ -28,7 +30,7 @@ namespace lasm {
             std::shared_ptr<Expr> unary();
             std::shared_ptr<Expr> primary();
 
-            void consume(TokenType token, ErrorType error);
+            std::shared_ptr<Token> consume(TokenType token, ErrorType error);
 
             bool match(std::vector<TokenType> types);
             bool check(TokenType type);

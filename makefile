@@ -33,10 +33,11 @@ TEST_MAIN = test # main for test
 INSTALLDIR = /usr/local/bin
 
 # test source modules
-MODULES_TEST = test_scanner test_token test_object test_instruction test_utility test_expr test_parser test_interpreter
+MODULES_TEST = test_scanner test_token test_object test_instruction test_utility test_expr test_parser test_interpreter\
+			   test_enviorment
 
 # modules from core that can be testsd
-TESTABLE_MODULES = scanner token object instruction error utility expr astprinter parser interpreter stmt
+TESTABLE_MODULES = scanner token object instruction error utility expr astprinter parser interpreter stmt enviorment
 
 # modules for tui frontend
 MODULES_FRONT =

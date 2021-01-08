@@ -18,7 +18,9 @@ namespace lasm {
         EXPECTED_EXPRESSION,
         TYPE_ERROR,
         DIVISION_BY_ZERO,
-        MISSING_SEMICOLON
+        MISSING_SEMICOLON,
+        MISSING_IDENTIFIER,
+        UNDEFINED_REF
     } ErrorType;
 
     std::string errorToString(ErrorType error);
@@ -72,6 +74,13 @@ namespace lasm {
             }
         private:
             std::shared_ptr<Token> token;
+    };
+
+    class LasmUndefinedReference: public LasmException {
+        public:
+            LasmUndefinedReference(std::shared_ptr<Token> token):
+                LasmException::LasmException(UNDEFINED_REF, token) {}
+            ~LasmUndefinedReference() {}
     };
 
     /**

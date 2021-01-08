@@ -8,7 +8,8 @@
 
 namespace lasm {
     enum StmtType {
-        EXPRESSION_STMT
+        EXPRESSION_STMT,
+        LET_STMT
     };
 
     class StmtVisitor;
@@ -42,11 +43,23 @@ namespace lasm {
             std::shared_ptr<Expr> expr;
     };
 
+    class LetStmt: public Stmt {
+        public:
+            LetStmt(std::shared_ptr<Token> name, std::shared_ptr<Expr> init):
+                Stmt::Stmt(LET_STMT), name(name), init(init) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+            std::shared_ptr<Expr> init;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
 
             virtual std::any visitExpression(ExpressionStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitLet(LetStmt *stmt) { return std::any(nullptr); };
     };
 }
 

@@ -11,7 +11,8 @@ namespace lasm {
         BINARY_EXPR,
         GROUPING_EXPR,
         LITERAL_EXPR,
-        UNARY_EXPR
+        UNARY_EXPR,
+        VARIABLE_EXPR
     };
 
     class ExprVisitor;
@@ -81,6 +82,16 @@ namespace lasm {
             std::shared_ptr<Expr> right;
     };
 
+    class VariableExpr: public Expr {
+        public:
+            VariableExpr(std::shared_ptr<Token> name=std::shared_ptr<Token>(nullptr)):
+                Expr::Expr(VARIABLE_EXPR), name(name) {}
+
+            virtual std::any accept(ExprVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+    };
+
     class ExprVisitor {
         public:
             virtual ~ExprVisitor () {}
@@ -89,6 +100,7 @@ namespace lasm {
             virtual std::any visitUnary(UnaryExpr *expr) { return std::any(nullptr); };
             virtual std::any visitLiteral(LiteralExpr *expr) { return std::any(nullptr); };
             virtual std::any visitGrouping(GroupingExpr *expr) { return std::any(nullptr); };
+            virtual std::any visitVariable(VariableExpr *expr) { return std::any(nullptr); };
     };
 }
 

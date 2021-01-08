@@ -42,13 +42,9 @@ class TestCallback: public InterpreterCallback {
     Scanner scanner(error, is, code, "");\
     auto tokens = scanner.scanTokens();\
     Parser parser(error, tokens);\
-    try {\
-        auto stmts = parser.parse();\
-        assert_true(false);\
-    } catch (ParserException &e) {\
-        assert_true(error.didError());\
-        assert_int_equal(error.getType(), errorType);\
-    }\
+    auto stmts = parser.parse();\
+    assert_true(error.didError());\
+    assert_int_equal(error.getType(), errorType);\
 }
 
 #define assert_interpreter_error(code, stmtSize, errorType) {\
@@ -79,6 +75,11 @@ void test_interpreter(void **state) {
     assert_interpreter_success("(\"Hello\") == \"Hello\";", 1, BOOLEAN_O, {assert_true(callback.object->toBool());});
 
     assert_interpreter_success("2 <= 3;", 1, BOOLEAN_O, {assert_true(callback.object->toBool());});
+
+    assert_interpreter_success("let a = 2; a+1;", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 3);});
+
+    assert_interpreter_success("let a = \"Hi\"+\"World\"; a;", 2, STRING_O,
+            {assert_cc_string_equal(callback.object->toString(), std::string("HiWorld"));});
 }
 
 void test_interpreter_errors(void **state) {

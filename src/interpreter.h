@@ -10,6 +10,7 @@
 #include "object.h"
 #include "error.h"
 #include "stmt.h"
+#include "enviorment.h"
 
 namespace lasm {
     class InterpreterCallback {
@@ -36,12 +37,15 @@ namespace lasm {
             std::any visitUnary(UnaryExpr *expr);
             std::any visitLiteral(LiteralExpr *expr);
             std::any visitGrouping(GroupingExpr *expr);
+            std::any visitVariable(VariableExpr *expr);
 
             std::any visitExpression(ExpressionStmt *stmt);
+            std::any visitLet(LetStmt *stmt);
         private:
             BaseError &onError;
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
+            std::shared_ptr<Enviorment> enviorment;
     };
 }
 

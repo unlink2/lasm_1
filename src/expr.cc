@@ -16,4 +16,8 @@ namespace lasm {
     std::any UnaryExpr::accept(ExprVisitor *visitor) {
         return visitor->visitUnary(this);
     }
+
+    std::any VariableExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitVariable(this);
+    }
 }
