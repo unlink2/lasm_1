@@ -8,4 +8,8 @@ namespace lasm {
     std::any LetStmt::accept(StmtVisitor *visitor) {
         return visitor->visitLet(this);
     }
+
+    std::any BlockStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitBlock(this);
+    }
 }

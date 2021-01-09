@@ -10,3 +10,8 @@
 Steps:
 
 Scan -> Parse -> Interpret -> output to binary or listing
+
+## Credit:
+
+The parser is largely based on the excellent book [Crafting Interpreters](https://craftinginterpreters.com/) by Bob Nystrom.
+Thank you very much for teaching me basic design patterns for interpreters!

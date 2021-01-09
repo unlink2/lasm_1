@@ -12,11 +12,18 @@
 namespace lasm {
     class Enviorment {
         public:
+            Enviorment(std::shared_ptr<Enviorment> parent=std::shared_ptr<Enviorment>(nullptr)):
+                parent(parent) {}
             void define(std::string name, LasmObject &value);
 
             std::shared_ptr<LasmObject> get(std::shared_ptr<Token> name);
+            void assign(std::shared_ptr<Token> name, LasmObject &value);
+
+            std::shared_ptr<Enviorment> getParent() { return parent; }
+            void setParent(std::shared_ptr<Enviorment> parent) { this->parent = parent; }
         private:
             std::map<std::string, std::shared_ptr<LasmObject>> values;
+            std::shared_ptr<Enviorment> parent = std::shared_ptr<Enviorment>(nullptr);
     };
 }
 

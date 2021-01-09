@@ -159,6 +159,13 @@ namespace lasm {
         return LasmObject(enviorment->get(expr->name).get());
     }
 
+    std::any Interpreter::visitAssign(AssignExpr *expr) {
+        auto value = evaluate(expr->value);
+
+        enviorment->assign(expr->name, value);
+        return value;
+    }
+
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {
         auto obj = std::any_cast<LasmObject>(evaluate(stmt->expr));
 
@@ -177,5 +184,21 @@ namespace lasm {
 
         enviorment->define(stmt->name->getLexeme(), value);
         return std::any();
+    }
+
+    std::any Interpreter::visitBlock(BlockStmt *stmt) {
+        executeBlock(stmt->statements, std::make_shared<Enviorment>(Enviorment(enviorment)));
+        return std::any();
+    }
+
+    void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
+            std::shared_ptr<Enviorment> enviorment) {
+        auto previous = this->enviorment;
+
+        this->enviorment = enviorment;
+        for (auto statement : statements) {
+            execute(statement);
+        }
+        this->enviorment = previous;
     }
 }

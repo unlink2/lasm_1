@@ -20,4 +20,8 @@ namespace lasm {
     std::any VariableExpr::accept(ExprVisitor *visitor) {
         return visitor->visitVariable(this);
     }
+
+    std::any AssignExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitAssign(this);
+    }
 }

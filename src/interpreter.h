@@ -38,10 +38,14 @@ namespace lasm {
             std::any visitLiteral(LiteralExpr *expr);
             std::any visitGrouping(GroupingExpr *expr);
             std::any visitVariable(VariableExpr *expr);
+            std::any visitAssign(AssignExpr *expr);
 
             std::any visitExpression(ExpressionStmt *stmt);
             std::any visitLet(LetStmt *stmt);
+            std::any visitBlock(BlockStmt *stmt);
         private:
+            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
+
             BaseError &onError;
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;

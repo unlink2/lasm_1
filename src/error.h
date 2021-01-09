@@ -20,7 +20,9 @@ namespace lasm {
         DIVISION_BY_ZERO,
         MISSING_SEMICOLON,
         MISSING_IDENTIFIER,
-        UNDEFINED_REF
+        UNDEFINED_REF,
+        BAD_ASSIGNMENT,
+        BLOCK_NOT_CLOSED_ERROR
     } ErrorType;
 
     std::string errorToString(ErrorType error);

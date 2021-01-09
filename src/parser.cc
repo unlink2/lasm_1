@@ -41,7 +41,22 @@ namespace lasm {
     }
 
     std::shared_ptr<Stmt> Parser::statement() {
+        if (match(std::vector<TokenType> {LEFT_BRACE})) {
+            return std::make_shared<BlockStmt>(block());
+        }
         return expressionStatement();
+    }
+
+    std::vector<std::shared_ptr<Stmt>> Parser::block() {
+        std::vector<std::shared_ptr<Stmt>> statements;
+
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            statements.push_back(declaration());
+        }
+
+        consume(RIGHT_BRACE, BLOCK_NOT_CLOSED_ERROR);
+
+        return statements;
     }
 
     std::shared_ptr<Stmt> Parser::expressionStatement() {
@@ -51,7 +66,26 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::expression() {
-        return equality();
+        return assignment();
+    }
+
+    std::shared_ptr<Expr> Parser::assignment() {
+        auto expr = equality();
+
+        if (match(std::vector<TokenType> {EQUAL})) {
+            auto equals = previous();
+            auto value = equality();
+
+            if (expr->getType() == VARIABLE_EXPR) {
+                auto name = std::static_pointer_cast<VariableExpr>(expr)->name;
+
+                return std::make_shared<AssignExpr>(AssignExpr(name, value));
+            }
+
+            handleError(BAD_ASSIGNMENT, equals);
+        }
+
+        return expr;
     }
 
     std::shared_ptr<Expr> Parser::equality() {
@@ -163,9 +197,12 @@ namespace lasm {
         return previous();
     }
 
-    ParserException Parser::handleError(ErrorType error) {
-        onError.onError(error, peek());
-        return ParserException(peek(), error);
+    ParserException Parser::handleError(ErrorType error, std::shared_ptr<Token> token) {
+        if (!token.get()) {
+            token = peek();
+        }
+        onError.onError(error, token);
+        return ParserException(token, error);
     }
 
     bool Parser::isAtEnd() {

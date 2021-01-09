@@ -80,6 +80,12 @@ void test_interpreter(void **state) {
 
     assert_interpreter_success("let a = \"Hi\"+\"World\"; a;", 2, STRING_O,
             {assert_cc_string_equal(callback.object->toString(), std::string("HiWorld"));});
+
+    assert_interpreter_success("let a = \"Hi\"+\"World\"; a = 22;", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 22);});
+
+    assert_interpreter_success("let a = 1; { let a = 2; } a;", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
+
+    assert_interpreter_success("let a = 1; { a = 22; } a;", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 22);});
 }
 
 void test_interpreter_errors(void **state) {
@@ -88,4 +94,12 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("\"Hi\" >= 3", MISSING_SEMICOLON);
 
     assert_interpreter_error("2 / 0;", 1, DIVISION_BY_ZERO);
+
+    assert_interpreter_error("a + 1;", 1, UNDEFINED_REF);
+
+    assert_interpreter_error("a=1;", 1, UNDEFINED_REF);
+
+    assert_parser_error("let a = 1; a+1=2;", BAD_ASSIGNMENT);
+
+    assert_parser_error("{ let a = 1;", BLOCK_NOT_CLOSED_ERROR);
 }

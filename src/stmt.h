@@ -9,7 +9,8 @@
 namespace lasm {
     enum StmtType {
         EXPRESSION_STMT,
-        LET_STMT
+        LET_STMT,
+        BLOCK_STMT
     };
 
     class StmtVisitor;
@@ -54,12 +55,23 @@ namespace lasm {
             std::shared_ptr<Expr> init;
     };
 
+    class BlockStmt: public Stmt {
+        public:
+            BlockStmt(std::vector<std::shared_ptr<Stmt>> statements):
+                Stmt::Stmt(BLOCK_STMT), statements(statements) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::vector<std::shared_ptr<Stmt>> statements;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
 
             virtual std::any visitExpression(ExpressionStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitLet(LetStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitBlock(BlockStmt *stmt) { return std::any(nullptr); };
     };
 }
 
