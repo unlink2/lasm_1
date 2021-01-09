@@ -16,4 +16,8 @@ namespace lasm {
     std::any IfStmt::accept(StmtVisitor *visitor) {
         return visitor->visitIf(this);
     }
+
+    std::any WhileStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitWhile(this);
+    }
 }

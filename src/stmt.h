@@ -80,6 +80,17 @@ namespace lasm {
             std::shared_ptr<Stmt> elseBranch;
     };
 
+    class WhileStmt: public Stmt {
+        public:
+            WhileStmt(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body):
+                Stmt::Stmt(WHILE_STMT), condition(condition), body(body) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Expr> condition;
+            std::shared_ptr<Stmt> body;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -88,6 +99,7 @@ namespace lasm {
             virtual std::any visitLet(LetStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitBlock(BlockStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitIf(IfStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitWhile(WhileStmt *stmt) { return std::any(nullptr); };
     };
 }
 

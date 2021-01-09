@@ -45,8 +45,19 @@ namespace lasm {
             return std::make_shared<BlockStmt>(block());
         } else if (match(std::vector<TokenType> {IF})) {
             return ifStatement();
+        } else if (match(std::vector<TokenType> {WHILE})) {
+            return whileStatement();
         }
         return expressionStatement();
+    }
+
+    std::shared_ptr<Stmt> Parser::whileStatement() {
+        consume(LEFT_PAREN, MISSING_LEFT_PAREN);
+        auto condition = expression();
+        consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+        auto body = statement();
+
+        return std::make_shared<WhileStmt>(condition, body);
     }
 
     std::shared_ptr<Stmt> Parser::ifStatement() {

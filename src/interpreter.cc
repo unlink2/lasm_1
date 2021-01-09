@@ -226,4 +226,11 @@ namespace lasm {
         }
         return std::any();
     }
+
+    std::any Interpreter::visitWhile(WhileStmt *stmt) {
+        while (evaluate(stmt->condition).isTruthy()) {
+            execute(stmt->body);
+        }
+        return std::any();
+    }
 }
