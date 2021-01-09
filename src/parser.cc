@@ -47,8 +47,55 @@ namespace lasm {
             return ifStatement();
         } else if (match(std::vector<TokenType> {WHILE})) {
             return whileStatement();
+        } else if (match(std::vector<TokenType> {FOR})) {
+            return forStatement();
         }
         return expressionStatement();
+    }
+
+    std::shared_ptr<Stmt> Parser::forStatement() {
+        consume(LEFT_PAREN, MISSING_LEFT_PAREN);
+
+        std::shared_ptr<Stmt> init;
+        if (match(std::vector<TokenType> {SEMICOLON})) {
+            init = std::shared_ptr<Stmt>(nullptr);
+        } else if (match(std::vector<TokenType> {LET})) {
+            init = letDeclaration();
+        } else {
+            init = expressionStatement();
+        }
+
+        std::shared_ptr<Expr> condition = std::shared_ptr<Expr>(nullptr);
+        if (!check(SEMICOLON)) {
+            condition = expression();
+        }
+
+        consume(SEMICOLON, MISSING_SEMICOLON);
+
+        std::shared_ptr<Expr> increment = std::shared_ptr<Expr>(nullptr);
+        if (!check(RIGHT_PAREN)) {
+            increment = expression();
+        }
+        consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+
+        auto body = statement();
+
+        if (increment.get()) {
+            body = std::make_shared<BlockStmt>(std::vector<std::shared_ptr<Stmt>>
+                    {body, std::make_shared<ExpressionStmt>(increment)});
+        }
+
+        if (!condition.get()) {
+            condition = std::make_shared<LiteralExpr>(LasmObject(BOOLEAN_O, true));
+        }
+        body = std::make_shared<WhileStmt>(condition, body);
+
+        if (init.get()) {
+            body = std::make_shared<BlockStmt>(std::vector<std::shared_ptr<Stmt>>
+                    {init, body});
+        }
+
+        return body;
     }
 
     std::shared_ptr<Stmt> Parser::whileStatement() {

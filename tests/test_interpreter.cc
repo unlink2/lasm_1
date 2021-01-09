@@ -95,6 +95,11 @@ void test_interpreter(void **state) {
     assert_interpreter_success("let a = 1; if (a == 1 and false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
 
     assert_interpreter_success("let a = 10; while (a > 0) a = a -1;", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
+
+    assert_interpreter_success("let a = 10; for (;a > 0; a = a - 1) {} ", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
+    assert_interpreter_success("let a = 10; for (;a > 0;) {a = a - 1;} ", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
+    assert_interpreter_success("let a; for (a = 0;a > 0;a = a - 1) {} ", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
+    assert_interpreter_success("let b = 0; for (let a = 10;a > 0;a = a - 1) {b = b + 1;} b; ", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 10);});
 }
 
 void test_interpreter_errors(void **state) {
@@ -115,4 +120,7 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("if (true { 1; }", EXPECTED_EXPRESSION);
 
     assert_parser_error("while (false { 1; }", EXPECTED_EXPRESSION);
+
+    assert_parser_error("for (;false; { 1; }", EXPECTED_EXPRESSION);
+    assert_parser_error("for () { 1; }", EXPECTED_EXPRESSION);
 }

@@ -19,6 +19,7 @@ namespace lasm {
             std::shared_ptr<Stmt> letDeclaration();
             std::shared_ptr<Stmt> statement();
 
+            std::shared_ptr<Stmt> forStatement();
             std::shared_ptr<Stmt> whileStatement();
             std::shared_ptr<Stmt> ifStatement();
             std::vector<std::shared_ptr<Stmt>> block();
