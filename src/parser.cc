@@ -43,8 +43,24 @@ namespace lasm {
     std::shared_ptr<Stmt> Parser::statement() {
         if (match(std::vector<TokenType> {LEFT_BRACE})) {
             return std::make_shared<BlockStmt>(block());
+        } else if (match(std::vector<TokenType> {IF})) {
+            return ifStatement();
         }
         return expressionStatement();
+    }
+
+    std::shared_ptr<Stmt> Parser::ifStatement() {
+        consume(LEFT_PAREN, MISSING_LEFT_PAREN);
+        auto condition = expression();
+        consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+
+        auto thenBranch = statement();
+        std::shared_ptr<Stmt> elseBranch = std::shared_ptr<Stmt>(nullptr);
+        if (match(std::vector<TokenType> {ELSE})) {
+            elseBranch = statement();
+        }
+
+        return std::make_shared<IfStmt>(IfStmt(condition, thenBranch, elseBranch));
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {
@@ -70,7 +86,7 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::assignment() {
-        auto expr = equality();
+        auto expr = orExpr();
 
         if (match(std::vector<TokenType> {EQUAL})) {
             auto equals = previous();
@@ -83,6 +99,30 @@ namespace lasm {
             }
 
             handleError(BAD_ASSIGNMENT, equals);
+        }
+
+        return expr;
+    }
+
+    std::shared_ptr<Expr> Parser::orExpr() {
+        auto expr = andExpr();
+
+        while (match(std::vector<TokenType> {OR})) {
+            auto op = previous();
+            auto right = andExpr();
+            expr = std::make_shared<LogicalExpr>(LogicalExpr(expr, op, right));
+        }
+
+        return expr;
+    }
+
+    std::shared_ptr<Expr> Parser::andExpr() {
+        auto expr = equality();
+
+        while (match(std::vector<TokenType> {AND})) {
+            auto op = previous();
+            auto right = equality();
+            expr = std::make_shared<LogicalExpr>(LogicalExpr(expr, op, right));
         }
 
         return expr;

@@ -24,4 +24,8 @@ namespace lasm {
     std::any AssignExpr::accept(ExprVisitor *visitor) {
         return visitor->visitAssign(this);
     }
+
+    std::any LogicalExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitLogical(this);
+    }
 }

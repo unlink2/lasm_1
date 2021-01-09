@@ -86,6 +86,13 @@ void test_interpreter(void **state) {
     assert_interpreter_success("let a = 1; { let a = 2; } a;", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
 
     assert_interpreter_success("let a = 1; { a = 22; } a;", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 22);});
+
+    assert_interpreter_success("let a = 1; if (a == 1) {a = 2;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
+
+    assert_interpreter_success("let a = 1; if (a == 2) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
+
+    assert_interpreter_success("let a = 1; if (a == 1 or false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
+    assert_interpreter_success("let a = 1; if (a == 1 and false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
 }
 
 void test_interpreter_errors(void **state) {
@@ -102,4 +109,6 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("let a = 1; a+1=2;", BAD_ASSIGNMENT);
 
     assert_parser_error("{ let a = 1;", BLOCK_NOT_CLOSED_ERROR);
+
+    assert_parser_error("if (true { 1; }", EXPECTED_EXPRESSION);
 }

@@ -166,6 +166,22 @@ namespace lasm {
         return value;
     }
 
+    std::any Interpreter::visitLogical(LogicalExpr *expr) {
+        auto left = evaluate(expr->left);
+
+        if (expr->op->getType() == OR) {
+            if (left.isTruthy()) {
+                return left;
+            }
+        } else {
+            if (!left.isTruthy()) {
+                return left;
+            }
+        }
+
+        return evaluate(expr->right);
+    }
+
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {
         auto obj = std::any_cast<LasmObject>(evaluate(stmt->expr));
 
@@ -200,5 +216,14 @@ namespace lasm {
             execute(statement);
         }
         this->enviorment = previous;
+    }
+
+    std::any Interpreter::visitIf(IfStmt *stmt) {
+        if (evaluate(stmt->condition).isTruthy()) {
+            execute(stmt->thenBranch);
+        } else if (stmt->elseBranch.get()) {
+            execute(stmt->elseBranch);
+        }
+        return std::any();
     }
 }

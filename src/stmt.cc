@@ -12,4 +12,8 @@ namespace lasm {
     std::any BlockStmt::accept(StmtVisitor *visitor) {
         return visitor->visitBlock(this);
     }
+
+    std::any IfStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitIf(this);
+    }
 }

@@ -14,6 +14,7 @@ namespace lasm {
         UNEXPECTED_CHAR,
         UNTERMINATED_STRING,
         NUMBER_PARSE_ERROR,
+        MISSING_LEFT_PAREN,
         MISSING_RIHGT_PAREN,
         EXPECTED_EXPRESSION,
         TYPE_ERROR,

@@ -10,7 +10,9 @@ namespace lasm {
     enum StmtType {
         EXPRESSION_STMT,
         LET_STMT,
-        BLOCK_STMT
+        BLOCK_STMT,
+        IF_STMT,
+        WHILE_STMT
     };
 
     class StmtVisitor;
@@ -65,6 +67,19 @@ namespace lasm {
             std::vector<std::shared_ptr<Stmt>> statements;
     };
 
+    class IfStmt: public Stmt {
+        public:
+            IfStmt(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch,
+                    std::shared_ptr<Stmt> elseBranch):
+                Stmt::Stmt(IF_STMT), condition(condition), thenBranch(thenBranch), elseBranch(elseBranch) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Expr> condition;
+            std::shared_ptr<Stmt> thenBranch;
+            std::shared_ptr<Stmt> elseBranch;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -72,6 +87,7 @@ namespace lasm {
             virtual std::any visitExpression(ExpressionStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitLet(LetStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitBlock(BlockStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitIf(IfStmt *stmt) { return std::any(nullptr); };
     };
 }
 
