@@ -5,8 +5,7 @@
 #include <any>
 #include "types.h"
 #include <vector>
-
-// TODO test
+#include <memory>
 
 namespace lasm {
     typedef long lasmNumber;
@@ -15,13 +14,15 @@ namespace lasm {
     typedef char lasmChar;
     typedef bool lasmBool;
     typedef nullptr_t lasmNil;
+    class Callable;
 
     enum ObjectType {
         NIL_O,
         NUMBER_O,
         REAL_O,
         STRING_O,
-        BOOLEAN_O
+        BOOLEAN_O,
+        CALLABLE_O
     };
 
     class LasmObject {
@@ -43,6 +44,7 @@ namespace lasm {
             lasmString toString();
             lasmBool toBool();
             lasmNil toNil();
+            std::shared_ptr<Callable> toCallable();
 
             bool isTruthy() {
                 if (isNil()) {
@@ -70,6 +72,8 @@ namespace lasm {
                         return toString() == second.toString();
                     case BOOLEAN_O:
                         return toBool() == second.toBool();
+                    case CALLABLE_O:
+                        return false;
                 }
 
                 // should be unreacbable

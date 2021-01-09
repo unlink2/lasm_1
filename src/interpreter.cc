@@ -2,8 +2,14 @@
 
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
-        onError(onError), instructions(is), callback(callback) {
-            enviorment = std::make_shared<Enviorment>(Enviorment());
+        onError(onError), instructions(is), callback(callback),
+        globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals) {
+
+        auto hi = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(std::shared_ptr<NativeHi>(new NativeHi())));
+        globals->define("hi", hi);
+
+        auto lo = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(std::shared_ptr<NativeLo>(new NativeLo())));
+        globals->define("lo", lo);
     }
 
 
@@ -180,6 +186,27 @@ namespace lasm {
         }
 
         return evaluate(expr->right);
+    }
+
+    std::any Interpreter::visitCall(CallExpr *expr) {
+        auto callee = evaluate(expr->callee);
+
+        std::vector<LasmObject> arguments;
+        for (auto arg : expr->arguments) {
+            arguments.push_back(evaluate(arg));
+        }
+
+        if (callee.getType() != CALLABLE_O) {
+            throw LasmNotCallable(expr->paren);
+        }
+
+        auto function = callee.toCallable();
+
+        if (function->getArity() != arguments.size()) {
+            throw LasmArityError(expr->paren);
+        }
+
+        return function->call(this, arguments);
     }
 
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {

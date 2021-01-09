@@ -11,6 +11,7 @@
 #include "error.h"
 #include "stmt.h"
 #include "enviorment.h"
+#include "callable.h"
 
 namespace lasm {
     class InterpreterCallback {
@@ -40,6 +41,7 @@ namespace lasm {
             std::any visitVariable(VariableExpr *expr);
             std::any visitAssign(AssignExpr *expr);
             std::any visitLogical(LogicalExpr *expr);
+            std::any visitCall(CallExpr *expr);
 
             std::any visitExpression(ExpressionStmt *stmt);
             std::any visitLet(LetStmt *stmt);
@@ -52,6 +54,8 @@ namespace lasm {
             BaseError &onError;
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
+
+            std::shared_ptr<Enviorment> globals;
             std::shared_ptr<Enviorment> enviorment;
     };
 }

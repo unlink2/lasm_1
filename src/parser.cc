@@ -240,7 +240,26 @@ namespace lasm {
             auto right = unary();
             return std::make_shared<UnaryExpr>(UnaryExpr(op, right));
         }
-        return primary();
+        return call();
+    }
+
+    std::shared_ptr<Expr> Parser::call() {
+        auto expr = primary();
+
+        while (match(std::vector<TokenType> {LEFT_PAREN})) {
+            std::vector<std::shared_ptr<Expr>> arguments;
+            if (!check(RIGHT_PAREN)) {
+                do {
+                    arguments.push_back(expression());
+                } while(match(std::vector<TokenType> {COMMA}));
+
+                auto paren = consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+
+                expr = std::make_shared<CallExpr>(expr, paren, arguments);
+            }
+        }
+
+        return expr;
     }
 
     std::shared_ptr<Expr> Parser::primary() {

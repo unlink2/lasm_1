@@ -23,7 +23,9 @@ namespace lasm {
         MISSING_IDENTIFIER,
         UNDEFINED_REF,
         BAD_ASSIGNMENT,
-        BLOCK_NOT_CLOSED_ERROR
+        BLOCK_NOT_CLOSED_ERROR,
+        NOT_CALLABLE,
+        ARITY_ERROR
     } ErrorType;
 
     std::string errorToString(ErrorType error);
@@ -84,6 +86,18 @@ namespace lasm {
             LasmUndefinedReference(std::shared_ptr<Token> token):
                 LasmException::LasmException(UNDEFINED_REF, token) {}
             ~LasmUndefinedReference() {}
+    };
+
+    class LasmNotCallable: public LasmException {
+        public:
+            LasmNotCallable(std::shared_ptr<Token> token):
+                LasmException::LasmException(NOT_CALLABLE, token) {}
+    };
+
+    class LasmArityError: public LasmException {
+        public:
+            LasmArityError(std::shared_ptr<Token> token):
+                LasmException::LasmException(ARITY_ERROR, token) {}
     };
 
     /**

@@ -25,10 +25,12 @@ class TestCallback: public InterpreterCallback {
     auto tokens = scanner.scanTokens();\
     Parser parser(error, tokens);\
     auto stmts = parser.parse();\
+    assert_int_equal(error.getType(), NO_ERROR);\
     assert_false(error.didError());\
     assert_int_equal(stmts.size(), stmtSize);\
     Interpreter interpreter(error, is, &callback);\
     interpreter.interprete(stmts);\
+    assert_int_equal(error.getType(), NO_ERROR);\
     assert_false(error.didError());\
     assert_non_null(callback.object.get());\
     assert_int_equal(callback.object->getType(), objType);\
@@ -100,6 +102,9 @@ void test_interpreter(void **state) {
     assert_interpreter_success("let a = 10; for (;a > 0;) {a = a - 1;} ", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
     assert_interpreter_success("let a; for (a = 0;a > 0;a = a - 1) {} ", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
     assert_interpreter_success("let b = 0; for (let a = 10;a > 0;a = a - 1) {b = b + 1;} b; ", 3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 10);});
+
+    assert_interpreter_success("lo(0xFF81); ", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x81);});
+    assert_interpreter_success("hi(0x81FF); ", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x81);});
 }
 
 void test_interpreter_errors(void **state) {

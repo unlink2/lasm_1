@@ -28,4 +28,8 @@ namespace lasm {
     std::any LogicalExpr::accept(ExprVisitor *visitor) {
         return visitor->visitLogical(this);
     }
+
+    std::any CallExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitCall(this);
+    }
 }

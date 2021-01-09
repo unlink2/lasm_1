@@ -14,6 +14,7 @@ namespace lasm {
         UNARY_EXPR,
         VARIABLE_EXPR,
         ASSIGN_EXPR,
+        CALL_EXPR
     };
 
     class ExprVisitor;
@@ -118,6 +119,19 @@ namespace lasm {
             std::shared_ptr<Expr> right;
     };
 
+    class CallExpr: public Expr {
+        public:
+            CallExpr(std::shared_ptr<Expr> callee, std::shared_ptr<Token> paren,
+                    std::vector<std::shared_ptr<Expr>> arguments):
+                Expr::Expr(CALL_EXPR), callee(callee), paren(paren), arguments(arguments) {}
+
+            virtual std::any accept(ExprVisitor *visitor);
+
+            std::shared_ptr<Expr> callee;
+            std::shared_ptr<Token> paren;
+            std::vector<std::shared_ptr<Expr>> arguments;
+    };
+
     class ExprVisitor {
         public:
             virtual ~ExprVisitor () {}
@@ -129,6 +143,7 @@ namespace lasm {
             virtual std::any visitVariable(VariableExpr *expr) { return std::any(nullptr); };
             virtual std::any visitAssign(AssignExpr *expr) { return std::any(nullptr); };
             virtual std::any visitLogical(LogicalExpr *expr) { return std::any(nullptr); };
+            virtual std::any visitCall(CallExpr *expr) { return std::any(nullptr); };
     };
 }
 
