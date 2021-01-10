@@ -34,6 +34,7 @@ namespace lasm {
             std::shared_ptr<Expr> andExpr();
             std::shared_ptr<Expr> equality();
             std::shared_ptr<Expr> comparison();
+            std::shared_ptr<Expr> logical();
             std::shared_ptr<Expr> term();
             std::shared_ptr<Expr> factor();
             std::shared_ptr<Expr> unary();

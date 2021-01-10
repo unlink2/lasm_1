@@ -115,6 +115,13 @@ void test_interpreter(void **state) {
             3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 5);});
     assert_interpreter_success("fn x() {} let a  = x(); a;", 3, NIL_O, {assert_null(callback.object->toNil());});
     assert_interpreter_success("fn x() {return;} let a  = x(); a;", 3, NIL_O, {assert_null(callback.object->toNil());});
+
+    assert_interpreter_success("0x8283 & 0xFF;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 & 0xFF);});
+    assert_interpreter_success("0x8283 | 0xFF;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 | 0xFF);});
+    assert_interpreter_success("0x8283 ^ 0xFF;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 ^ 0xFF);});
+    assert_interpreter_success("~0x8283;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), ~0x8283);});
+    assert_interpreter_success("0x8283 >> 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 >> 2);});
+    assert_interpreter_success("0x8283 << 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 << 2);});
 }
 
 void test_interpreter_errors(void **state) {

@@ -232,11 +232,23 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::comparison() {
-        auto expr = term();
+        auto expr = logical();
 
         while (match(std::vector<TokenType> {GREATER, GREATER_EQUAL, LESS, LESS_EQUAL})) {
             auto op = previous();
-            auto right = term();
+            auto right = logical();
+            expr = std::make_shared<BinaryExpr>(BinaryExpr(expr, op, right));
+        }
+
+        return expr;
+    }
+
+    std::shared_ptr<Expr> Parser::logical() {
+        auto expr = term();
+
+        while (match(std::vector<TokenType> {BIN_AND, BIN_OR, BIN_XOR, BIN_SHIFT_LEFT, BIN_SHIFT_RIGHT})) {
+            auto op = previous();
+            auto right = factor();
             expr = std::make_shared<BinaryExpr>(BinaryExpr(expr, op, right));
         }
 
@@ -258,7 +270,7 @@ namespace lasm {
     std::shared_ptr<Expr> Parser::factor() {
         auto expr = unary();
 
-        while (match(std::vector<TokenType> {SLASH, STAR})) {
+        while (match(std::vector<TokenType> {SLASH, STAR, PERCENT})) {
             auto op = previous();
             auto right = unary();
             expr = std::make_shared<BinaryExpr>(BinaryExpr(expr, op, right));
@@ -268,7 +280,7 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::unary() {
-        if (match(std::vector<TokenType> {BANG, MINUS})) {
+        if (match(std::vector<TokenType> {BANG, MINUS, BIN_NOT})) {
             auto op = previous();
             auto right = unary();
             return std::make_shared<UnaryExpr>(UnaryExpr(op, right));

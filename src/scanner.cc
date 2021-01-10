@@ -79,10 +79,18 @@ namespace lasm {
                 addToken(match('=') ? EQUAL_EQUAL : EQUAL);
                 break;
             case '<':
-                addToken(match('=') ? LESS_EQUAL : LESS);
+                if (match('<')) {
+                    addToken(BIN_SHIFT_LEFT);
+                } else {
+                    addToken(match('=') ? LESS_EQUAL : LESS);
+                }
                 break;
             case '>':
-                addToken(match('=') ? GREATER_EQUAL : GREATER);
+                if (match('>')) {
+                    addToken(BIN_SHIFT_RIGHT);
+                } else {
+                    addToken(match('=') ? GREATER_EQUAL : GREATER);
+                }
                 break;
             case '/':
                 if (match('/')) {
@@ -93,6 +101,21 @@ namespace lasm {
                 } else {
                     addToken(SLASH);
                 }
+                break;
+            case '%':
+                addToken(PERCENT);
+                break;
+            case '&':
+                addToken(BIN_AND);
+                break;
+            case '|':
+                addToken(BIN_OR);
+                break;
+            case '^':
+                addToken(BIN_XOR);
+                break;
+            case '~':
+                addToken(BIN_NOT);
                 break;
             case '#':
                 addToken(HASH);

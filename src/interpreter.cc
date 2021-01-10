@@ -120,6 +120,36 @@ namespace lasm {
                 return LasmObject(BOOLEAN_O, !left.isEqual(right));
             case EQUAL_EQUAL:
                 return LasmObject(BOOLEAN_O, left.isEqual(right));
+            case BIN_AND:
+                if (right.isScalar() && left.isScalar()) {
+                    return LasmObject(NUMBER_O, left.toNumber() & right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
+            case BIN_OR:
+                if (right.isScalar() && left.isScalar()) {
+                    return LasmObject(NUMBER_O, left.toNumber() | right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
+            case BIN_XOR:
+                if (right.isScalar() && left.isScalar()) {
+                    return LasmObject(NUMBER_O, left.toNumber() ^ right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
+            case BIN_SHIFT_LEFT:
+                if (right.isScalar() && left.isScalar()) {
+                    return LasmObject(NUMBER_O, left.toNumber() << right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
+            case BIN_SHIFT_RIGHT:
+                if (right.isScalar() && left.isScalar()) {
+                    return LasmObject(NUMBER_O, left.toNumber() >> right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
             default:
                 break;
         }
@@ -144,6 +174,12 @@ namespace lasm {
                 break;
             case BANG:
                 return LasmObject(BOOLEAN_O, !right.isTruthy());
+            case BIN_NOT:
+                if (right.isScalar()) {
+                    return LasmObject(NUMBER_O, ~right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);
+                }
             default:
                 break;
         }
