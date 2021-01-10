@@ -46,14 +46,15 @@ void test_scannerIsAlphaNumeric(void **state) {
 void test_scanner(void **state) {
     lasm::BaseError error;
     lasm::BaseInstructionSet instructions;
-    instructions.addInstruction("lda", new lasm::InstructionMapper());
+    instructions.addInstruction("lda", new lasm::InstructionParser());
 
     lasm::Scanner scanner(error, instructions, "()[] , \n"
             ".\t\r\"Hello\\\"\\t \\\"World\"'Hello World!'- + ;  * / ! != = == < > <= >=\n"
             "// comment\n"
-            "1234 3.1415\nand\norange\n0b101\n0xFF1 lda", "unit_test");
+            "1234 3.1415\nand\norange\n0b101\n0xFF1 lda testLabel:", "unit_test");
 
     auto scanned = scanner.scanTokens();
+    assert_int_equal(error.getType(), lasm::NO_ERROR);
     assert_false(error.didError());
 
     auto it = scanned.begin();
@@ -334,6 +335,16 @@ void test_scanner(void **state) {
         assert_int_equal(t->getLine(), 8);
         assert_cc_string_equal(t->getLexeme(), std::string("lda"));
         assert_int_equal(t->getType(), lasm::INSTRUCTION);
+        assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
+        assert_null(t->getLiteral().castTo<std::nullptr_t>());
+    }
+
+    it++;
+    {
+        auto t = *it;
+        assert_int_equal(t->getLine(), 8);
+        assert_cc_string_equal(t->getLexeme(), std::string("testLabel:"));
+        assert_int_equal(t->getType(), lasm::LABEL);
         assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
         assert_null(t->getLiteral().castTo<std::nullptr_t>());
     }

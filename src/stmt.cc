@@ -28,4 +28,8 @@ namespace lasm {
     std::any ReturnStmt::accept(StmtVisitor *visitor) {
         return visitor->visitReturn(this);
     }
+
+    std::any LabelStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitLabel(this);
+    }
 }

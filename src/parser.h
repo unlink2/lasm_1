@@ -8,16 +8,33 @@
 #include "expr.h"
 #include "error.h"
 #include "stmt.h"
+#include "instruction.h"
 
 namespace lasm {
     class Parser {
         public:
-            Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens);
+            Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens, BaseInstructionSet &instructions);
             std::vector<std::shared_ptr<Stmt>> parse();
+
+            std::shared_ptr<Token> consume(TokenType token, ErrorType error);
+
+            bool match(std::vector<TokenType> types);
+            bool check(TokenType type);
+            std::shared_ptr<Token> advance();
+
+            bool isAtEnd();
+            std::shared_ptr<Token> peek();
+            std::shared_ptr<Token> previous();
+
+            std::shared_ptr<Expr> expression();
+
+            unsigned long getAddress() { return address; }
+            void setAddress(unsigned long newAddress) { address = newAddress; }
         private:
             std::shared_ptr<Stmt> declaration();
             std::shared_ptr<Stmt> letDeclaration();
             std::shared_ptr<Stmt> functionDeclaration();
+            std::shared_ptr<Stmt> labelDeclaration();
             std::shared_ptr<Stmt> statement();
 
             std::shared_ptr<Stmt> forStatement();
@@ -26,8 +43,6 @@ namespace lasm {
             std::shared_ptr<Stmt> returnStatement();
             std::vector<std::shared_ptr<Stmt>> block();
             std::shared_ptr<Stmt> expressionStatement();
-            
-            std::shared_ptr<Expr> expression();
 
             std::shared_ptr<Expr> assignment();
             std::shared_ptr<Expr> orExpr();
@@ -41,16 +56,6 @@ namespace lasm {
             std::shared_ptr<Expr> call();
             std::shared_ptr<Expr> primary();
 
-            std::shared_ptr<Token> consume(TokenType token, ErrorType error);
-
-            bool match(std::vector<TokenType> types);
-            bool check(TokenType type);
-            std::shared_ptr<Token> advance();
-
-            bool isAtEnd();
-            std::shared_ptr<Token> peek();
-            std::shared_ptr<Token> previous();
-
             ParserException handleError(ErrorType error, std::shared_ptr<Token> token=std::shared_ptr<Token>(nullptr));
 
             void sync();
@@ -58,7 +63,11 @@ namespace lasm {
             std::vector<std::shared_ptr<Token>> &tokens;
             unsigned long current = 0;
 
+            // current address for label/instruction parsing
+            unsigned long address = 0;
+
             BaseError &onError;
+            BaseInstructionSet &instructions;
     };
 }
 

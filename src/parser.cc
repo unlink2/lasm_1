@@ -1,8 +1,8 @@
 #include "parser.h"
 
 namespace lasm {
-    Parser::Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens):
-        tokens(tokens), onError(error) {
+    Parser::Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens, BaseInstructionSet &instructions):
+        tokens(tokens), onError(error), instructions(instructions) {
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::parse() {
@@ -21,6 +21,8 @@ namespace lasm {
                 return letDeclaration();
             } else if (match(std::vector<TokenType> {FUNCTION})) {
                 return functionDeclaration();
+            } else if (match(std::vector<TokenType> {LABEL})) {
+                return labelDeclaration();
             }
             return statement();
         } catch (ParserException &e) {
@@ -58,6 +60,11 @@ namespace lasm {
         auto body = block();
 
         return std::make_shared<FunctionStmt>(name, params, body);
+    }
+
+    std::shared_ptr<Stmt> Parser::labelDeclaration() {
+        auto name = consume(LABEL, MISSING_IDENTIFIER);
+        return std::make_shared<LabelStmt>(name, std::make_shared<LiteralExpr>(LasmObject(NUMBER_O, address)));
     }
 
     std::shared_ptr<Stmt> Parser::statement() {

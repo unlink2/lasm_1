@@ -5,6 +5,7 @@
 #include <any>
 #include <memory>
 #include "expr.h"
+#include "instruction.h"
 
 namespace lasm {
     enum StmtType {
@@ -14,7 +15,9 @@ namespace lasm {
         IF_STMT,
         WHILE_STMT,
         FUNCTION_STMT,
-        RETURN_STMT
+        RETURN_STMT,
+        LABEL_STMT,
+        INSTRUCTION_STMT
     };
 
     class StmtVisitor;
@@ -117,6 +120,29 @@ namespace lasm {
             std::shared_ptr<Expr> value;
     };
 
+    class LabelStmt: public Stmt {
+        public:
+            LabelStmt(std::shared_ptr<Token> name, std::shared_ptr<Expr> value):
+                Stmt::Stmt(LABEL_STMT), name(name), value(value) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+            std::shared_ptr<Expr> value;
+    };
+
+    class InstructionStmt: public Stmt {
+        public:
+            InstructionStmt(std::shared_ptr<Token> name, std::shared_ptr<InstructionInfo> info, std::vector<std::shared_ptr<Expr>> args):
+                Stmt::Stmt(INSTRUCTION_STMT), name(name), info(info), args(args) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+            std::shared_ptr<InstructionInfo> info;
+            std::vector<std::shared_ptr<Expr>> args;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -128,6 +154,7 @@ namespace lasm {
             virtual std::any visitWhile(WhileStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitFunction(FunctionStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitReturn(ReturnStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitLabel(LabelStmt *stmt) { return std::any(nullptr); };
     };
 }
 

@@ -19,7 +19,7 @@ void test_parser(void **state) {
     auto tokens = scanner.scanTokens();
     assert_false(error.didError());
 
-    Parser parser(error, tokens);
+    Parser parser(error, tokens, is);
     auto stmts = parser.parse();
 
     assert_false(error.didError());

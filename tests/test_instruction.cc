@@ -6,7 +6,7 @@
 
 void test_instruction(void **state) {
     lasm::BaseInstructionSet set;
-    set.addInstruction("test", new lasm::InstructionMapper());
+    set.addInstruction("test", new lasm::InstructionParser());
 
     auto it = set.getInstructions().begin();
     assert_false(it == set.getInstructions().end());

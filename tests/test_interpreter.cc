@@ -2,6 +2,7 @@
 #include "scanner.h"
 #include "parser.h"
 #include "instruction.h"
+#include "instruction6502.h"
 #include <memory>
 
 #include "macros.h"
@@ -19,11 +20,11 @@ class TestCallback: public InterpreterCallback {
 
 #define assert_interpreter_success(code, stmtSize, objType, ...) {\
     BaseError error;\
-    BaseInstructionSet is;\
+    InstructionSet6502 is;\
     TestCallback callback;\
     Scanner scanner(error, is, code, "");\
     auto tokens = scanner.scanTokens();\
-    Parser parser(error, tokens);\
+    Parser parser(error, tokens, is);\
     auto stmts = parser.parse();\
     assert_int_equal(error.getType(), NO_ERROR);\
     assert_false(error.didError());\
@@ -39,11 +40,11 @@ class TestCallback: public InterpreterCallback {
 
 #define assert_parser_error(code, errorType) {\
     BaseError error;\
-    BaseInstructionSet is;\
+    InstructionSet6502 is;\
     TestCallback callback;\
     Scanner scanner(error, is, code, "");\
     auto tokens = scanner.scanTokens();\
-    Parser parser(error, tokens);\
+    Parser parser(error, tokens, is);\
     auto stmts = parser.parse();\
     assert_true(error.didError());\
     assert_int_equal(error.getType(), errorType);\
@@ -51,11 +52,11 @@ class TestCallback: public InterpreterCallback {
 
 #define assert_interpreter_error(code, stmtSize, errorType) {\
     BaseError error;\
-    BaseInstructionSet is;\
+    InstructionSet6502 is;\
     TestCallback callback;\
     Scanner scanner(error, is, code, "");\
     auto tokens = scanner.scanTokens();\
-    Parser parser(error, tokens);\
+    Parser parser(error, tokens, is);\
     auto stmts = parser.parse();\
     assert_false(error.didError());\
     assert_int_equal(stmts.size(), stmtSize);\

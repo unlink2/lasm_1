@@ -163,7 +163,7 @@ namespace lasm {
     bool Scanner::isAlpha(char c) {
         return (c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z') ||
-            c == '_';
+            c == '_' || c == ':';
     }
 
     bool Scanner::isAlphaNumeric(char c) {
@@ -304,6 +304,9 @@ namespace lasm {
             type = INSTRUCTION;
         } else if (keywordIt != keywords.end()) {
             type = keywordIt->second;
+        } else if (text.back() == ':') {
+            type = LABEL;
+            text = text.substr(0, text.size()-2);
         }
 
         addToken(type);
