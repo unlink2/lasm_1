@@ -260,4 +260,21 @@ namespace lasm {
         }
         return std::any();
     }
+
+    std::any Interpreter::visitFunction(FunctionStmt *stmt) {
+        auto fn = std::make_shared<LasmFunction>(LasmFunction(stmt));
+        LasmObject obj(CALLABLE_O, std::static_pointer_cast<Callable>(fn));
+        enviorment->define(stmt->name->getLexeme(), obj);
+        return std::any();
+    }
+
+    std::any Interpreter::visitReturn(ReturnStmt *stmt) {
+        LasmObject value(NIL_O, nullptr);
+
+        if (stmt->value.get()) {
+            value = evaluate(stmt->value);
+        }
+        // TODO this is kinda ugly but functional
+        throw Return(value);
+    }
 }

@@ -1,6 +1,22 @@
 #include "callable.h"
+#include "enviorment.h"
+#include "interpreter.h"
 
 namespace lasm {
+    LasmObject LasmFunction::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
+        std::shared_ptr<Enviorment> env = std::make_shared<Enviorment>(Enviorment());
+
+        for (unsigned int i = 0; i < stmt->params.size(); i++) {
+            env->define(stmt->params[i]->getLexeme(), arguments[i]);
+        }
+        try {
+            interpreter->executeBlock(stmt->body, env);
+            return LasmObject(NIL_O, nullptr);
+        } catch (Return &e) {
+            return e.value;
+        }
+    }
+
     LasmObject NativeHi::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
         auto num = arguments[0];
         if (num.getType() != NUMBER_O) {

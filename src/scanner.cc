@@ -8,13 +8,14 @@ namespace lasm {
             addKeyword("else", ELSE);
             addKeyword("false", FALSE);
             addKeyword("for", FOR);
-            addKeyword("func", FUNCTION);
+            addKeyword("fn", FUNCTION);
             addKeyword("if", IF);
             addKeyword("nil", NIL);
             addKeyword("or", OR);
             addKeyword("true", TRUE);
             addKeyword("let", LET);
             addKeyword("while", WHILE);
+            addKeyword("return", RETURN);
     }
 
     std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {

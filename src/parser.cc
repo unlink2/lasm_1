@@ -19,6 +19,8 @@ namespace lasm {
         try {
             if (match(std::vector<TokenType> {LET})) {
                 return letDeclaration();
+            } else if (match(std::vector<TokenType> {FUNCTION})) {
+                return functionDeclaration();
             }
             return statement();
         } catch (ParserException &e) {
@@ -40,6 +42,24 @@ namespace lasm {
         return std::make_shared<LetStmt>(LetStmt(name, init));
     }
 
+    std::shared_ptr<Stmt> Parser::functionDeclaration() {
+        auto name = consume(IDENTIFIER, MISSING_IDENTIFIER);
+        consume(LEFT_PAREN, MISSING_LEFT_PAREN);
+        std::vector<std::shared_ptr<Token>> params;
+
+        if (!check(RIGHT_PAREN)) {
+            do {
+                params.push_back(consume(IDENTIFIER, MISSING_IDENTIFIER));
+            } while (match(std::vector<TokenType> {COMMA}));
+        }
+
+        consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+        consume(LEFT_BRACE, BLOCK_NOT_OPENED_ERROR);
+        auto body = block();
+
+        return std::make_shared<FunctionStmt>(name, params, body);
+    }
+
     std::shared_ptr<Stmt> Parser::statement() {
         if (match(std::vector<TokenType> {LEFT_BRACE})) {
             return std::make_shared<BlockStmt>(block());
@@ -49,6 +69,8 @@ namespace lasm {
             return whileStatement();
         } else if (match(std::vector<TokenType> {FOR})) {
             return forStatement();
+        } else if (match(std::vector<TokenType> {RETURN})) {
+            return returnStatement();
         }
         return expressionStatement();
     }
@@ -119,6 +141,17 @@ namespace lasm {
         }
 
         return std::make_shared<IfStmt>(IfStmt(condition, thenBranch, elseBranch));
+    }
+
+    std::shared_ptr<Stmt> Parser::returnStatement() {
+        auto keyword = previous();
+        std::shared_ptr<Expr> value = std::shared_ptr<Expr>(nullptr);
+
+        if (!check(SEMICOLON)) {
+            value = expression();
+        }
+        consume(SEMICOLON, MISSING_SEMICOLON);
+        return std::make_shared<ReturnStmt>(ReturnStmt(keyword, value));
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {
@@ -252,11 +285,9 @@ namespace lasm {
                 do {
                     arguments.push_back(expression());
                 } while(match(std::vector<TokenType> {COMMA}));
-
-                auto paren = consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
-
-                expr = std::make_shared<CallExpr>(expr, paren, arguments);
             }
+            auto paren = consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+            expr = std::make_shared<CallExpr>(expr, paren, arguments);
         }
 
         return expr;

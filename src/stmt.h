@@ -12,7 +12,9 @@ namespace lasm {
         LET_STMT,
         BLOCK_STMT,
         IF_STMT,
-        WHILE_STMT
+        WHILE_STMT,
+        FUNCTION_STMT,
+        RETURN_STMT
     };
 
     class StmtVisitor;
@@ -91,6 +93,30 @@ namespace lasm {
             std::shared_ptr<Stmt> body;
     };
 
+    class FunctionStmt: public Stmt {
+        public:
+            FunctionStmt(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Token>> params,
+                    std::vector<std::shared_ptr<Stmt>> body):
+                Stmt::Stmt(FUNCTION_STMT), name(name), params(params), body(body) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+            std::vector<std::shared_ptr<Token>> params;
+            std::vector<std::shared_ptr<Stmt>> body;
+    };
+
+    class ReturnStmt: public Stmt {
+        public:
+            ReturnStmt(std::shared_ptr<Token> keyword, std::shared_ptr<Expr> value):
+                Stmt::Stmt(RETURN_STMT), keyword(keyword), value(value) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> keyword;
+            std::shared_ptr<Expr> value;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -100,6 +126,8 @@ namespace lasm {
             virtual std::any visitBlock(BlockStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitIf(IfStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitWhile(WhileStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitFunction(FunctionStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitReturn(ReturnStmt *stmt) { return std::any(nullptr); };
     };
 }
 

@@ -23,6 +23,7 @@ namespace lasm {
         MISSING_IDENTIFIER,
         UNDEFINED_REF,
         BAD_ASSIGNMENT,
+        BLOCK_NOT_OPENED_ERROR,
         BLOCK_NOT_CLOSED_ERROR,
         NOT_CALLABLE,
         ARITY_ERROR

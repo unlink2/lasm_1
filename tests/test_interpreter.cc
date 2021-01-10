@@ -105,6 +105,16 @@ void test_interpreter(void **state) {
 
     assert_interpreter_success("lo(0xFF81); ", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x81);});
     assert_interpreter_success("hi(0x81FF); ", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x81);});
+
+    assert_interpreter_success("fn x() {return 1+1;} x();",
+            2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
+
+    assert_interpreter_success("fn x(a, b) { if ((a + b) == 2) { return 2; } else {return 5;}} let a = x(1, 1); a;",
+            3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
+    assert_interpreter_success("fn x(a, b) { if ((a + b) == 2) { return 2; } else {return 5;}} let a = x(1, 2); a;",
+            3, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 5);});
+    assert_interpreter_success("fn x() {} let a  = x(); a;", 3, NIL_O, {assert_null(callback.object->toNil());});
+    assert_interpreter_success("fn x() {return;} let a  = x(); a;", 3, NIL_O, {assert_null(callback.object->toNil());});
 }
 
 void test_interpreter_errors(void **state) {
@@ -128,4 +138,8 @@ void test_interpreter_errors(void **state) {
 
     assert_parser_error("for (;false; { 1; }", EXPECTED_EXPRESSION);
     assert_parser_error("for () { 1; }", EXPECTED_EXPRESSION);
+
+    assert_interpreter_error("fn x(a, b) {} let a  = x(1);", 2, ARITY_ERROR);
+    assert_interpreter_error("fn x(a, b) {} let a  = x(1, 2, 3);", 2, ARITY_ERROR);
+    assert_parser_error("fn x a, b) {} x(1, 2);", MISSING_LEFT_PAREN);
 }

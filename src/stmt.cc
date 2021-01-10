@@ -20,4 +20,12 @@ namespace lasm {
     std::any WhileStmt::accept(StmtVisitor *visitor) {
         return visitor->visitWhile(this);
     }
+
+    std::any FunctionStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitFunction(this);
+    }
+
+    std::any ReturnStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitReturn(this);
+    }
 }

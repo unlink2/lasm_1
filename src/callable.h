@@ -6,9 +6,18 @@
 #include <vector>
 #include <memory>
 #include "object.h"
+#include "stmt.h"
 
 namespace lasm {
     class Interpreter;
+
+    class Return {
+        public:
+            Return(LasmObject value):
+                value(value) {}
+
+            LasmObject value;
+    };
 
     class Callable {
         public:
@@ -22,6 +31,16 @@ namespace lasm {
             unsigned short getArity() { return arity; }
         private:
             unsigned short arity = 0;
+    };
+
+    class LasmFunction: public Callable {
+        public:
+            LasmFunction(FunctionStmt *stmt):
+                Callable::Callable(stmt->params.size()), stmt(stmt) {}
+
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+        private:
+            FunctionStmt *stmt;
     };
 
     class NativeHi: public Callable {

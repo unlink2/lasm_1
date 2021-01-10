@@ -48,9 +48,11 @@ namespace lasm {
             std::any visitBlock(BlockStmt *stmt);
             std::any visitIf(IfStmt *stmt);
             std::any visitWhile(WhileStmt *stmt);
-        private:
-            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
+            std::any visitFunction(FunctionStmt *stmt);
+            std::any visitReturn(ReturnStmt *stmt);
 
+            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
+        private:
             BaseError &onError;
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
