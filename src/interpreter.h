@@ -12,6 +12,7 @@
 #include "stmt.h"
 #include "enviorment.h"
 #include "callable.h"
+#include "instruction.h"
 
 namespace lasm {
     class InterpreterCallback {
@@ -28,7 +29,7 @@ namespace lasm {
             // TODO make this return a list of opcode results
             // this can then be consumed by a code generator
             // or be converted to a list file
-            void interprete(std::vector<std::shared_ptr<Stmt>> stmts);
+            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts);
 
             void execute(std::shared_ptr<Stmt> stmt);
 
@@ -50,8 +51,14 @@ namespace lasm {
             std::any visitWhile(WhileStmt *stmt);
             std::any visitFunction(FunctionStmt *stmt);
             std::any visitReturn(ReturnStmt *stmt);
+            std::any visitInstruction(InstructionStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
+
+            unsigned long getAddress() { return address; }
+            void setAddress(unsigned long newAddress) { address = newAddress; }
+
+            std::vector<InstructionResult> getCode() { return code; }
         private:
             BaseError &onError;
             BaseInstructionSet &instructions;
@@ -59,6 +66,10 @@ namespace lasm {
 
             std::shared_ptr<Enviorment> globals;
             std::shared_ptr<Enviorment> enviorment;
+
+            unsigned long address = 0;
+
+            std::vector<InstructionResult> code;
     };
 }
 

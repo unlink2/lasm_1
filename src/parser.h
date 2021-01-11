@@ -28,8 +28,6 @@ namespace lasm {
 
             std::shared_ptr<Expr> expression();
 
-            unsigned long getAddress() { return address; }
-            void setAddress(unsigned long newAddress) { address = newAddress; }
         private:
             std::shared_ptr<Stmt> declaration();
             std::shared_ptr<Stmt> letDeclaration();
@@ -62,9 +60,6 @@ namespace lasm {
 
             std::vector<std::shared_ptr<Token>> &tokens;
             unsigned long current = 0;
-
-            // current address for label/instruction parsing
-            unsigned long address = 0;
 
             BaseError &onError;
             BaseInstructionSet &instructions;

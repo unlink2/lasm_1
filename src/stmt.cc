@@ -32,4 +32,9 @@ namespace lasm {
     std::any LabelStmt::accept(StmtVisitor *visitor) {
         return visitor->visitLabel(this);
     }
+
+
+    std::any InstructionStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitInstruction(this);
+    }
 }

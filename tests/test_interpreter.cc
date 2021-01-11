@@ -38,6 +38,26 @@ class TestCallback: public InterpreterCallback {
     __VA_ARGS__\
 }
 
+#define assert_code6502(code, codeSize, address, ...) {\
+    BaseError error;\
+    InstructionSet6502 is;\
+    TestCallback callback;\
+    Scanner scanner(error, is, code, "");\
+    auto tokens = scanner.scanTokens();\
+    Parser parser(error, tokens, is);\
+    auto stmts = parser.parse();\
+    assert_int_equal(error.getType(), NO_ERROR);\
+    assert_false(error.didError());\
+    Interpreter interpreter(error, is, &callback);\
+    auto result = interpreter.interprete(stmts);\
+    assert_false(error.didError());\
+    assert_int_equal(error.getType(), NO_ERROR);\
+    assert_int_equal(result[0].getSize(), codeSize);\
+    assert_int_equal(result[0].getAddress(), address);\
+    char dataArray[] = __VA_ARGS__;\
+    assert_memory_equal(dataArray, result[0].getData().get(), codeSize);\
+}
+
 #define assert_parser_error(code, errorType) {\
     BaseError error;\
     InstructionSet6502 is;\
@@ -123,6 +143,8 @@ void test_interpreter(void **state) {
     assert_interpreter_success("~0x8283;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), ~0x8283);});
     assert_interpreter_success("0x8283 >> 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 >> 2);});
     assert_interpreter_success("0x8283 << 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 << 2);});
+
+    assert_code6502("lda #0xFF;", 2, 0, {(char)0x69, (char)0xFF});
 }
 
 void test_interpreter_errors(void **state) {

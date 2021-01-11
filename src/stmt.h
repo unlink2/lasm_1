@@ -122,13 +122,12 @@ namespace lasm {
 
     class LabelStmt: public Stmt {
         public:
-            LabelStmt(std::shared_ptr<Token> name, std::shared_ptr<Expr> value):
-                Stmt::Stmt(LABEL_STMT), name(name), value(value) {}
+            LabelStmt(std::shared_ptr<Token> name):
+                Stmt::Stmt(LABEL_STMT), name(name) {}
 
             virtual std::any accept(StmtVisitor *visitor);
 
             std::shared_ptr<Token> name;
-            std::shared_ptr<Expr> value;
     };
 
     class InstructionStmt: public Stmt {
@@ -155,6 +154,7 @@ namespace lasm {
             virtual std::any visitFunction(FunctionStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitReturn(ReturnStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitLabel(LabelStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitInstruction(InstructionStmt *stmt) { return std::any(nullptr); };
     };
 }
 

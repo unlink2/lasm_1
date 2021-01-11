@@ -64,7 +64,7 @@ namespace lasm {
 
     std::shared_ptr<Stmt> Parser::labelDeclaration() {
         auto name = consume(LABEL, MISSING_IDENTIFIER);
-        return std::make_shared<LabelStmt>(name, std::make_shared<LiteralExpr>(LasmObject(NUMBER_O, address)));
+        return std::make_shared<LabelStmt>(name);
     }
 
     std::shared_ptr<Stmt> Parser::statement() {
@@ -78,6 +78,8 @@ namespace lasm {
             return forStatement();
         } else if (match(std::vector<TokenType> {RETURN})) {
             return returnStatement();
+        } else if (match(std::vector<TokenType> {INSTRUCTION})) {
+            return instructions.parse(this);
         }
         return expressionStatement();
     }

@@ -13,7 +13,7 @@ namespace lasm {
     }
 
 
-    void Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts) {
+    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts) {
         try {
             for (auto stmt : stmts) {
                 execute(stmt);
@@ -21,6 +21,7 @@ namespace lasm {
         } catch (LasmException &e) {
             onError.onError(e.getType(), e.getToken(), &e);
         }
+        return code;
     }
 
     void Interpreter::execute(std::shared_ptr<Stmt> stmt) {
@@ -312,5 +313,10 @@ namespace lasm {
         }
         // TODO this is kinda ugly but functional
         throw Return(value);
+    }
+
+    std::any Interpreter::visitInstruction(InstructionStmt *stmt) {
+        code.push_back(instructions.generate(this, stmt->info, stmt));
+        return std::any();
     }
 }
