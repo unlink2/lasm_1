@@ -8,8 +8,7 @@ void test_instruction(void **state) {
     lasm::BaseInstructionSet set;
     set.addInstruction("test", new lasm::InstructionParser());
 
-    auto it = set.getInstructions().begin();
-    assert_false(it == set.getInstructions().end());
-    assert_cc_string_equal(it->first, std::string("test"));
+    assert_false(set.isInstruction("test1"));
+    assert_true(set.isInstruction("test"));
 }
 

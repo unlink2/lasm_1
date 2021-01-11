@@ -296,11 +296,11 @@ namespace lasm {
 
         std::string text = source.substr(start, current-start);
         // is it an opcode from the opcode table?
-        auto opIt = instructions.getInstructions().find(text);
+        auto opIt = instructions.isInstruction(text);
         auto keywordIt = keywords.find(text);
 
         TokenType type = IDENTIFIER;
-        if (opIt != instructions.getInstructions().end()) {
+        if (opIt) {
             type = INSTRUCTION;
         } else if (keywordIt != keywords.end()) {
             type = keywordIt->second;

@@ -77,8 +77,8 @@ namespace lasm {
      */
     class BaseInstructionSet {
         public:
-            std::map<std::string, std::shared_ptr<InstructionParser>>& getInstructions() {
-                return instructions;
+            bool isInstruction(std::string name) {
+                return instructions.find(name) != instructions.end();
             }
             void addInstruction(std::string name, InstructionParser *parser);
 
