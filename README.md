@@ -11,6 +11,12 @@ Steps:
 
 Scan -> Parse -> Interpret -> output to binary or listing
 
+TODO:
+- org keyword
+- fill keyword
+- all asm instructions for 6502
+- label support
+
 ## Credit:
 
 The parser is largely based on the excellent book [Crafting Interpreters](https://craftinginterpreters.com/) by Bob Nystrom.

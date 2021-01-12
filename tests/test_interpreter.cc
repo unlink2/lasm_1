@@ -172,4 +172,6 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("fn x(a, b) {} let a  = x(1);", 2, ARITY_ERROR);
     assert_interpreter_error("fn x(a, b) {} let a  = x(1, 2, 3);", 2, ARITY_ERROR);
     assert_parser_error("fn x a, b) {} x(1, 2);", MISSING_LEFT_PAREN);
+
+    // TODO test asm syntax errors
 }
