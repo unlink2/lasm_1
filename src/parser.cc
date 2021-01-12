@@ -79,7 +79,12 @@ namespace lasm {
         } else if (match(std::vector<TokenType> {RETURN})) {
             return returnStatement();
         } else if (match(std::vector<TokenType> {INSTRUCTION})) {
-            return instructions.parse(this);
+            auto token = previous();
+            auto instr = instructions.parse(this);
+            if (!instr.get()) {
+                throw ParserException(token, INVALID_INSTRUCTION);
+            }
+            return instr;
         }
         return expressionStatement();
     }

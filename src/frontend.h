@@ -10,6 +10,28 @@
 
 namespace lasm {
     class FrontendErrorHandler: public BaseError {
+        public:
+            FrontendErrorHandler(std::ostream &errorOut):
+                errorOut(errorOut) {}
+            virtual void onError(ErrorType type, unsigned long line, std::string path, LasmException *e=nullptr) {
+                hasErrored = true;
+                this->type = type;
+                this->path = path;
+                this->line = line;
+
+                errorOut << errorToString(type) << " in " << path << ":" << line << std::endl;
+            }
+
+            virtual void onError(ErrorType type, std::shared_ptr<Token> token, LasmException *e=nullptr) {
+                hasErrored = true;
+                this->type = type;
+                this->path = token->getPath();
+                this->line = token->getLine();
+
+                errorOut << errorToString(type) << " (" << token->getLexeme() << ")" << " in " << path << ":" << line << std::endl;
+            }
+        private:
+            std::ostream &errorOut;
     };
 
     class Frontend {

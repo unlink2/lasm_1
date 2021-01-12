@@ -27,7 +27,8 @@ namespace lasm {
         BLOCK_NOT_CLOSED_ERROR,
         NOT_CALLABLE,
         ARITY_ERROR,
-        VALUE_OUT_OF_RANGE
+        VALUE_OUT_OF_RANGE,
+        INVALID_INSTRUCTION
     } ErrorType;
 
     std::string errorToString(ErrorType error);
