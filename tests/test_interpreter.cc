@@ -148,6 +148,11 @@ void test_interpreter(void **state) {
 
     assert_code6502("org 0x02; align 0x04, 0xFF;", 2, 2, {(char)0xFF, (char)0xFF});
     assert_code6502("org 0x02; fill 0x06, 0xFF;", 4, 2, {(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF});
+
+    assert_code6502("db \"Hello\", 2, 3, true;", 6, 0, {'H', 'e', 'l', 'l', 'o', '\0', 0x02, 0x03, 1});
+    assert_code6502("dw 100, 100;", 4, 0, {0x64, 0, 0, 0, 0x64, 0, 0, 0});
+    assert_code6502("dh 100;", 2, 0, {0x64, 0});
+    assert_code6502("dd 100;", 8, 0, {0x64, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 void test_interpreter_errors(void **state) {
@@ -180,9 +185,15 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("align", EXPECTED_EXPRESSION);
     assert_parser_error("align 0xFF", MISSING_COMMA);
     assert_parser_error("align 0xFF, ", EXPECTED_EXPRESSION);
+    assert_interpreter_error("align 0xFF, 256;", 1, VALUE_OUT_OF_RANGE);
     assert_parser_error("fill", EXPECTED_EXPRESSION);
     assert_parser_error("fill 0xFF", MISSING_COMMA);
     assert_parser_error("fill 0xFF, ", EXPECTED_EXPRESSION);
+    assert_interpreter_error("fill 0xFF, 256;", 1, VALUE_OUT_OF_RANGE);
+
+    assert_parser_error("db 0xFF 0xFF;", MISSING_SEMICOLON);
+    assert_parser_error("db;", EXPECTED_EXPRESSION);
+    assert_interpreter_error("db hi;", 1, TYPE_ERROR);
 
     // TODO test asm syntax errors
 }

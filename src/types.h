@@ -2,6 +2,12 @@
 #define __TYPES_H__
 
 namespace lasm {
+    enum Endianess {
+        BIG,
+        LITTLE,
+        RAW
+    };
+
     typedef enum {
         NO_TOKEN, // this never matches any token!
         // single char tokens

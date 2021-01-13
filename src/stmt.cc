@@ -49,4 +49,8 @@ namespace lasm {
     std::any FillStmt::accept(StmtVisitor *visitor) {
         return visitor->visitFill(this);
     }
+
+    std::any DefineByteStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitDefineByte(this);
+    }
 }

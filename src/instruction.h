@@ -88,6 +88,10 @@ namespace lasm {
                     InstructionStmt *stmt) {
                 return InstructionResult();
             }
+
+            virtual Endianess getEndianess() {
+                return LITTLE;
+            }
         protected:
             std::map<std::string, std::shared_ptr<InstructionParser>> instructions;
     };

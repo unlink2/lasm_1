@@ -91,6 +91,14 @@ namespace lasm {
             return fillDirective();
         } else if (match(std::vector<TokenType> {ALIGN})) {
             return alignDirective();
+        } else if (match(std::vector<TokenType> {DEFINE_BYTE})) {
+            return defineByteStatement();
+        } else if (match(std::vector<TokenType> {DEFINE_HALF})) {
+            return defineHalfWorldStatement();
+        } else if (match(std::vector<TokenType> {DEFINE_WORD})) {
+            return defineWordStatement();
+        } else if (match(std::vector<TokenType> {DEFINE_DOUBLE})) {
+            return defineDoubleWorldStatement();
         }
         return expressionStatement();
     }
@@ -197,6 +205,33 @@ namespace lasm {
         std::shared_ptr<Expr> fillValue = expression();
         consume(SEMICOLON, MISSING_SEMICOLON);
         return std::make_shared<AlignStmt>(AlignStmt(token, address, fillValue));
+    }
+
+    std::shared_ptr<Stmt> Parser::defineNByteStatement(unsigned short size, Endianess endianess) {
+        auto token = previous();
+        std::vector<std::shared_ptr<Expr>> values;
+        do {
+            values.push_back(expression());
+        } while (match(std::vector<TokenType> {COMMA}));
+        consume(SEMICOLON, MISSING_SEMICOLON);
+
+        return std::make_shared<DefineByteStmt>(DefineByteStmt(token, values, size, endianess));
+    }
+
+    std::shared_ptr<Stmt> Parser::defineByteStatement() {
+        return defineNByteStatement(1, instructions.getEndianess());
+    }
+
+    std::shared_ptr<Stmt> Parser::defineHalfWorldStatement() {
+        return defineNByteStatement(2, instructions.getEndianess());
+    }
+
+    std::shared_ptr<Stmt> Parser::defineWordStatement() {
+        return defineNByteStatement(4, instructions.getEndianess());
+    }
+
+    std::shared_ptr<Stmt> Parser::defineDoubleWorldStatement() {
+        return defineNByteStatement(8, instructions.getEndianess());
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {

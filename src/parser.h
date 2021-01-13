@@ -45,6 +45,12 @@ namespace lasm {
             std::shared_ptr<Stmt> fillDirective();
             std::shared_ptr<Stmt> alignDirective();
 
+            std::shared_ptr<Stmt> defineNByteStatement(unsigned short size, Endianess endianess=LITTLE);
+            std::shared_ptr<Stmt> defineByteStatement();
+            std::shared_ptr<Stmt> defineHalfWorldStatement();
+            std::shared_ptr<Stmt> defineWordStatement();
+            std::shared_ptr<Stmt> defineDoubleWorldStatement();
+
             std::shared_ptr<Expr> assignment();
             std::shared_ptr<Expr> orExpr();
             std::shared_ptr<Expr> andExpr();

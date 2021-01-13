@@ -182,6 +182,21 @@ namespace lasm {
             std::shared_ptr<Expr> fillValue;
     };
 
+    class DefineByteStmt: public Stmt {
+        public:
+            DefineByteStmt(std::shared_ptr<Token> token, std::vector<std::shared_ptr<Expr>> values,
+                    unsigned int size, Endianess endianess):
+                Stmt::Stmt(DEFINE_BYTE_STMT), token(token), values(values), size(size), endianess(endianess) {
+            }
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::vector<std::shared_ptr<Expr>> values;
+            unsigned int size;
+            Endianess endianess;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -198,6 +213,7 @@ namespace lasm {
             virtual std::any visitAlign(AlignStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitOrg(OrgStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitFill(FillStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitDefineByte(DefineByteStmt *stmt) { return std::any(nullptr); };
     };
 }
 

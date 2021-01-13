@@ -1,5 +1,7 @@
 #include "interpreter.h"
 #include <cstring>
+#include <cmath>
+#include <algorithm>
 
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
@@ -380,6 +382,106 @@ namespace lasm {
             throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, address.getType(), stmt->token);
         }
         this->address = address.toNumber();
+        return std::any();
+    }
+
+/**
+ * uncomment relevant line at compile time
+ */
+#define NATIVE_BO LITTLE
+// #define NATIVE_BO BIG
+
+    // TODO test endianess
+    std::any Interpreter::visitDefineByte(DefineByteStmt *stmt) {
+        // loop all exprs. each entry gets a node as code
+        for (auto value : stmt->values) {
+            auto evaluated = evaluate(value);
+            std::shared_ptr<char[]> data;
+
+            if (evaluated.isString()) {
+                data = std::shared_ptr<char[]>(new char[evaluated.toString().length()+1]);
+                // for string we ignore endianess anyway
+                strncpy(data.get(), evaluated.toString().c_str(), evaluated.toString().length()+1);
+                code.push_back(InstructionResult(data, evaluated.toString().length()+1, getAddress(), stmt->token));
+                address += evaluated.toString().length()+1;
+            } else if (evaluated.isScalar() || evaluated.isBool()) {
+                data = std::shared_ptr<char[]>(new char[stmt->size]);
+                switch (stmt->size) {
+                    case 1: {
+                                char value = 0;
+                                if (evaluated.isBool()) {
+                                    value = evaluated.toBool();
+                                } else if (evaluated.isNumber()) {
+                                    value = evaluated.toNumber();
+                                } else {
+                                    throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+                                }
+                                memcpy(data.get(), &value, stmt->size);
+                                break;
+                            }
+                    case 2: {
+                                short value = 0;
+                                if (evaluated.isBool()) {
+                                    value = evaluated.toBool();
+                                } else if (evaluated.isNumber()) {
+                                    value = evaluated.toNumber();
+                                } else {
+                                    throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+                                }
+                                memcpy(data.get(), &value, stmt->size);
+                                break;
+                            }
+                    case 4: {
+                                int value = 0;
+                                if (evaluated.isBool()) {
+                                    value = evaluated.toBool();
+                                } else if (evaluated.isNumber()) {
+                                    value = evaluated.toNumber();
+                                } else if (evaluated.isReal()) {
+                                    float evalFloat = evaluated.toReal();
+                                    memcpy(&value, &evalFloat, stmt->size);
+                                } else {
+                                    throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+                                }
+                                memcpy(data.get(), &value, stmt->size);
+                                break;
+                            }
+                    case 8: {
+                                long value = 0;
+                                if (evaluated.isBool()) {
+                                    value = evaluated.toBool();
+                                } else if (evaluated.isNumber()) {
+                                    value = evaluated.toNumber();
+                                } else if (evaluated.isReal()) {
+                                    double evalFloat = evaluated.toReal();
+                                    memcpy(&value, &evalFloat, stmt->size);
+                                } else {
+                                    throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+                                }
+                                memcpy(data.get(), &value, stmt->size);
+                                break;
+                            }
+                    default:
+                        throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+                }
+
+                // is the required endianess the same as the native endianess?
+                // TODO test this! maybe on a powerpc machine?
+                if (stmt->endianess != NATIVE_BO) {
+                    // swap time!
+                    std::shared_ptr<char[]> swapped(new char[stmt->size]);
+                    std::reverse_copy(data.get(), data.get()+stmt->size, swapped.get());
+                    data = swapped;
+                }
+
+                code.push_back(InstructionResult(data, stmt->size, getAddress(), stmt->token));
+                address += stmt->size;
+            } else {
+                throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O, BOOLEAN_O, STRING_O},
+                        evaluated.getType(), stmt->token);
+            }
+        }
+
         return std::any();
     }
 }
