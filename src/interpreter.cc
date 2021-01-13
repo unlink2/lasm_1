@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#include <cstring>
 
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
@@ -10,6 +11,10 @@ namespace lasm {
 
         auto lo = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(std::shared_ptr<NativeLo>(new NativeLo())));
         globals->define("lo", lo);
+
+        auto address = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
+                    std::shared_ptr<NativeAddress>(new NativeAddress())));
+        globals->define("_A", address);
     }
 
 
@@ -317,6 +322,64 @@ namespace lasm {
 
     std::any Interpreter::visitInstruction(InstructionStmt *stmt) {
         code.push_back(instructions.generate(this, stmt->info, stmt));
+        return std::any();
+    }
+
+    std::any Interpreter::visitAlign(AlignStmt *stmt) {
+        auto alignTo = evaluate(stmt->alignTo);
+        auto fillValue = evaluate(stmt->fillValue);
+
+        if (!alignTo.isScalar()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, alignTo.getType(), stmt->token);
+        } else if (!fillValue.isScalar()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, fillValue.getType(), stmt->token);
+        } else if (fillValue.toNumber() > 0xFF) {
+            throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+        }
+
+        unsigned long size = 0;
+        // fill until address % fillValue == 0
+        while ((address % (unsigned long)alignTo.toNumber()) != 0) {
+            address++;
+            size++;
+        }
+
+        // make byte array with fill value as instruction result
+        std::shared_ptr<char[]> data(new char[size]);
+        memset(data.get(), fillValue.toNumber(), size);
+        code.push_back(InstructionResult(data, size, getAddress()-size, stmt->token));
+
+        return std::any();
+    }
+
+    std::any Interpreter::visitFill(FillStmt *stmt) {
+        auto fillTo = evaluate(stmt->fillAddress);
+        auto fillValue = evaluate(stmt->fillValue);
+
+        if (!fillTo.isScalar()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, fillTo.getType(), stmt->token);
+        } else if (!fillValue.isScalar()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, fillValue.getType(), stmt->token);
+        } else if (fillValue.toNumber() > 0xFF || (unsigned long)fillTo.toNumber() <= address) {
+            throw LasmException(VALUE_OUT_OF_RANGE, stmt->token);
+        }
+
+        // make data of address-fillTo
+        unsigned long size = (unsigned long)fillTo.toNumber() - address;
+        std::shared_ptr<char[]> data(new char[size]);
+        memset(data.get(), fillValue.toNumber(), size);
+        address += size;
+        code.push_back(InstructionResult(data, size, getAddress()-size, stmt->token));
+
+        return std::any();
+    }
+
+    std::any Interpreter::visitOrg(OrgStmt *stmt) {
+        auto address = evaluate(stmt->address);
+        if (!address.isScalar()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, address.getType(), stmt->token);
+        }
+        this->address = address.toNumber();
         return std::any();
     }
 }

@@ -60,6 +60,15 @@ namespace lasm {
 
             virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
     };
+
+    class NativeAddress: public Callable {
+        public:
+            NativeAddress():
+                Callable::Callable(0) {}
+            ~NativeAddress() {}
+
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+    };
 }
 
 #endif 

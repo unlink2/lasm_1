@@ -28,7 +28,8 @@ namespace lasm {
         NOT_CALLABLE,
         ARITY_ERROR,
         VALUE_OUT_OF_RANGE,
-        INVALID_INSTRUCTION
+        INVALID_INSTRUCTION,
+        MISSING_COMMA
     } ErrorType;
 
     std::string errorToString(ErrorType error);

@@ -25,6 +25,8 @@ namespace lasm {
 
         // assembler
         INSTRUCTION, LABEL, ASM_DIRECTIVE,
+        ORG, FILL, ALIGN,
+        DEFINE_BYTE, DEFINE_HALF, DEFINE_WORD, DEFINE_DOUBLE,
 
         EOF_T
     } TokenType;

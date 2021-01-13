@@ -41,6 +41,9 @@ namespace lasm {
             std::shared_ptr<Stmt> returnStatement();
             std::vector<std::shared_ptr<Stmt>> block();
             std::shared_ptr<Stmt> expressionStatement();
+            std::shared_ptr<Stmt> orgDirective();
+            std::shared_ptr<Stmt> fillDirective();
+            std::shared_ptr<Stmt> alignDirective();
 
             std::shared_ptr<Expr> assignment();
             std::shared_ptr<Expr> orExpr();

@@ -39,6 +39,8 @@ namespace lasm {
                 return "Value out of range";
             case INVALID_INSTRUCTION:
                 return "Invalid instruction";
+            case MISSING_COMMA:
+                return "Expected comma";
             default:
                 return "";
         }

@@ -37,4 +37,16 @@ namespace lasm {
     std::any InstructionStmt::accept(StmtVisitor *visitor) {
         return visitor->visitInstruction(this);
     }
+
+    std::any AlignStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitAlign(this);
+    }
+
+    std::any OrgStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitOrg(this);
+    }
+
+    std::any FillStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitFill(this);
+    }
 }

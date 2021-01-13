@@ -145,6 +145,9 @@ void test_interpreter(void **state) {
     assert_interpreter_success("0x8283 << 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 << 2);});
 
     assert_code6502("lda #0xFF;", 2, 0, {(char)0x69, (char)0xFF});
+
+    assert_code6502("org 0x02; align 0x04, 0xFF;", 2, 2, {(char)0xFF, (char)0xFF});
+    assert_code6502("org 0x02; fill 0x06, 0xFF;", 4, 2, {(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF});
 }
 
 void test_interpreter_errors(void **state) {
@@ -172,6 +175,14 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("fn x(a, b) {} let a  = x(1);", 2, ARITY_ERROR);
     assert_interpreter_error("fn x(a, b) {} let a  = x(1, 2, 3);", 2, ARITY_ERROR);
     assert_parser_error("fn x a, b) {} x(1, 2);", MISSING_LEFT_PAREN);
+
+    assert_parser_error("org", EXPECTED_EXPRESSION);
+    assert_parser_error("align", EXPECTED_EXPRESSION);
+    assert_parser_error("align 0xFF", MISSING_COMMA);
+    assert_parser_error("align 0xFF, ", EXPECTED_EXPRESSION);
+    assert_parser_error("fill", EXPECTED_EXPRESSION);
+    assert_parser_error("fill 0xFF", MISSING_COMMA);
+    assert_parser_error("fill 0xFF, ", EXPECTED_EXPRESSION);
 
     // TODO test asm syntax errors
 }

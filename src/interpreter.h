@@ -52,6 +52,9 @@ namespace lasm {
             std::any visitFunction(FunctionStmt *stmt);
             std::any visitReturn(ReturnStmt *stmt);
             std::any visitInstruction(InstructionStmt *stmt);
+            std::any visitAlign(AlignStmt *stmt);
+            std::any visitFill(FillStmt *stmt);
+            std::any visitOrg(OrgStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
 

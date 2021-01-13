@@ -85,6 +85,12 @@ namespace lasm {
                 throw ParserException(token, INVALID_INSTRUCTION);
             }
             return instr;
+        } else if (match(std::vector<TokenType> {ORG})) {
+            return orgDirective();
+        } else if (match(std::vector<TokenType> {FILL})) {
+            return fillDirective();
+        } else if (match(std::vector<TokenType> {ALIGN})) {
+            return alignDirective();
         }
         return expressionStatement();
     }
@@ -166,6 +172,31 @@ namespace lasm {
         }
         consume(SEMICOLON, MISSING_SEMICOLON);
         return std::make_shared<ReturnStmt>(ReturnStmt(keyword, value));
+    }
+
+    std::shared_ptr<Stmt> Parser::orgDirective() {
+        auto token = previous();
+        std::shared_ptr<Expr> address = expression();
+        consume(SEMICOLON, MISSING_SEMICOLON);
+        return std::make_shared<OrgStmt>(OrgStmt(token, address));
+    }
+
+    std::shared_ptr<Stmt> Parser::fillDirective() {
+        auto token = previous();
+        std::shared_ptr<Expr> address = expression();
+        consume(COMMA, MISSING_COMMA);
+        std::shared_ptr<Expr> fillValue = expression();
+        consume(SEMICOLON, MISSING_SEMICOLON);
+        return std::make_shared<FillStmt>(FillStmt(token, address, fillValue));
+    }
+
+    std::shared_ptr<Stmt> Parser::alignDirective() {
+        auto token = previous();
+        std::shared_ptr<Expr> address = expression();
+        consume(COMMA, MISSING_COMMA);
+        std::shared_ptr<Expr> fillValue = expression();
+        consume(SEMICOLON, MISSING_SEMICOLON);
+        return std::make_shared<AlignStmt>(AlignStmt(token, address, fillValue));
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {

@@ -17,7 +17,12 @@ namespace lasm {
         FUNCTION_STMT,
         RETURN_STMT,
         LABEL_STMT,
-        INSTRUCTION_STMT
+        INSTRUCTION_STMT,
+        ORG_STMT,
+        ALIGN_STMT,
+        DEFINE_BYTE_STMT,
+        FILL_STMT,
+        ENUM_STMT
     };
 
     class StmtVisitor;
@@ -142,6 +147,41 @@ namespace lasm {
             std::vector<std::shared_ptr<Expr>> args;
     };
 
+    class AlignStmt: public Stmt {
+        public:
+            AlignStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> alignTo, std::shared_ptr<Expr> fillValue):
+                Stmt::Stmt(ALIGN_STMT), token(token), alignTo(alignTo), fillValue(fillValue) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> alignTo;
+            std::shared_ptr<Expr> fillValue;
+    };
+
+    class OrgStmt: public Stmt {
+        public:
+            OrgStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> address):
+                Stmt::Stmt(ORG_STMT), token(token), address(address) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> address;
+    };
+
+    class FillStmt: public Stmt {
+        public:
+            FillStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> fillAddress, std::shared_ptr<Expr> fillValue):
+                Stmt::Stmt(FILL_STMT), token(token), fillAddress(fillAddress), fillValue(fillValue) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> fillAddress;
+            std::shared_ptr<Expr> fillValue;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -155,6 +195,9 @@ namespace lasm {
             virtual std::any visitReturn(ReturnStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitLabel(LabelStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitInstruction(InstructionStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitAlign(AlignStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitOrg(OrgStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitFill(FillStmt *stmt) { return std::any(nullptr); };
     };
 }
 

@@ -16,6 +16,7 @@ TODO:
 - fill keyword
 - all asm instructions for 6502
 - label support
+- enum statement
 
 ## Credit:
 

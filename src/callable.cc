@@ -32,4 +32,8 @@ namespace lasm {
         }
         return LasmObject(NUMBER_O, num.toNumber() & 0xFF);
     }
+
+    LasmObject NativeAddress::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
+        return LasmObject(NUMBER_O, lasmNumber(interpreter->getAddress()));
+    }
 }

@@ -16,6 +16,13 @@ namespace lasm {
             addKeyword("let", LET);
             addKeyword("while", WHILE);
             addKeyword("return", RETURN);
+            addKeyword("org", ORG);
+            addKeyword("fill", FILL);
+            addKeyword("align", ALIGN);
+            addKeyword("db", DEFINE_BYTE);
+            addKeyword("dh", DEFINE_HALF);
+            addKeyword("dw", DEFINE_WORD);
+            addKeyword("dd", DEFINE_DOUBLE);
     }
 
     std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {
