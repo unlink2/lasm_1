@@ -291,6 +291,24 @@ namespace lasm {
     }
 
     std::any Interpreter::visitIndexAssign(IndexAssignExpr *expr) {
+        auto value = evaluate(expr->value);
+        auto index = evaluate(expr->index);
+        auto object = evaluate(expr->object);
+        if (!index.isNumber()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, index.getType(), expr->token);
+        }
+
+        if (object.isList()) {
+            if ((unsigned long)object.toList()->size() < (unsigned long)index.toNumber()) {
+                throw LasmException(INDEX_OUT_OF_BOUNDS, expr->token);
+            }
+            object.toList()->at(index.toNumber()) = value;
+            return value;
+        } else {
+            throw LasmTypeError(std::vector<ObjectType> {STRING_O, LIST_O}, object.getType(), expr->token);
+        }
+
+        return value;
     }
 
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {

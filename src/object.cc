@@ -36,8 +36,8 @@ namespace lasm {
         throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, type, std::shared_ptr<Token>(nullptr));
     }
 
-    lasmString LasmObject::toString() {
-        return castTo<lasmString>();
+    lasmString& LasmObject::toString() {
+        return castTo<lasmString&>();
     }
 
     lasmBool LasmObject::toBool() {

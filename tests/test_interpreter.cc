@@ -173,6 +173,14 @@ void test_interpreter(void **state) {
             2, 4, 2, {0x69, 2});
     assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
             2, 6, 3, {0x69, 'e'});
+
+    // list assign
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+            2, 0, 0, {0x69, 100});
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+            2, 2, 1, {0x69, 4});
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+            2, 4, 2, {0x69, 2});
 }
 
 void test_interpreter_errors(void **state) {
@@ -231,5 +239,8 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("let a = [1, 2, 3]; a[\"hello\"];", 2, TYPE_ERROR);
     assert_interpreter_error("let a = 22; a[1];", 2, TYPE_ERROR);
 
+    assert_interpreter_error("let a = [1, 2, 3]; a[4] = 4;", 2, INDEX_OUT_OF_BOUNDS);
+    assert_interpreter_error("let a = [1, 2, 3]; a[\"hello\"] = 3;", 2, TYPE_ERROR);
+    assert_interpreter_error("let a = 22; a[1] = 1;", 2, TYPE_ERROR);
     // TODO test asm syntax errors
 }

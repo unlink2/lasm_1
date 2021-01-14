@@ -42,7 +42,7 @@ namespace lasm {
 
             lasmReal toReal();
             lasmNumber toNumber();
-            lasmString toString();
+            lasmString& toString();
             lasmBool toBool();
             lasmNil toNil();
             std::shared_ptr<Callable> toCallable();
