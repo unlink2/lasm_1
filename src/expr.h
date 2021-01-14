@@ -14,7 +14,9 @@ namespace lasm {
         UNARY_EXPR,
         VARIABLE_EXPR,
         ASSIGN_EXPR,
-        CALL_EXPR
+        CALL_EXPR,
+        LIST_EXPR,
+        INDEX_EXPR,
     };
 
     class ExprVisitor;
@@ -132,6 +134,40 @@ namespace lasm {
             std::vector<std::shared_ptr<Expr>> arguments;
     };
 
+    class ListExpr: public Expr {
+        public:
+            ListExpr(std::vector<std::shared_ptr<Expr>> list, std::shared_ptr<Token> paren):
+                Expr::Expr(LIST_EXPR), list(list), paren(paren) {}
+
+            virtual std::any accept(ExprVisitor *visitor);
+
+            std::vector<std::shared_ptr<Expr>> list;
+            std::shared_ptr<Token> paren;
+    };
+
+    class IndexExpr: public Expr {
+        public:
+            IndexExpr(std::shared_ptr<Expr> object, std::shared_ptr<Expr> index, std::shared_ptr<Token> token):
+                Expr::Expr(INDEX_EXPR), object(object), index(index), token(token) {}
+
+            virtual std::any accept(ExprVisitor *visitor);
+
+            std::shared_ptr<Expr> object;
+            std::shared_ptr<Expr> index;
+            std::shared_ptr<Token> token;
+    };
+
+    class IndexAssignExpr: public IndexExpr {
+        public:
+            IndexAssignExpr(std::shared_ptr<Expr> object, std::shared_ptr<Expr> index,
+                    std::shared_ptr<Expr> value, std::shared_ptr<Token> token):
+                IndexExpr::IndexExpr(object, index, token), value(value) {}
+
+            virtual std::any accept(ExprVisitor *visitor);
+
+            std::shared_ptr<Expr> value;
+    };
+
     class ExprVisitor {
         public:
             virtual ~ExprVisitor () {}
@@ -144,6 +180,9 @@ namespace lasm {
             virtual std::any visitAssign(AssignExpr *expr) { return std::any(nullptr); };
             virtual std::any visitLogical(LogicalExpr *expr) { return std::any(nullptr); };
             virtual std::any visitCall(CallExpr *expr) { return std::any(nullptr); };
+            virtual std::any visitList(ListExpr *expr) { return std::any(nullptr); };
+            virtual std::any visitIndex(IndexExpr *expr) { return std::any(nullptr); };
+            virtual std::any visitIndexAssign(IndexAssignExpr *expr) { return std::any(nullptr); };
     };
 }
 

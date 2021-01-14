@@ -51,5 +51,9 @@ namespace lasm {
     std::shared_ptr<Callable> LasmObject::toCallable() {
         return castTo<std::shared_ptr<Callable>>();
     }
+
+    std::shared_ptr<std::vector<LasmObject>> LasmObject::toList() {
+        return castTo<std::shared_ptr<std::vector<LasmObject>>>();
+    }
 }
 

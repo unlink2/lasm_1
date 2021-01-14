@@ -253,6 +253,46 @@ namespace lasm {
         return function->call(this, arguments);
     }
 
+    std::any Interpreter::visitList(ListExpr *expr) {
+        auto values = std::make_shared<std::vector<LasmObject>>(std::vector<LasmObject>());
+
+        // evaluate all array members
+        for (auto init : expr->list) {
+            values->push_back(evaluate(init));
+        }
+
+        return LasmObject(LIST_O, values);
+    }
+
+    std::any Interpreter::visitIndex(IndexExpr *expr) {
+        auto value = evaluate(expr->object);
+        auto index = evaluate(expr->index);
+
+        if (!index.isNumber()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, index.getType(), expr->token);
+        }
+
+        LasmObject result(NIL_O, nullptr);
+        if (value.isString()) {
+            if ((unsigned long)value.toString().length() < (unsigned long)index.toNumber()) {
+                throw LasmException(INDEX_OUT_OF_BOUNDS, expr->token);
+            }
+            return LasmObject(NUMBER_O, (lasmNumber)value.toString().at(index.toNumber()));
+        } else if (value.isList()) {
+            if ((unsigned long)value.toList()->size() < (unsigned long)index.toNumber()) {
+                throw LasmException(INDEX_OUT_OF_BOUNDS, expr->token);
+            }
+            return value.toList()->at(index.toNumber());
+        } else {
+            throw LasmTypeError(std::vector<ObjectType> {STRING_O, LIST_O}, value.getType(), expr->token);
+        }
+
+        return result;
+    }
+
+    std::any Interpreter::visitIndexAssign(IndexAssignExpr *expr) {
+    }
+
     std::any Interpreter::visitExpression(ExpressionStmt *stmt) {
         auto obj = std::any_cast<LasmObject>(evaluate(stmt->expr));
 

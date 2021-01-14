@@ -32,4 +32,16 @@ namespace lasm {
     std::any CallExpr::accept(ExprVisitor *visitor) {
         return visitor->visitCall(this);
     }
+
+    std::any ListExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitList(this);
+    }
+
+    std::any IndexExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitIndex(this);
+    }
+
+    std::any IndexAssignExpr::accept(ExprVisitor *visitor) {
+        return visitor->visitIndexAssign(this);
+    }
 }

@@ -38,7 +38,9 @@ class TestCallback: public InterpreterCallback {
     __VA_ARGS__\
 }
 
-#define assert_code6502(code, codeSize, address, ...) {\
+#define assert_code6502(code, codeSize, address, ...) assert_code6502_a(code, codeSize, address, 0, __VA_ARGS__)
+
+#define assert_code6502_a(code, codeSize, address, resultIndex, ...) {\
     BaseError error;\
     InstructionSet6502 is;\
     TestCallback callback;\
@@ -52,10 +54,10 @@ class TestCallback: public InterpreterCallback {
     auto result = interpreter.interprete(stmts);\
     assert_false(error.didError());\
     assert_int_equal(error.getType(), NO_ERROR);\
-    assert_int_equal(result[0].getSize(), codeSize);\
-    assert_int_equal(result[0].getAddress(), address);\
+    assert_int_equal(result[resultIndex].getSize(), codeSize);\
+    assert_int_equal(result[resultIndex].getAddress(), address);\
     char dataArray[] = __VA_ARGS__;\
-    assert_memory_equal(dataArray, result[0].getData().get(), codeSize);\
+    assert_memory_equal(dataArray, result[resultIndex].getData().get(), codeSize);\
 }
 
 #define assert_parser_error(code, errorType) {\
@@ -154,8 +156,23 @@ void test_interpreter(void **state) {
     assert_code6502("dh 100;", 2, 0, {0x64, 0});
     assert_code6502("dd 100;", 8, 0, {0x64, 0, 0, 0, 0, 0, 0, 0, 0});
 
-    assert_code6502("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
-            2, 0, {0x69, 100, 0x69, 100+1, 0x69, 100+3});
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+            2, 0, 0, {0x69, 100, 0x69, 100+1, 0x69, 100+3});
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+            2, 2, 1, {0x69, 100+1, 0x69, 100+3});
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+            2, 4, 2, {0x69, 100+3});
+
+
+    // lists
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+            2, 0, 0, {0x69, 3});
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+            2, 2, 1, {0x69, 1});
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+            2, 4, 2, {0x69, 2});
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+            2, 6, 3, {0x69, 'e'});
 }
 
 void test_interpreter_errors(void **state) {
@@ -205,6 +222,14 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("bss 100 { 100 100, test 100}", MISSING_IDENTIFIER);
     assert_interpreter_error("bss 3.1 { test 100}", 1, TYPE_ERROR);
     assert_interpreter_error("bss 3 { test 3.1}", 1, TYPE_ERROR);
+
+    // list errors
+    assert_parser_error("let a = [;", EXPECTED_EXPRESSION);
+    assert_parser_error("let a = [1 2];", MISSING_COMMA);
+    assert_interpreter_error("let a = [1, 2, 3]; a[4];", 2, INDEX_OUT_OF_BOUNDS);
+    assert_interpreter_error("let a = \"hi\"; a[4];", 2, INDEX_OUT_OF_BOUNDS);
+    assert_interpreter_error("let a = [1, 2, 3]; a[\"hello\"];", 2, TYPE_ERROR);
+    assert_interpreter_error("let a = 22; a[1];", 2, TYPE_ERROR);
 
     // TODO test asm syntax errors
 }

@@ -41,6 +41,8 @@ namespace lasm {
                 return "Invalid instruction";
             case MISSING_COMMA:
                 return "Expected comma";
+            case INDEX_OUT_OF_BOUNDS:
+                return "Index out of bounds";
             default:
                 return "";
         }

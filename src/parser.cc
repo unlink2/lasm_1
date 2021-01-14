@@ -279,7 +279,28 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::expression() {
-        return assignment();
+        return index();
+    }
+
+    std::shared_ptr<Expr> Parser::index() {
+        auto expr = assignment();
+
+        while (match(std::vector<TokenType> {LEFT_BRACKET})) {
+            auto token = previous();
+            // index expr found!
+            auto index = expression();
+            consume(RIGHT_BRACKET, BLOCK_NOT_CLOSED_ERROR);
+            if (match(std::vector<TokenType> {EQUAL})) {
+                // either assing to an indexed value
+                auto value = equality();
+                expr = std::make_shared<IndexAssignExpr>(IndexAssignExpr(expr, index, value, token));
+            } else {
+                // or simply return it
+                expr = std::make_shared<IndexExpr>(IndexExpr(expr, index, token));
+            }
+        }
+
+        return expr;
     }
 
     std::shared_ptr<Expr> Parser::assignment() {
@@ -428,9 +449,24 @@ namespace lasm {
             auto expr = expression();
             consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
             return std::make_shared<GroupingExpr>(GroupingExpr(expr));
+        } else if (match(std::vector<TokenType> {LEFT_BRACKET})) {
+            return list();
         }
-
         throw handleError(EXPECTED_EXPRESSION);
+    }
+
+    std::shared_ptr<Expr> Parser::list() {
+        auto paren = previous();
+        std::vector<std::shared_ptr<Expr>> inits;
+        while (!check(RIGHT_BRACKET) && !isAtEnd()) {
+            inits.push_back(expression());
+
+            if (!check(RIGHT_BRACKET)) {
+                consume(COMMA, MISSING_COMMA);
+            }
+        }
+        consume(RIGHT_BRACKET, BLOCK_NOT_CLOSED_ERROR);
+        return std::make_shared<ListExpr>(ListExpr(inits, paren));
     }
 
     std::shared_ptr<Token> Parser::consume(TokenType token, ErrorType error) {

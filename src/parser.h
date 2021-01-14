@@ -53,6 +53,7 @@ namespace lasm {
 
             std::shared_ptr<Stmt> bssStatement();
 
+            std::shared_ptr<Expr> index();
             std::shared_ptr<Expr> assignment();
             std::shared_ptr<Expr> orExpr();
             std::shared_ptr<Expr> andExpr();
@@ -64,6 +65,7 @@ namespace lasm {
             std::shared_ptr<Expr> unary();
             std::shared_ptr<Expr> call();
             std::shared_ptr<Expr> primary();
+            std::shared_ptr<Expr> list();
 
             ParserException handleError(ErrorType error, std::shared_ptr<Token> token=std::shared_ptr<Token>(nullptr));
 

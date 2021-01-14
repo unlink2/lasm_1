@@ -22,7 +22,8 @@ namespace lasm {
         REAL_O,
         STRING_O,
         BOOLEAN_O,
-        CALLABLE_O
+        CALLABLE_O,
+        LIST_O
     };
 
     class LasmObject {
@@ -45,6 +46,7 @@ namespace lasm {
             lasmBool toBool();
             lasmNil toNil();
             std::shared_ptr<Callable> toCallable();
+            std::shared_ptr<std::vector<LasmObject>> toList();
 
             bool isTruthy() {
                 if (isNil()) {
@@ -74,6 +76,8 @@ namespace lasm {
                         return toBool() == second.toBool();
                     case CALLABLE_O:
                         return false;
+                    case LIST_O:
+                        return false;
                 }
 
                 // should be unreacbable
@@ -102,6 +106,14 @@ namespace lasm {
 
             bool isString() {
                 return type == STRING_O;
+            }
+
+            bool isCallable() {
+                return type == CALLABLE_O;
+            }
+
+            bool isList() {
+                return type == LIST_O;
             }
 
             bool isScalar();

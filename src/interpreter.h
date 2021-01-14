@@ -43,6 +43,9 @@ namespace lasm {
             std::any visitAssign(AssignExpr *expr);
             std::any visitLogical(LogicalExpr *expr);
             std::any visitCall(CallExpr *expr);
+            std::any visitList(ListExpr *expr);
+            std::any visitIndex(IndexExpr *expr);
+            std::any visitIndexAssign(IndexAssignExpr *expr);
 
             std::any visitExpression(ExpressionStmt *stmt);
             std::any visitLet(LetStmt *stmt);

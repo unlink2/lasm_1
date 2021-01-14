@@ -29,7 +29,8 @@ namespace lasm {
         ARITY_ERROR,
         VALUE_OUT_OF_RANGE,
         INVALID_INSTRUCTION,
-        MISSING_COMMA
+        MISSING_COMMA,
+        INDEX_OUT_OF_BOUNDS,
     } ErrorType;
 
     std::string errorToString(ErrorType error);
