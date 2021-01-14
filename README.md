@@ -12,11 +12,9 @@ Steps:
 Scan -> Parse -> Interpret -> output to binary or listing
 
 TODO:
-- org keyword
-- fill keyword
 - all asm instructions for 6502
 - label support
-- enum statement
+- lists of LasmObjects and list access/assign for lists and strings
 
 ## Credit:
 

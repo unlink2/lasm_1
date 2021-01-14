@@ -484,4 +484,24 @@ namespace lasm {
 
         return std::any();
     }
+
+    std::any Interpreter::visitBss(BssStmt *stmt) {
+        auto startAddress = evaluate(stmt->startAddress);
+        if (!startAddress.isNumber()) {
+            throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, startAddress.getType(), stmt->token);
+        }
+
+        // define every value
+        for (auto declaration : stmt->declarations) {
+            auto value = evaluate(declaration->init);
+            if (!value.isNumber()) {
+                throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, value.getType(), declaration->name);
+            }
+            // add start address to it
+            enviorment->define(declaration->name->getLexeme(), startAddress);
+            startAddress = LasmObject(NUMBER_O, value.toNumber() + startAddress.toNumber());
+        }
+
+        return std::any();
+    }
 }

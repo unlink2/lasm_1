@@ -23,6 +23,7 @@ namespace lasm {
             addKeyword("dh", DEFINE_HALF);
             addKeyword("dw", DEFINE_WORD);
             addKeyword("dd", DEFINE_DOUBLE);
+            addKeyword("bss", BSS);
     }
 
     std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {

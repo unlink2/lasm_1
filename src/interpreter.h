@@ -56,6 +56,7 @@ namespace lasm {
             std::any visitFill(FillStmt *stmt);
             std::any visitOrg(OrgStmt *stmt);
             std::any visitDefineByte(DefineByteStmt *stmt);
+            std::any visitBss(BssStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
 

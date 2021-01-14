@@ -22,7 +22,8 @@ namespace lasm {
         ALIGN_STMT,
         DEFINE_BYTE_STMT,
         FILL_STMT,
-        ENUM_STMT
+        ENUM_STMT,
+        BSS_STMT
     };
 
     class StmtVisitor;
@@ -197,6 +198,19 @@ namespace lasm {
             Endianess endianess;
     };
 
+    class BssStmt: public Stmt {
+        public:
+            BssStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> startAddress,
+                    std::vector<std::shared_ptr<LetStmt>> declarations):
+                Stmt::Stmt(BSS_STMT), token(token), startAddress(startAddress), declarations(declarations) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> startAddress;
+            std::vector<std::shared_ptr<LetStmt>> declarations;
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -214,6 +228,7 @@ namespace lasm {
             virtual std::any visitOrg(OrgStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitFill(FillStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitDefineByte(DefineByteStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitBss(BssStmt *stmt) { return std::any(nullptr); };
     };
 }
 

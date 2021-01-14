@@ -51,6 +51,8 @@ namespace lasm {
             std::shared_ptr<Stmt> defineWordStatement();
             std::shared_ptr<Stmt> defineDoubleWorldStatement();
 
+            std::shared_ptr<Stmt> bssStatement();
+
             std::shared_ptr<Expr> assignment();
             std::shared_ptr<Expr> orExpr();
             std::shared_ptr<Expr> andExpr();

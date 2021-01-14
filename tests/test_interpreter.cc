@@ -153,6 +153,9 @@ void test_interpreter(void **state) {
     assert_code6502("dw 100, 100;", 4, 0, {0x64, 0, 0, 0, 0x64, 0, 0, 0});
     assert_code6502("dh 100;", 2, 0, {0x64, 0});
     assert_code6502("dd 100;", 8, 0, {0x64, 0, 0, 0, 0, 0, 0, 0, 0});
+
+    assert_code6502("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+            2, 0, {0x69, 100, 0x69, 100+1, 0x69, 100+3});
 }
 
 void test_interpreter_errors(void **state) {
@@ -194,6 +197,14 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("db 0xFF 0xFF;", MISSING_SEMICOLON);
     assert_parser_error("db;", EXPECTED_EXPRESSION);
     assert_interpreter_error("db hi;", 1, TYPE_ERROR);
+
+    assert_parser_error("bss test 100", BLOCK_NOT_OPENED_ERROR);
+    assert_parser_error("bss { test 100}", EXPECTED_EXPRESSION);
+    assert_parser_error("bss 100 { test 100", MISSING_COMMA);
+    assert_parser_error("bss 100 { 100 100}", MISSING_IDENTIFIER);
+    assert_parser_error("bss 100 { 100 100, test 100}", MISSING_IDENTIFIER);
+    assert_interpreter_error("bss 3.1 { test 100}", 1, TYPE_ERROR);
+    assert_interpreter_error("bss 3 { test 3.1}", 1, TYPE_ERROR);
 
     // TODO test asm syntax errors
 }

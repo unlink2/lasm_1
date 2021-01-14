@@ -99,6 +99,8 @@ namespace lasm {
             return defineWordStatement();
         } else if (match(std::vector<TokenType> {DEFINE_DOUBLE})) {
             return defineDoubleWorldStatement();
+        } else if (match(std::vector<TokenType> {BSS})) {
+            return bssStatement();
         }
         return expressionStatement();
     }
@@ -232,6 +234,30 @@ namespace lasm {
 
     std::shared_ptr<Stmt> Parser::defineDoubleWorldStatement() {
         return defineNByteStatement(8, instructions.getEndianess());
+    }
+
+    std::shared_ptr<Stmt> Parser::bssStatement() {
+        auto token = previous();
+
+        // start address of bss
+        auto startAddress = expression();
+
+        std::vector<std::shared_ptr<LetStmt>> declarations;
+
+        consume(LEFT_BRACE, BLOCK_NOT_OPENED_ERROR);
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            // name size,
+            auto name = consume(IDENTIFIER, MISSING_IDENTIFIER);
+            auto size = expression();
+            // add to list
+            declarations.push_back(std::make_shared<LetStmt>(LetStmt(name, size)));
+
+            if (!check(RIGHT_BRACE)) {
+                consume(COMMA, MISSING_COMMA);
+            }
+        }
+        consume(RIGHT_BRACE, BLOCK_NOT_CLOSED_ERROR);
+        return std::make_shared<BssStmt>(BssStmt(token, startAddress, declarations));
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {
