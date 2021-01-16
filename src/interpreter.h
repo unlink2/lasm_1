@@ -75,10 +75,6 @@ namespace lasm {
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
 
-            // label enviorment chain
-            std::shared_ptr<Enviorment> globalLabels;
-            std::shared_ptr<Enviorment> labels;
-
             // interpreter enviorment chain
             std::shared_ptr<Enviorment> globals;
             std::shared_ptr<Enviorment> enviorment;

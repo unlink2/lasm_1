@@ -73,14 +73,11 @@ namespace lasm {
         public:
             BlockStmt(std::vector<std::shared_ptr<Stmt>> statements):
                 Stmt::Stmt(BLOCK_STMT), statements(statements) {
-                labels = std::make_shared<Enviorment>(Enviorment());
             }
 
             virtual std::any accept(StmtVisitor *visitor);
 
             std::vector<std::shared_ptr<Stmt>> statements;
-            // first pass sets up this label enviroment
-            std::shared_ptr<Enviorment> labels;
     };
 
     class IfStmt: public Stmt {

@@ -6,8 +6,8 @@
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
         onError(onError), instructions(is), callback(callback),
-        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels),
         globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals) {
+        initGlobals();
     }
 
     void Interpreter::initGlobals() {
@@ -23,9 +23,6 @@ namespace lasm {
     }
 
     std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass) {
-        code.clear();
-        globals->clear();
-        initGlobals();
         try {
             for (auto stmt : stmts) {
                 execute(stmt);
