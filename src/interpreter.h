@@ -28,9 +28,10 @@ namespace lasm {
 
             void initGlobals();
 
-            // first pass: returns a label enviorment for each block
-            // TODO remove code generation from pass 1
-            // second pass generates code based on label enviroments
+            // TODO first pass: resolve all. make new ast containing blocks for each loop, if stmt, function call
+            // with copies of local variables.
+            // and all instructions
+            // second pass -> actually resolve instructions. look-ahead for labels at this point!
             std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
 
             void execute(std::shared_ptr<Stmt> stmt);
