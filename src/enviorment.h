@@ -21,6 +21,8 @@ namespace lasm {
 
             std::shared_ptr<Enviorment> getParent() { return parent; }
             void setParent(std::shared_ptr<Enviorment> parent) { this->parent = parent; }
+
+            void clear();
         private:
             std::map<std::string, std::shared_ptr<LasmObject>> values;
             std::shared_ptr<Enviorment> parent = std::shared_ptr<Enviorment>(nullptr);

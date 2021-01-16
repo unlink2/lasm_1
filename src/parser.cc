@@ -63,7 +63,7 @@ namespace lasm {
     }
 
     std::shared_ptr<Stmt> Parser::labelDeclaration() {
-        auto name = consume(LABEL, MISSING_IDENTIFIER);
+        auto name = previous();
         return std::make_shared<LabelStmt>(name);
     }
 

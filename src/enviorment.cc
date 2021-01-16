@@ -28,4 +28,8 @@ namespace lasm {
         }
         define(name->getLexeme(), value);
     }
+
+    void Enviorment::clear() {
+        values.clear();
+    }
 }

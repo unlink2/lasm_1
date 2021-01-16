@@ -30,6 +30,7 @@ class TestCallback: public InterpreterCallback {
     assert_false(error.didError());\
     assert_int_equal(stmts.size(), stmtSize);\
     Interpreter interpreter(error, is, &callback);\
+    assert_false(error.didError());\
     interpreter.interprete(stmts);\
     assert_int_equal(error.getType(), NO_ERROR);\
     assert_false(error.didError());\
@@ -51,6 +52,7 @@ class TestCallback: public InterpreterCallback {
     assert_int_equal(error.getType(), NO_ERROR);\
     assert_false(error.didError());\
     Interpreter interpreter(error, is, &callback);\
+    assert_false(error.didError());\
     auto result = interpreter.interprete(stmts);\
     assert_false(error.didError());\
     assert_int_equal(error.getType(), NO_ERROR);\
@@ -83,6 +85,7 @@ class TestCallback: public InterpreterCallback {
     assert_false(error.didError());\
     assert_int_equal(stmts.size(), stmtSize);\
     Interpreter interpreter(error, is, &callback);\
+    assert_false(error.didError());\
     interpreter.interprete(stmts);\
     assert_true(error.didError());\
     assert_int_equal(error.getType(), errorType);\

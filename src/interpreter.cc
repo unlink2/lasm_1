@@ -6,8 +6,11 @@
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
         onError(onError), instructions(is), callback(callback),
+        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels),
         globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals) {
+    }
 
+    void Interpreter::initGlobals() {
         auto hi = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(std::shared_ptr<NativeHi>(new NativeHi())));
         globals->define("hi", hi);
 
@@ -19,8 +22,10 @@ namespace lasm {
         globals->define("_A", address);
     }
 
-
-    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts) {
+    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass) {
+        code.clear();
+        globals->clear();
+        initGlobals();
         try {
             for (auto stmt : stmts) {
                 execute(stmt);
@@ -381,6 +386,10 @@ namespace lasm {
     }
 
     std::any Interpreter::visitInstruction(InstructionStmt *stmt) {
+        // TODO catch unresolved labels, return a deep clone of the current enviorment
+        // and set unresolved flag along with the expression.
+        // after assembly ends do a second pass and attempt to
+        // resolve again
         code.push_back(instructions.generate(this, stmt->info, stmt));
         return std::any();
     }
@@ -559,6 +568,11 @@ namespace lasm {
             enviorment->define(declaration->name->getLexeme(), startAddress);
             startAddress = LasmObject(NUMBER_O, value.toNumber() + startAddress.toNumber());
         }
+
+        return std::any();
+    }
+
+    std::any Interpreter::visitLabel(LabelStmt *stmt) {
 
         return std::any();
     }

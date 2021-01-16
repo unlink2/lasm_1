@@ -34,13 +34,16 @@ namespace lasm {
 
             if (!error.didError()) {
                 Interpreter interpreter(error, instructions);
-                auto binary = interpreter.interprete(ast);
 
-                auto os = writer.openFile(outPath);
-                for (auto b : binary) {
-                    os->write(b.getData().get(), b.getSize());
+                if (!error.didError()) {
+                    auto binary = interpreter.interprete(ast);
+
+                    auto os = writer.openFile(outPath);
+                    for (auto b : binary) {
+                        os->write(b.getData().get(), b.getSize());
+                    }
+                    writer.closeFile(os);
                 }
-                writer.closeFile(os);
             }
         }
     }

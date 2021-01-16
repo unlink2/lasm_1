@@ -26,10 +26,12 @@ namespace lasm {
         public:
             Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback=nullptr);
 
-            // TODO make this return a list of opcode results
-            // this can then be consumed by a code generator
-            // or be converted to a list file
-            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts);
+            void initGlobals();
+
+            // first pass: returns a label enviorment for each block
+            // TODO remove code generation from pass 1
+            // second pass generates code based on label enviroments
+            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
 
             void execute(std::shared_ptr<Stmt> stmt);
 
@@ -60,6 +62,7 @@ namespace lasm {
             std::any visitOrg(OrgStmt *stmt);
             std::any visitDefineByte(DefineByteStmt *stmt);
             std::any visitBss(BssStmt *stmt);
+            std::any visitLabel(LabelStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
 
@@ -72,6 +75,11 @@ namespace lasm {
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
 
+            // label enviorment chain
+            std::shared_ptr<Enviorment> globalLabels;
+            std::shared_ptr<Enviorment> labels;
+
+            // interpreter enviorment chain
             std::shared_ptr<Enviorment> globals;
             std::shared_ptr<Enviorment> enviorment;
 
