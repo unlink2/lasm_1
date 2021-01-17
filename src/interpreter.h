@@ -28,10 +28,10 @@ namespace lasm {
 
             void initGlobals();
 
-            // TODO first pass: resolve all. make new ast containing blocks for each loop, if stmt, function call
-            // with copies of local variables.
-            // and all instructions
-            // second pass -> actually resolve instructions. look-ahead for labels at this point!
+            // TODO first pass:
+            // make resolver that walks the entire tree and attaches pointers to labels to all variables
+            // if var name == label name
+            // must be scoped by block
             std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
 
             void execute(std::shared_ptr<Stmt> stmt);

@@ -570,7 +570,8 @@ namespace lasm {
     }
 
     std::any Interpreter::visitLabel(LabelStmt *stmt) {
-
+        stmt->value = LasmObject(NUMBER_O, (lasmNumber)address);
+        enviorment->define(stmt->name->getLexeme().substr(0, stmt->name->getLexeme().length()-1), stmt->value);
         return std::any();
     }
 }
