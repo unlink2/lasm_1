@@ -32,6 +32,9 @@ namespace lasm {
             // make resolver that walks the entire tree and attaches pointers to labels to all variables
             // if var name == label name
             // must be scoped by block
+            // resolver will create a list of variable nodes
+            // and a hashmap of labelname, label node
+            // when block finishes resolve all labels of that block
             std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
 
             void execute(std::shared_ptr<Stmt> stmt);
