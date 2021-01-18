@@ -29,12 +29,10 @@ namespace lasm {
             void initGlobals();
 
             // TODO first pass:
-            // make resolver that walks the entire tree and attaches pointers to labels to all variables
-            // if var name == label name
-            // must be scoped by block
-            // resolver will create a list of variable nodes
-            // and a hashmap of labelname, label node
-            // when block finishes resolve all labels of that block
+            // resolve labels by adding them to a speical enviorment
+            // each variable that was not resolvable the first time around gets a pointer to said enviorment
+            // second pass:
+            // now all variables should be resolved
             std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
 
             void execute(std::shared_ptr<Stmt> stmt);

@@ -136,7 +136,6 @@ namespace lasm {
             virtual std::any accept(StmtVisitor *visitor);
 
             std::shared_ptr<Token> name;
-            LasmObject value = LasmObject(NIL_O, nullptr);
     };
 
     class InstructionStmt: public Stmt {

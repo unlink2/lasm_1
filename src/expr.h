@@ -5,6 +5,7 @@
 #include "token.h"
 #include <any>
 #include <memory>
+#include "enviorment.h"
 
 namespace lasm {
     enum ExprType {
@@ -20,7 +21,6 @@ namespace lasm {
     };
 
     class ExprVisitor;
-    class LabelStmt;
 
     class Expr {
         public:
@@ -97,7 +97,7 @@ namespace lasm {
             std::shared_ptr<Token> name;
 
             // is non-null if variable literal points to a label name
-            std::shared_ptr<LabelStmt> label=std::shared_ptr<LabelStmt>(nullptr);
+            std::shared_ptr<Enviorment> labels=std::shared_ptr<Enviorment>(nullptr);
     };
 
     class AssignExpr: public Expr {
