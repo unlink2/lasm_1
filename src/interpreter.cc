@@ -23,8 +23,9 @@ namespace lasm {
         globals->define("_A", address);
     }
 
-    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int passes) {
-        for (int i = 0; i < passes && !onError.didError(); i++) {
+    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts,
+            bool abortOnError, int passes) {
+        for (int i = 0; i < passes && (!onError.didError() || !abortOnError); i++) {
             execPass(stmts);
         }
         return code;

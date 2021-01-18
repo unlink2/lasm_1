@@ -36,7 +36,8 @@ namespace lasm {
             // variable names shadow labels
             // second pass:
             // now all variables should be resolved
-            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int passes=2);
+            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, bool abortOnError=false,
+                    int passes=2);
 
             void execPass(std::vector<std::shared_ptr<Stmt>> stmts);
 

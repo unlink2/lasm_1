@@ -36,7 +36,7 @@ namespace lasm {
                 Interpreter interpreter(error, instructions);
 
                 if (!error.didError()) {
-                    auto binary = interpreter.interprete(ast);
+                    auto binary = interpreter.interprete(ast, true);
 
                     auto os = writer.openFile(outPath);
                     for (auto b : binary) {
