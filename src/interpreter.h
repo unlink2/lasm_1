@@ -31,9 +31,14 @@ namespace lasm {
             // TODO first pass:
             // resolve labels by adding them to a speical enviorment
             // each variable that was not resolvable the first time around gets a pointer to said enviorment
+            // for loops each iteration creates a new label enviorment
+            // each block creates a new label enviormnent
+            // variable names shadow labels
             // second pass:
             // now all variables should be resolved
-            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass=0);
+            std::vector<InstructionResult> interprete(std::vector<std::shared_ptr<Stmt>> stmts, int passes=2);
+
+            void execPass(std::vector<std::shared_ptr<Stmt>> stmts);
 
             void execute(std::shared_ptr<Stmt> stmt);
 
@@ -66,12 +71,14 @@ namespace lasm {
             std::any visitBss(BssStmt *stmt);
             std::any visitLabel(LabelStmt *stmt);
 
-            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment);
+            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment,
+                    std::shared_ptr<Enviorment> labels=std::make_shared<Enviorment>(Enviorment()));
 
             unsigned long getAddress() { return address; }
             void setAddress(unsigned long newAddress) { address = newAddress; }
 
             std::vector<InstructionResult> getCode() { return code; }
+            unsigned int getPass() { return pass; }
         private:
             BaseError &onError;
             BaseInstructionSet &instructions;
@@ -81,7 +88,12 @@ namespace lasm {
             std::shared_ptr<Enviorment> globals;
             std::shared_ptr<Enviorment> enviorment;
 
+            // interpreter label chain
+            std::shared_ptr<Enviorment> globalLabels;
+            std::shared_ptr<Enviorment> labels;
+
             unsigned long address = 0;
+            unsigned short pass = 0;
 
             std::vector<InstructionResult> code;
     };

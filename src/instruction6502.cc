@@ -41,7 +41,12 @@ namespace lasm {
         std::shared_ptr<char[]> data(new char[2]);
         data[0] = info->getOpcode();
         if (!value.isScalar()) {
-            throw LasmException(TYPE_ERROR, stmt->name);
+            // handle first pass
+            if (value.isNil() && interpreter->getPass() == 0) {
+                value = LasmObject(NUMBER_O, (lasmNumber)0);
+            } else {
+                throw LasmException(TYPE_ERROR, stmt->name);
+            }
         } else if (value.toNumber() > 0xFF) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
         }

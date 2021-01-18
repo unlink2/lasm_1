@@ -6,7 +6,8 @@
 namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
         onError(onError), instructions(is), callback(callback),
-        globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals) {
+        globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals),
+        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels) {
         initGlobals();
     }
 
@@ -22,7 +23,18 @@ namespace lasm {
         globals->define("_A", address);
     }
 
-    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int pass) {
+    std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int passes) {
+        for (int i = 0; i < passes; i++) {
+            execPass(stmts);
+        }
+        return code;
+    }
+
+    void Interpreter::execPass(std::vector<std::shared_ptr<Stmt>> stmts) {
+        enviorment->clear();
+        code.clear();
+        initGlobals();
+        address = 0;
         try {
             for (auto stmt : stmts) {
                 execute(stmt);
@@ -30,7 +42,7 @@ namespace lasm {
         } catch (LasmException &e) {
             onError.onError(e.getType(), e.getToken(), &e);
         }
-        return code;
+        pass++;
     }
 
     void Interpreter::execute(std::shared_ptr<Stmt> stmt) {
@@ -207,8 +219,26 @@ namespace lasm {
     }
 
     std::any Interpreter::visitVariable(VariableExpr *expr) {
-        // TODO can we avoid copy constructor? does it matter?
-        return LasmObject(enviorment->get(expr->name).get());
+        // label enviorment. used for n+1th pass
+        // only set if it has not already been assigned
+        bool wasFirstPass = false;
+        if (!expr->labels.get()) {
+            wasFirstPass = true; // if so do not throw
+            expr->labels = labels;
+        }
+        try {
+            // TODO can we avoid copy constructor? does it matter?
+            return LasmObject(enviorment->get(expr->name).get());
+        } catch (LasmUndefinedReference &e) {
+            // attempt getting label by name, but only on second+ pass
+            if (expr->labels.get() && !wasFirstPass) {
+                return LasmObject(expr->labels->get(expr->name).get());
+            } else if (!wasFirstPass) {
+                throw e; // only re-throw on second+ pass
+            }
+        }
+
+        return LasmObject(NIL_O, 0);
     }
 
     std::any Interpreter::visitAssign(AssignExpr *expr) {
@@ -339,14 +369,17 @@ namespace lasm {
     }
 
     void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
-            std::shared_ptr<Enviorment> enviorment) {
+            std::shared_ptr<Enviorment> enviorment, std::shared_ptr<Enviorment> labels) {
         auto previous = this->enviorment;
+        auto previousLabels = this->labels;
 
         this->enviorment = enviorment;
+        this->labels = labels;
         for (auto statement : statements) {
             execute(statement);
         }
         this->enviorment = previous;
+        this->labels = previousLabels;
     }
 
     std::any Interpreter::visitIf(IfStmt *stmt) {
@@ -571,7 +604,7 @@ namespace lasm {
 
     std::any Interpreter::visitLabel(LabelStmt *stmt) {
         LasmObject obj(NUMBER_O, (lasmNumber)address);
-        enviorment->define(stmt->name->getLexeme().substr(0, stmt->name->getLexeme().length()-1), obj);
+        labels->define(stmt->name->getLexeme().substr(0, stmt->name->getLexeme().length()-1), obj);
         return std::any();
     }
 }
