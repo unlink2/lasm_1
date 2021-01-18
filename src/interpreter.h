@@ -72,7 +72,7 @@ namespace lasm {
             std::any visitLabel(LabelStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment,
-                    std::shared_ptr<Enviorment> labels=std::make_shared<Enviorment>(Enviorment()));
+                    std::shared_ptr<Enviorment> labels=std::shared_ptr<Enviorment>(nullptr));
 
             unsigned long getAddress() { return address; }
             void setAddress(unsigned long newAddress) { address = newAddress; }

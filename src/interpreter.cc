@@ -222,17 +222,17 @@ namespace lasm {
         // label enviorment. used for n+1th pass
         // only set if it has not already been assigned
         bool wasFirstPass = false;
-        if (!expr->labels.get()) {
+        if (!expr->getEnv(address).get()) {
             wasFirstPass = true; // if so do not throw
-            expr->labels = labels;
+            expr->setEnv(address, labels);
         }
         try {
             // TODO can we avoid copy constructor? does it matter?
             return LasmObject(enviorment->get(expr->name).get());
         } catch (LasmUndefinedReference &e) {
             // attempt getting label by name, but only on second+ pass
-            if (expr->labels.get() && !wasFirstPass) {
-                return LasmObject(expr->labels->get(expr->name).get());
+            if (expr->getEnv(address).get() && !wasFirstPass) {
+                return LasmObject(expr->getEnv(address)->get(expr->name).get());
             } else if (!wasFirstPass) {
                 throw e; // only re-throw on second+ pass
             }
@@ -370,6 +370,11 @@ namespace lasm {
 
     void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
             std::shared_ptr<Enviorment> enviorment, std::shared_ptr<Enviorment> labels) {
+
+        if (!labels.get()) {
+            labels = std::make_shared<Enviorment>(Enviorment(this->labels));
+        }
+
         auto previous = this->enviorment;
         auto previousLabels = this->labels;
 
@@ -392,9 +397,11 @@ namespace lasm {
     }
 
     std::any Interpreter::visitWhile(WhileStmt *stmt) {
+        auto previousLabels = labels;
         while (evaluate(stmt->condition).isTruthy()) {
             execute(stmt->body);
         }
+        labels = previousLabels;
         return std::any();
     }
 

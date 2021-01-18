@@ -94,10 +94,14 @@ namespace lasm {
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            std::shared_ptr<Token> name;
+            std::shared_ptr<Enviorment> getEnv(unsigned long address);
+            void setEnv(unsigned long address, std::shared_ptr<Enviorment> env);
 
+            std::shared_ptr<Token> name;
+        private:
             // is non-null if variable literal points to a label name
-            std::shared_ptr<Enviorment> labels=std::shared_ptr<Enviorment>(nullptr);
+            // labels mapping address, label enviormnet
+            std::map<unsigned long, std::shared_ptr<Enviorment>> labels;
     };
 
     class AssignExpr: public Expr {

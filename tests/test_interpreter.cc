@@ -184,6 +184,20 @@ void test_interpreter(void **state) {
             2, 2, 1, {0x69, 4});
     assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
             2, 4, 2, {0x69, 2});
+
+    // label resolve
+    std::string labelResolveCode = "fn labels() { lda #test_label; test_label: } lda #1; labels(); labels(); global: lda #global;"
+    "for (let i = 0; i < 2; i = i + 1) { lda #label; lda #global; lda #after; label: } after:";
+    assert_code6502_a(labelResolveCode, 2, 0, 0, {0x69, 0x01});
+    assert_code6502_a(labelResolveCode, 2, 2, 1, {0x69, 0x04});
+    assert_code6502_a(labelResolveCode, 2, 4, 2, {0x69, 0x06});
+    assert_code6502_a(labelResolveCode, 2, 6, 3, {0x69, 0x06});
+    assert_code6502_a(labelResolveCode, 2, 8, 4, {0x69, 0x0E});
+    assert_code6502_a(labelResolveCode, 2, 10, 5, {0x69, 0x06});
+    assert_code6502_a(labelResolveCode, 2, 12, 6, {0x69, 0x14});
+    assert_code6502_a(labelResolveCode, 2, 14, 7, {0x69, 0x14});
+    assert_code6502_a(labelResolveCode, 2, 16, 8, {0x69, 0x06});
+    assert_code6502_a(labelResolveCode, 2, 18, 9, {0x69, 0x14});
 }
 
 void test_interpreter_errors(void **state) {
