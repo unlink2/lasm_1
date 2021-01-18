@@ -24,13 +24,16 @@ namespace lasm {
     }
 
     std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts, int passes) {
-        for (int i = 0; i < passes; i++) {
+        for (int i = 0; i < passes && !onError.didError(); i++) {
             execPass(stmts);
         }
         return code;
     }
 
     void Interpreter::execPass(std::vector<std::shared_ptr<Stmt>> stmts) {
+        labels = globalLabels;
+        enviorment = globals;
+
         enviorment->clear();
         code.clear();
         initGlobals();

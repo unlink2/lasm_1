@@ -79,6 +79,8 @@ namespace lasm {
 
             std::vector<InstructionResult> getCode() { return code; }
             unsigned int getPass() { return pass; }
+
+            std::shared_ptr<Enviorment> getEnv() { return enviorment; }
         private:
             BaseError &onError;
             BaseInstructionSet &instructions;

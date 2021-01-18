@@ -4,7 +4,7 @@
 
 namespace lasm {
     LasmObject LasmFunction::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
-        std::shared_ptr<Enviorment> env = std::make_shared<Enviorment>(Enviorment());
+        std::shared_ptr<Enviorment> env = std::make_shared<Enviorment>(Enviorment(interpreter->getEnv()));
 
         for (unsigned int i = 0; i < stmt->params.size(); i++) {
             env->define(stmt->params[i]->getLexeme(), arguments[i]);
