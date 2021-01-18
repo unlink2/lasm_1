@@ -20,6 +20,7 @@ namespace lasm {
     };
 
     class ExprVisitor;
+    class LabelStmt;
 
     class Expr {
         public:
@@ -94,6 +95,9 @@ namespace lasm {
             virtual std::any accept(ExprVisitor *visitor);
 
             std::shared_ptr<Token> name;
+
+            // is non-null if variable literal points to a label name
+            std::shared_ptr<LabelStmt> label=std::shared_ptr<LabelStmt>(nullptr);
     };
 
     class AssignExpr: public Expr {
