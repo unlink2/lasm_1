@@ -21,7 +21,23 @@ namespace lasm {
             InstructionSet6502 *is;
     };
 
+    class InstructionParser6502Absolute: public InstructionParser {
+        public:
+            InstructionParser6502Absolute(char opcode, InstructionSet6502 *is);
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
+        private:
+            char opcode;
+            InstructionSet6502 *is;
+    };
+
     class Immediate6502Generator: public InstructionGenerator {
+        public:
+            virtual InstructionResult generate(Interpreter *interpreter,
+                    std::shared_ptr<InstructionInfo> info,
+                    InstructionStmt *stmt);
+    };
+
+    class Absolute6502Generator: public InstructionGenerator {
         public:
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
@@ -36,6 +52,7 @@ namespace lasm {
                     InstructionStmt *stmt);
 
             std::shared_ptr<Immediate6502Generator> immediate = std::make_shared<Immediate6502Generator>(Immediate6502Generator());
+            std::shared_ptr<Absolute6502Generator> absolute = std::make_shared<Absolute6502Generator>(Absolute6502Generator());
     };
 }
 

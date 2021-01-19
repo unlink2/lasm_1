@@ -1,6 +1,7 @@
 #include "callable.h"
 #include "enviorment.h"
 #include "interpreter.h"
+#include "utility.h"
 
 namespace lasm {
     LasmObject LasmFunction::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
@@ -22,7 +23,7 @@ namespace lasm {
         if (num.getType() != NUMBER_O) {
             return LasmObject(NIL_O, nullptr);
         }
-        return LasmObject(NUMBER_O, (num.toNumber() >> 8) & 0xFF);
+        return LasmObject(NUMBER_O, LO(num.toNumber()));
     }
 
     LasmObject NativeLo::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
@@ -30,7 +31,7 @@ namespace lasm {
         if (num.getType() != NUMBER_O) {
             return LasmObject(NIL_O, nullptr);
         }
-        return LasmObject(NUMBER_O, num.toNumber() & 0xFF);
+        return LasmObject(NUMBER_O, HI(num.toNumber()));
     }
 
     LasmObject NativeAddress::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {

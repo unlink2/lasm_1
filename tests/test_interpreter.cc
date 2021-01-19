@@ -198,6 +198,9 @@ void test_interpreter(void **state) {
     assert_code6502_a(labelResolveCode, 2, 14, 7, {0x69, 0x14});
     assert_code6502_a(labelResolveCode, 2, 16, 8, {0x69, 0x06});
     assert_code6502_a(labelResolveCode, 2, 18, 9, {0x69, 0x14});
+
+    // test absolute
+    assert_code6502_a("lda 0x4021;", 3, 0, 0, {0x6D, 0x21, 0x40});
 }
 
 void test_interpreter_errors(void **state) {
