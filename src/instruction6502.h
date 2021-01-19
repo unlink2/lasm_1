@@ -34,10 +34,15 @@ namespace lasm {
 
     class InstructionParser6502AbsoluteOrZp: public InstructionParser {
         public:
-            InstructionParser6502AbsoluteOrZp(char absolute, InstructionSet6502 *is);
+            InstructionParser6502AbsoluteOrZp(char absolute, char absoluteX, char absoluteY,
+            char zeropage, char zeropageX, InstructionSet6502 *is);
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
         private:
             char absolute;
+            char absoluteX;
+            char absoluteY;
+            char zeropage;
+            char zeropageX;
             InstructionSet6502 *is;
     };
 

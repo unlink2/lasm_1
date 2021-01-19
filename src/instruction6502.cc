@@ -58,8 +58,10 @@ namespace lasm {
     /**
      * Absolute
      */
-    InstructionParser6502AbsoluteOrZp::InstructionParser6502AbsoluteOrZp(char absolute, InstructionSet6502 *is):
-        absolute(absolute), is(is) {}
+    InstructionParser6502AbsoluteOrZp::InstructionParser6502AbsoluteOrZp(char absolute, char absoluteX, char absoluteY,
+            char zeropage, char zeropageX, InstructionSet6502 *is):
+        absolute(absolute), absoluteX(absoluteX), absoluteY(absoluteY),
+        zeropage(zeropage), zeropageX(zeropageX), is(is) {}
 
     std::shared_ptr<Stmt> InstructionParser6502AbsoluteOrZp::parse(Parser *parser) {
         auto name = parser->previous();
@@ -69,7 +71,25 @@ namespace lasm {
         args.push_back(expr);
 
         auto info = std::make_shared<InstructionInfo>(InstructionInfo(is->absolute));
-        info->addOpcode(absolute);
+
+        if (parser->match(std::vector<TokenType> {COMMA})) {
+            if (parser->match(std::vector<TokenType> {IDENTIFIER})) {
+                auto reg = parser->previous();
+                if (reg->getLexeme() == "x") {
+                    info->addOpcode(absoluteX, "absolute");
+                    info->addOpcode(zeropageX, "zeropage");
+                } else if (reg->getLexeme() == "y") {
+                    info->addOpcode(absoluteY, "absolute");
+                } else {
+                    throw ParserException(parser->previous(), INVALID_INSTRUCTION);
+                }
+            } else {
+                throw ParserException(parser->previous(), INVALID_INSTRUCTION);
+            }
+        } else {
+            info->addOpcode(absolute, "absolute");
+            info->addOpcode(zeropage, "zeropage");
+        }
 
         parser->consume(SEMICOLON, MISSING_SEMICOLON);
 
@@ -80,12 +100,10 @@ namespace lasm {
             std::shared_ptr<InstructionInfo> info,
             InstructionStmt *stmt) {
 
-        const unsigned int size = 3;
+        unsigned int size = 3;
 
         auto value = interpreter->evaluate(stmt->args[0]);
-
-        std::shared_ptr<char[]> data(new char[size]);
-        data[0] = info->getOpcode();
+        std::shared_ptr<char[]> data;
         if (!value.isScalar()) {
             // handle first pass
             if (value.isNil() && interpreter->getPass() == 0) {
@@ -95,9 +113,19 @@ namespace lasm {
             }
         } else if (value.toNumber() > 0xFFFF) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
+        } else if (value.toNumber() > 0xFF || !info->hasOpcode("zeropage")) {
+            size = 3;
+            data = std::shared_ptr<char[]>(new char[size]);
+            data[0] = info->getOpcode("absolute");
+            data[1] = HI(value.toNumber());
+            data[2] = LO(value.toNumber());
+        } else {
+            size = 2;
+            data = std::shared_ptr<char[]>(new char[size]);
+            data[0] = info->getOpcode("zeropage");
+            data[1] = value.toNumber();
         }
-        data[1] = HI(value.toNumber());
-        data[2] = LO(value.toNumber());
+
         interpreter->setAddress(interpreter->getAddress()+size);
         return InstructionResult(data, size, interpreter->getAddress()-size, stmt->name);
     }
@@ -110,7 +138,8 @@ namespace lasm {
     InstructionSet6502::InstructionSet6502() {
         // TODO add all instructions
         addInstruction("lda", std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0x69, this)));
-        addInstruction("lda", std::make_shared<InstructionParser6502AbsoluteOrZp>(InstructionParser6502AbsoluteOrZp(0x6D, this)));
+        addInstruction("lda", std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(0x6D, 0x7D, 0x79, 0x65, 0x75, this)));
     }
 
     InstructionResult InstructionSet6502::generate(Interpreter *interpreter,
