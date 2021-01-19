@@ -5,4 +5,6 @@ void test_interpreter(void **state);
 
 void test_interpreter_errors(void **state);
 
+void test_misc_interpreter(void **state);
+
 #endif

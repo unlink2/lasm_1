@@ -49,6 +49,7 @@ extern "C" {
             // interpreter
             cmocka_unit_test(test_interpreter),
             cmocka_unit_test(test_interpreter_errors),
+            cmocka_unit_test(test_misc_interpreter),
 
             // enviorment
             cmocka_unit_test(test_enviorment),

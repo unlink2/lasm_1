@@ -7,9 +7,9 @@
 
 namespace lasm {
     class InstructionSet6502;
+
     /**
-     * Common instruction mapper
-     * good for most instructions the 6502 offers
+     * Immediate
      */
     class InstructionParser6502Immediate: public InstructionParser {
         public:
@@ -21,15 +21,6 @@ namespace lasm {
             InstructionSet6502 *is;
     };
 
-    class InstructionParser6502Absolute: public InstructionParser {
-        public:
-            InstructionParser6502Absolute(char opcode, InstructionSet6502 *is);
-            virtual std::shared_ptr<Stmt> parse(Parser *parser);
-        private:
-            char opcode;
-            InstructionSet6502 *is;
-    };
-
     class Immediate6502Generator: public InstructionGenerator {
         public:
             virtual InstructionResult generate(Interpreter *interpreter,
@@ -37,12 +28,29 @@ namespace lasm {
                     InstructionStmt *stmt);
     };
 
-    class Absolute6502Generator: public InstructionGenerator {
+    /**
+     * Absolute or zp modes
+     */
+
+    class InstructionParser6502AbsoluteOrZp: public InstructionParser {
+        public:
+            InstructionParser6502AbsoluteOrZp(char absolute, InstructionSet6502 *is);
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
+        private:
+            char absolute;
+            InstructionSet6502 *is;
+    };
+
+    class AbsoluteOrZp6502Generator: public InstructionGenerator {
         public:
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt);
     };
+
+    /**
+     * 6502
+     */
 
     class InstructionSet6502: public BaseInstructionSet {
         public:
@@ -52,7 +60,7 @@ namespace lasm {
                     InstructionStmt *stmt);
 
             std::shared_ptr<Immediate6502Generator> immediate = std::make_shared<Immediate6502Generator>(Immediate6502Generator());
-            std::shared_ptr<Absolute6502Generator> absolute = std::make_shared<Absolute6502Generator>(Absolute6502Generator());
+            std::shared_ptr<AbsoluteOrZp6502Generator> absolute = std::make_shared<AbsoluteOrZp6502Generator>(AbsoluteOrZp6502Generator());
     };
 }
 

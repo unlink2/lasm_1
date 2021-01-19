@@ -60,15 +60,22 @@ namespace lasm {
      */
     class InstructionInfo {
         public:
-            InstructionInfo(unsigned long opcode, unsigned long size, std::shared_ptr<InstructionGenerator> generator):
-                opcode(opcode), size(size), generator(generator) {}
+            InstructionInfo(std::shared_ptr<InstructionGenerator> generator):
+                generator(generator) {}
 
-            unsigned long getSize() { return size; }
-            unsigned long getOpcode() { return opcode; }
+            void addOpcode(unsigned long opcode, std::string name="") {
+                this->opcode[name] = opcode;
+            }
+
+            bool hasOpcode(std::string name) {
+                return opcode.find(name) != opcode.end();
+            }
+
+            unsigned long getOpcode(std::string name="") { return opcode[name]; }
             std::shared_ptr<InstructionGenerator> getGenerator() { return generator; }
         private:
-            unsigned short opcode;
-            unsigned short size;
+            // map of opcodes this instruction could produce once generator handles it
+            std::map<std::string, unsigned long> opcode;
             std::shared_ptr<InstructionGenerator> generator;
     };
 

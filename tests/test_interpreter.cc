@@ -264,3 +264,11 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("let a = 22; a[1] = 1;", 2, TYPE_ERROR);
     // TODO test asm syntax errors
 }
+
+void test_misc_interpreter(void **state) {
+    InstructionInfo result(nullptr);
+    result.addOpcode(0xF1, "test");
+    assert_true(result.hasOpcode("test"));
+    assert_false(result.hasOpcode("not_included"));
+    assert_int_equal(result.getOpcode("test"), 0xF1);
+}
