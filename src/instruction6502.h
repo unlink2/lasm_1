@@ -11,23 +11,13 @@ namespace lasm {
      * Common instruction mapper
      * good for most instructions the 6502 offers
      */
-    class InstructionParser6502Generic: public InstructionParser {
+    class InstructionParser6502Immediate: public InstructionParser {
         public:
-            InstructionParser6502Generic(char immediate, char zeropage, char zeropageX,
-                    char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY,
+            InstructionParser6502Immediate(char immediate,
                     InstructionSet6502 *is);
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
-
-            std::shared_ptr<Stmt> parseImmediate(Parser *parser, std::shared_ptr<Token> name);
         private:
             char immediate;
-            char zeropage;
-            char zeropageX;
-            char absolute;
-            char absoluteX;
-            char absoluteY;
-            char indirectX;
-            char indirectY;
             InstructionSet6502 *is;
     };
 
@@ -41,7 +31,6 @@ namespace lasm {
     class InstructionSet6502: public BaseInstructionSet {
         public:
             InstructionSet6502();
-            virtual std::shared_ptr<Stmt> parse(Parser *parser);
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt);

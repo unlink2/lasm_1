@@ -4,34 +4,28 @@
 #include "interpreter.h"
 
 namespace lasm {
-    InstructionParser6502Generic::InstructionParser6502Generic(char immediate, char zeropage, char zeropageX,
-            char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY,
+    InstructionParser6502Immediate::InstructionParser6502Immediate(char immediate,
             InstructionSet6502 *is):
-        immediate(immediate), zeropage(zeropage), zeropageX(zeropageX), absolute(absolute),
-        absoluteX(absoluteX), absoluteY(absoluteY), indirectX(indirectX), indirectY(indirectY),
+        immediate(immediate),
         is(is) {}
 
-    std::shared_ptr<Stmt> InstructionParser6502Generic::parse(Parser *parser) {
+    std::shared_ptr<Stmt> InstructionParser6502Immediate::parse(Parser *parser) {
         auto name = parser->previous();
         if (parser->match(std::vector<TokenType> {HASH})) {
             // immediate
-            return parseImmediate(parser, name);
+            auto expr = parser->expression();
+            std::vector<std::shared_ptr<Expr>> args;
+
+            args.push_back(expr);
+
+            auto info = std::make_shared<InstructionInfo>(InstructionInfo(immediate, 2,
+                        is->immediate));
+
+            parser->consume(SEMICOLON, MISSING_SEMICOLON);
+
+            return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
         }
         return std::shared_ptr<Stmt>(nullptr);
-    }
-
-    std::shared_ptr<Stmt> InstructionParser6502Generic::parseImmediate(Parser *parser, std::shared_ptr<Token> name) {
-        auto expr = parser->expression();
-        std::vector<std::shared_ptr<Expr>> args;
-
-        args.push_back(expr);
-
-        auto info = std::make_shared<InstructionInfo>(InstructionInfo(immediate, 2,
-                    is->immediate));
-
-        parser->consume(SEMICOLON, MISSING_SEMICOLON);
-
-        return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
     }
 
     InstructionResult Immediate6502Generator::generate(Interpreter *interpreter,
@@ -57,12 +51,7 @@ namespace lasm {
 
     InstructionSet6502::InstructionSet6502() {
         // TODO add all instructions
-        addInstruction("lda", new InstructionParser6502Generic(0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71, this));
-    }
-
-    std::shared_ptr<Stmt> InstructionSet6502::parse(Parser *parser) {
-        auto name = parser->previous()->getLexeme();
-        return instructions.find(name)->second->parse(parser);
+        addInstruction("lda", std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0x69, this)));
     }
 
     InstructionResult InstructionSet6502::generate(Interpreter *interpreter,

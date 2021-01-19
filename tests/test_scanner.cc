@@ -46,7 +46,7 @@ void test_scannerIsAlphaNumeric(void **state) {
 void test_scanner(void **state) {
     lasm::BaseError error;
     lasm::BaseInstructionSet instructions;
-    instructions.addInstruction("lda", new lasm::InstructionParser());
+    instructions.addInstruction("lda", std::make_shared<lasm::InstructionParser>(lasm::InstructionParser()));
 
     lasm::Scanner scanner(error, instructions, "()[] , \n"
             ".\t\r\"Hello\\\"\\t \\\"World\"'Hello World!'- + ;  * / ! != = == < > <= >=\n"

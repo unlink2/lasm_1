@@ -80,9 +80,9 @@ namespace lasm {
             bool isInstruction(std::string name) {
                 return instructions.find(name) != instructions.end();
             }
-            void addInstruction(std::string name, InstructionParser *parser);
+            void addInstruction(std::string name, std::shared_ptr<InstructionParser> parser);
 
-            virtual std::shared_ptr<Stmt> parse(Parser *parser) { return std::shared_ptr<Stmt>(nullptr); }
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt) {
@@ -93,7 +93,7 @@ namespace lasm {
                 return LITTLE;
             }
         protected:
-            std::map<std::string, std::shared_ptr<InstructionParser>> instructions;
+            std::map<std::string, std::vector<std::shared_ptr<InstructionParser>>> instructions;
     };
 }
 
