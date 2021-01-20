@@ -222,6 +222,15 @@ void test_interpreter(void **state) {
 
     // indirect, y
     assert_code6502_a("lda (0x21), y;", 2, 0, 0, {0x71, 0x21});
+
+    // implicit
+    assert_code6502_a("nop;", 1, 0, 0, {0x00});
+    assert_code6502_a("asl;", 1, 0, 0, {0x0A});
+    assert_code6502_a("asl a;", 1, 0, 0, {0x0A});
+
+    // branch
+    assert_code6502_a("org 0x8000; beq test; org 0x8010; test:", 2, 0x8000, 0, {char(0xF0), 0x0E});
+    assert_code6502_a("org 0x7F90; test: org 0x8000; beq test;", 2, 0x8000, 0, {char(0xF0), -114});
 }
 
 void test_interpreter_errors(void **state) {
@@ -294,6 +303,13 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("lda (0xFF+1, y);", 1, INVALID_INSTRUCTION);
     assert_interpreter_error("lda (0xFF+1, a);", 1, INVALID_INSTRUCTION);
     assert_interpreter_error("lda (0xFF+1), l;", 1, INVALID_INSTRUCTION);
+
+    // nop does not allow accumulator mode
+    assert_parser_error("nop a;", MISSING_SEMICOLON);
+
+    // out of range branch
+    assert_interpreter_error("org 0x7990; test: org 0x8000; beq test;", 4, VALUE_OUT_OF_RANGE);
+    assert_interpreter_error("org 0x8000; beq test; org 0x8990; test:", 4, VALUE_OUT_OF_RANGE);
 }
 
 void test_misc_interpreter(void **state) {

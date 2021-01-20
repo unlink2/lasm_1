@@ -125,6 +125,47 @@ namespace lasm {
     };
 
     /**
+     * Implicit and accumulator mode
+     */
+    class InstructionParser6502Implicit: public InstructionParser {
+        public:
+            InstructionParser6502Implicit(char opcode, InstructionSet6502 *is, bool allowAccumulator=false);
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
+
+        private:
+            char opcode;
+            InstructionSet6502 *is;
+            bool allowAccumulator;
+    };
+
+    class Implicit6502Generator: public InstructionGenerator {
+        public:
+            virtual InstructionResult generate(Interpreter *interpreter,
+                    std::shared_ptr<InstructionInfo> info,
+                    InstructionStmt *stmt);
+    };
+
+    /**
+     * Relative mode (branches)
+     */
+    class InstructionParser6502Relative: public InstructionParser {
+        public:
+            InstructionParser6502Relative(char opcode, InstructionSet6502 *is);
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
+
+        private:
+            char opcode;
+            InstructionSet6502 *is;
+    };
+
+    class Relative6502Generator: public InstructionGenerator {
+        public:
+            virtual InstructionResult generate(Interpreter *interpreter,
+                    std::shared_ptr<InstructionInfo> info,
+                    InstructionStmt *stmt);
+    };
+
+    /**
      * 6502
      */
 
@@ -137,6 +178,8 @@ namespace lasm {
 
             std::shared_ptr<Immediate6502Generator> immediate = std::make_shared<Immediate6502Generator>(Immediate6502Generator());
             std::shared_ptr<AbsoluteOrZp6502Generator> absolute = std::make_shared<AbsoluteOrZp6502Generator>(AbsoluteOrZp6502Generator());
+            std::shared_ptr<Implicit6502Generator> implicit = std::make_shared<Implicit6502Generator>(Implicit6502Generator());
+            std::shared_ptr<Relative6502Generator> relative = std::make_shared<Relative6502Generator>(Relative6502Generator());
     };
 }
 

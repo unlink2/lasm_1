@@ -199,6 +199,93 @@ namespace lasm {
     }
 
     /**
+     * Implicit parser
+     */
+    InstructionParser6502Implicit::InstructionParser6502Implicit(char opcode, InstructionSet6502 *is, bool allowAccumulator):
+        opcode(opcode), is(is), allowAccumulator(allowAccumulator) {}
+
+    std::shared_ptr<Stmt> InstructionParser6502Implicit::parse(Parser *parser) {
+        auto name = parser->previous();
+        std::vector<std::shared_ptr<Expr>> args;
+        auto info = std::make_shared<InstructionInfo>(InstructionInfo(is->implicit));
+        info->addOpcode(opcode);
+
+        // allow accumulator name
+        if (allowAccumulator && parser->match(std::vector<TokenType> {IDENTIFIER})) {
+            auto reg = parser->previous();
+            if (reg->getLexeme() != "a") {
+                throw ParserException(name, INVALID_INSTRUCTION);
+            }
+        }
+
+        parser->consume(SEMICOLON, MISSING_SEMICOLON);
+
+        return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
+    }
+
+    InstructionResult Implicit6502Generator::generate(Interpreter *interpreter,
+            std::shared_ptr<InstructionInfo> info, InstructionStmt *stmt) {
+        const unsigned int size = 1;
+
+        std::shared_ptr<char[]> data(new char[size]);
+        data[0] = info->getOpcode();
+        interpreter->setAddress(interpreter->getAddress()+size);
+        return InstructionResult(data, size, interpreter->getAddress()-size, stmt->name);
+    }
+
+    /**
+     * Relative parser (branch)
+     */
+
+    InstructionParser6502Relative::InstructionParser6502Relative(char opcode, InstructionSet6502 *is):
+        opcode(opcode), is(is) {}
+
+    std::shared_ptr<Stmt> InstructionParser6502Relative::parse(Parser *parser) {
+        auto name = parser->previous();
+        // immediate
+        auto expr = parser->expression();
+        std::vector<std::shared_ptr<Expr>> args;
+
+        args.push_back(expr);
+
+        auto info = std::make_shared<InstructionInfo>(InstructionInfo(is->relative));
+        info->addOpcode(opcode);
+
+        parser->consume(SEMICOLON, MISSING_SEMICOLON);
+
+        return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
+    }
+
+    InstructionResult Relative6502Generator::generate(Interpreter *interpreter,
+            std::shared_ptr<InstructionInfo> info,
+            InstructionStmt *stmt) {
+        auto value = interpreter->evaluate(stmt->args[0]);
+
+        const unsigned int size = 2;
+
+        if (!value.isScalar()) {
+            // handle first pass
+            if (value.isNil() && interpreter->getPass() == 0) {
+                value = LasmObject(NUMBER_O, (lasmNumber)0);
+            } else {
+                throw LasmException(TYPE_ERROR, stmt->name);
+            }
+        }
+
+        short offset = value.toNumber() - interpreter->getAddress() - 2;
+        if (interpreter->getPass() != 0 && (offset > 127 || offset < -128)) {
+            throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
+        } else if (interpreter->getPass() == 0) {
+            offset = 0;
+        }
+        std::shared_ptr<char[]> data(new char[size]);
+        data[0] = info->getOpcode();
+        data[1] = (char)offset;
+        interpreter->setAddress(interpreter->getAddress()+size);
+        return InstructionResult(data, size, interpreter->getAddress()-size, stmt->name);
+    }
+
+    /**
      * Instruction set
      */
 
@@ -219,6 +306,21 @@ namespace lasm {
             ldaAbsoluteOrZp->withAbsolute(0x6D)->withAbsoluteX(0x7D)->withAbsoluteY(0x79)
                 ->withZeropage(0x65)->withZeropageX(0x75);
             addInstruction("lda", ldaAbsoluteOrZp);
+        }
+
+        // nop
+        {
+            addInstruction("nop", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x00, this)));
+        }
+
+        // asl
+        {
+            addInstruction("asl", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x0A, this, true)));
+        }
+
+        // branch
+        {
+            addInstruction("beq", std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xF0, this)));
         }
     }
 
