@@ -119,8 +119,8 @@ void test_interpreter(void **state) {
 
     assert_interpreter_success("let a = 1; if (a == 2) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
 
-    assert_interpreter_success("let a = 1; if (a == 1 or false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
-    assert_interpreter_success("let a = 1; if (a == 1 and false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
+    assert_interpreter_success("let a = 1; if (a == 1 || false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 2);});
+    assert_interpreter_success("let a = 1; if (a == 1 && false) {a = 2;} else {a;}", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 1);});
 
     assert_interpreter_success("let a = 10; while (a > 0) a = a -1;", 2, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0);});
 

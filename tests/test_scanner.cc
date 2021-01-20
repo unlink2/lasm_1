@@ -51,7 +51,7 @@ void test_scanner(void **state) {
     lasm::Scanner scanner(error, instructions, "()[] , \n"
             ".\t\r\"Hello\\\"\\t \\\"World\"'Hello World!'- + ;  * / ! != = == < > <= >=\n"
             "// comment\n"
-            "1234 3.1415\nand\norange\n0b101\n0xFF1 lda testLabel:", "unit_test");
+            "1234 3.1415\n&&\norange\n0b101\n0xFF1 lda testLabel:", "unit_test");
 
     auto scanned = scanner.scanTokens();
     assert_int_equal(error.getType(), lasm::NO_ERROR);
@@ -293,7 +293,7 @@ void test_scanner(void **state) {
     {
         auto t = *it;
         assert_int_equal(t->getLine(), 5);
-        assert_cc_string_equal(t->getLexeme(), std::string("and"));
+        assert_cc_string_equal(t->getLexeme(), std::string("&&"));
         assert_int_equal(t->getType(), lasm::AND);
         assert_int_equal(t->getLiteral().getType(), lasm::NIL_O);
         assert_null(t->getLiteral().castTo<std::nullptr_t>());

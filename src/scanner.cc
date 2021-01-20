@@ -4,14 +4,12 @@
 namespace lasm {
     Scanner::Scanner(BaseError &error, BaseInstructionSet &instructions, std::string source, std::string path):
         LasmCommon(error, instructions), source(source), path(path) {
-            addKeyword("and", AND);
             addKeyword("else", ELSE);
             addKeyword("false", FALSE);
             addKeyword("for", FOR);
             addKeyword("fn", FUNCTION);
             addKeyword("if", IF);
             addKeyword("nil", NIL);
-            addKeyword("or", OR);
             addKeyword("true", TRUE);
             addKeyword("let", LET);
             addKeyword("while", WHILE);
@@ -114,10 +112,18 @@ namespace lasm {
                 addToken(PERCENT);
                 break;
             case '&':
-                addToken(BIN_AND);
+                if (match('&')) {
+                    addToken(AND);
+                } else {
+                    addToken(BIN_AND);
+                }
                 break;
             case '|':
-                addToken(BIN_OR);
+                if (match('|')) {
+                    addToken(OR);
+                } else {
+                    addToken(BIN_OR);
+                }
                 break;
             case '^':
                 addToken(BIN_XOR);
