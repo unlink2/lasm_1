@@ -149,7 +149,7 @@ void test_interpreter(void **state) {
     assert_interpreter_success("0x8283 >> 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 >> 2);});
     assert_interpreter_success("0x8283 << 2;", 1, NUMBER_O, {assert_int_equal(callback.object->toNumber(), 0x8283 << 2);});
 
-    assert_code6502("lda #0xFF;", 2, 0, {(char)0x69, (char)0xFF});
+    assert_code6502("adc #0xFF;", 2, 0, {(char)0x69, (char)0xFF});
 
     assert_code6502("org 0x02; align 0x04, 0xFF;", 2, 2, {(char)0xFF, (char)0xFF});
     assert_code6502("org 0x02; fill 0x06, 0xFF;", 4, 2, {(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF});
@@ -159,35 +159,35 @@ void test_interpreter(void **state) {
     assert_code6502("dh 100;", 2, 0, {0x64, 0});
     assert_code6502("dd 100;", 8, 0, {0x64, 0, 0, 0, 0, 0, 0, 0, 0});
 
-    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} adc #test1; adc #test2; adc #test3;",
             2, 0, 0, {0x69, 100, 0x69, 100+1, 0x69, 100+3});
-    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} adc #test1; adc #test2; adc #test3;",
             2, 2, 1, {0x69, 100+1, 0x69, 100+3});
-    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} lda #test1; lda #test2; lda #test3;",
+    assert_code6502_a("bss 100 {test1 1, test2 2, test3 3} adc #test1; adc #test2; adc #test3;",
             2, 4, 2, {0x69, 100+3});
 
 
     // lists
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; adc #a[0][1]; adc #a[1]; adc #a[2]; adc #s[1];",
             2, 0, 0, {0x69, 3});
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; adc #a[0][1]; adc #a[1]; adc #a[2]; adc #s[1];",
             2, 2, 1, {0x69, 1});
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; adc #a[0][1]; adc #a[1]; adc #a[2]; adc #s[1];",
             2, 4, 2, {0x69, 2});
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; lda #a[0][1]; lda #a[1]; lda #a[2]; lda #s[1];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; let s = \"Hello\"; adc #a[0][1]; adc #a[1]; adc #a[2]; adc #s[1];",
             2, 6, 3, {0x69, 'e'});
 
     // list assign
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; adc #a[0][1]; adc #a[1]; adc #a[2];",
             2, 0, 0, {0x69, 100});
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; adc #a[0][1]; adc #a[1]; adc #a[2];",
             2, 2, 1, {0x69, 4});
-    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; lda #a[0][1]; lda #a[1]; lda #a[2];",
+    assert_code6502_a("let a = [[2, 3], 1, 2, 3]; a[1] = 4; a[0][1] = 100; adc #a[0][1]; adc #a[1]; adc #a[2];",
             2, 4, 2, {0x69, 2});
 
     // label resolve
-    std::string labelResolveCode = "fn labels() { lda #test_label; test_label: } lda #1; labels(); labels(); global: lda #global;"
-    "for (let i = 0; i < 2; i = i + 1) { lda #label; lda #global; lda #after; label: } after:";
+    std::string labelResolveCode = "fn labels() { adc #test_label; test_label: } adc #1; labels(); labels(); global: adc #global;"
+    "for (let i = 0; i < 2; i = i + 1) { adc #label; adc #global; adc #after; label: } after:";
     assert_code6502_a(labelResolveCode, 2, 0, 0, {0x69, 0x01});
     assert_code6502_a(labelResolveCode, 2, 2, 1, {0x69, 0x04});
     assert_code6502_a(labelResolveCode, 2, 4, 2, {0x69, 0x06});
@@ -200,28 +200,28 @@ void test_interpreter(void **state) {
     assert_code6502_a(labelResolveCode, 2, 18, 9, {0x69, 0x14});
 
     // test absolute
-    assert_code6502_a("lda 0x4021;", 3, 0, 0, {0x6D, 0x21, 0x40});
+    assert_code6502_a("adc 0x4021;", 3, 0, 0, {0x6D, 0x21, 0x40});
 
     // absolute, x
-    assert_code6502_a("lda 0x4021, x;", 3, 0, 0, {0x7D, 0x21, 0x40});
+    assert_code6502_a("adc 0x4021, x;", 3, 0, 0, {0x7D, 0x21, 0x40});
 
     // absolute, y
-    assert_code6502_a("lda 0x4021, y;", 3, 0, 0, {0x79, 0x21, 0x40});
+    assert_code6502_a("adc 0x4021, y;", 3, 0, 0, {0x79, 0x21, 0x40});
 
     // zp
-    assert_code6502_a("lda 0x21;", 2, 0, 0, {0x65, 0x21});
+    assert_code6502_a("adc 0x21;", 2, 0, 0, {0x65, 0x21});
 
     // zp, x
-    assert_code6502_a("lda 0x21, x;", 2, 0, 0, {0x75, 0x21});
+    assert_code6502_a("adc 0x21, x;", 2, 0, 0, {0x75, 0x21});
 
     // zp, y -> does not exists so it will be absolute
-    assert_code6502_a("lda 0x21, y;", 3, 0, 0, {0x79, 0x21, 0x00});
+    assert_code6502_a("adc 0x21, y;", 3, 0, 0, {0x79, 0x21, 0x00});
 
     // indirect, x
-    assert_code6502_a("lda (0x21, x);", 2, 0, 0, {0x61, 0x21});
+    assert_code6502_a("adc (0x21, x);", 2, 0, 0, {0x61, 0x21});
 
     // indirect, y
-    assert_code6502_a("lda (0x21), y;", 2, 0, 0, {0x71, 0x21});
+    assert_code6502_a("adc (0x21), y;", 2, 0, 0, {0x71, 0x21});
 
     // implicit
     assert_code6502_a("nop;", 1, 0, 0, {0x00});
@@ -294,15 +294,15 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("let a = 22; a[1] = 1;", 2, TYPE_ERROR);
 
     // asm syntax errors
-    assert_interpreter_error("lda 0x4FFF1;", 1, VALUE_OUT_OF_RANGE);
-    assert_parser_error("lda 0x4FFF1, b;", INVALID_INSTRUCTION);
+    assert_interpreter_error("adc 0x4FFF1;", 1, VALUE_OUT_OF_RANGE);
+    assert_parser_error("adc 0x4FFF1, b;", INVALID_INSTRUCTION);
 
-    assert_interpreter_error("lda (0xFF+1, x);", 1, VALUE_OUT_OF_RANGE);
-    assert_interpreter_error("lda (0xFF+1), y;", 1, VALUE_OUT_OF_RANGE);
-    assert_interpreter_error("lda (0xFF+1), x;", 1, INVALID_INSTRUCTION);
-    assert_interpreter_error("lda (0xFF+1, y);", 1, INVALID_INSTRUCTION);
-    assert_interpreter_error("lda (0xFF+1, a);", 1, INVALID_INSTRUCTION);
-    assert_interpreter_error("lda (0xFF+1), l;", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1, x);", 1, VALUE_OUT_OF_RANGE);
+    assert_interpreter_error("adc (0xFF+1), y;", 1, VALUE_OUT_OF_RANGE);
+    assert_interpreter_error("adc (0xFF+1), x;", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1, y);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1, a);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1), l;", 1, INVALID_INSTRUCTION);
 
     // nop does not allow accumulator mode
     assert_parser_error("nop a;", MISSING_SEMICOLON);

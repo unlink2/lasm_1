@@ -288,24 +288,28 @@ namespace lasm {
     /**
      * Instruction set
      */
+    void InstructionSet6502::addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
+            char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY) {
+        addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(immediate, this)));
+
+        auto ldaIndirect = std::make_shared<InstructionParser6502Indirect>(
+                InstructionParser6502Indirect(this));
+        ldaIndirect->withIndirectX(indirectX)->withIndirectY(indirectY);
+        addInstruction(name, ldaIndirect);
+
+        auto ldaAbsoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                InstructionParser6502AbsoluteOrZp(this));
+        ldaAbsoluteOrZp->withAbsolute(absolute)->withAbsoluteX(absoluteX)->withAbsoluteY(absoluteY)
+            ->withZeropage(zeropage)->withZeropageX(zeropageX);
+        addInstruction(name, ldaAbsoluteOrZp);
+    }
 
     InstructionSet6502::InstructionSet6502() {
         // TODO add all instructions
 
-        // lda
+        // adc
         {
-            addInstruction("lda", std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0x69, this)));
-
-            auto ldaIndirect = std::make_shared<InstructionParser6502Indirect>(
-                    InstructionParser6502Indirect(this));
-            ldaIndirect->withIndirectX(0x61)->withIndirectY(0x71);
-            addInstruction("lda", ldaIndirect);
-
-            auto ldaAbsoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
-                    InstructionParser6502AbsoluteOrZp(this));
-            ldaAbsoluteOrZp->withAbsolute(0x6D)->withAbsoluteX(0x7D)->withAbsoluteY(0x79)
-                ->withZeropage(0x65)->withZeropageX(0x75);
-            addInstruction("lda", ldaAbsoluteOrZp);
+            addFullInstruction("adc", 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71);
         }
 
         // nop
