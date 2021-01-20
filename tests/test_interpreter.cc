@@ -201,6 +201,27 @@ void test_interpreter(void **state) {
 
     // test absolute
     assert_code6502_a("lda 0x4021;", 3, 0, 0, {0x6D, 0x21, 0x40});
+
+    // absolute, x
+    assert_code6502_a("lda 0x4021, x;", 3, 0, 0, {0x7D, 0x21, 0x40});
+
+    // absolute, y
+    assert_code6502_a("lda 0x4021, y;", 3, 0, 0, {0x79, 0x21, 0x40});
+
+    // zp
+    assert_code6502_a("lda 0x21;", 2, 0, 0, {0x65, 0x21});
+
+    // zp, x
+    assert_code6502_a("lda 0x21, x;", 2, 0, 0, {0x75, 0x21});
+
+    // zp, y -> does not exists so it will be absolute
+    assert_code6502_a("lda 0x21, y;", 3, 0, 0, {0x79, 0x21, 0x00});
+
+    // indirect, x
+    assert_code6502_a("lda (0x21, x);", 2, 0, 0, {0x61, 0x21});
+
+    // indirect, y
+    assert_code6502_a("lda (0x21), y;", 2, 0, 0, {0x71, 0x21});
 }
 
 void test_interpreter_errors(void **state) {
@@ -262,7 +283,17 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("let a = [1, 2, 3]; a[4] = 4;", 2, INDEX_OUT_OF_BOUNDS);
     assert_interpreter_error("let a = [1, 2, 3]; a[\"hello\"] = 3;", 2, TYPE_ERROR);
     assert_interpreter_error("let a = 22; a[1] = 1;", 2, TYPE_ERROR);
-    // TODO test asm syntax errors
+
+    // asm syntax errors
+    assert_interpreter_error("lda 0x4FFF1;", 1, VALUE_OUT_OF_RANGE);
+    assert_parser_error("lda 0x4FFF1, b;", INVALID_INSTRUCTION);
+
+    assert_interpreter_error("lda (0xFF+1, x);", 1, VALUE_OUT_OF_RANGE);
+    assert_interpreter_error("lda (0xFF+1), y;", 1, VALUE_OUT_OF_RANGE);
+    assert_interpreter_error("lda (0xFF+1), x;", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("lda (0xFF+1, y);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("lda (0xFF+1, a);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("lda (0xFF+1), l;", 1, INVALID_INSTRUCTION);
 }
 
 void test_misc_interpreter(void **state) {

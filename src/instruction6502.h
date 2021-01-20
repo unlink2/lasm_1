@@ -34,15 +34,58 @@ namespace lasm {
 
     class InstructionParser6502AbsoluteOrZp: public InstructionParser {
         public:
-            InstructionParser6502AbsoluteOrZp(char absolute, char absoluteX, char absoluteY,
-            char zeropage, char zeropageX, InstructionSet6502 *is);
+            InstructionParser6502AbsoluteOrZp(InstructionSet6502 *is);
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
+
+            InstructionParser6502AbsoluteOrZp* withAbsolute(char opcode) {
+                absolute = opcode;
+                enableAbsolute = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withAbsoluteX(char opcode) {
+                absoluteX = opcode;
+                enableAbsoluteX = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withAbsoluteY(char opcode) {
+                absoluteY = opcode;
+                enableAbsoluteY = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withZeropage(char opcode) {
+                zeropage = opcode;
+                enableZeropage = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withZeropageX(char opcode) {
+                zeropageX = opcode;
+                enableZeropageX = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withZeropageY(char opcode) {
+                zeropageY = opcode;
+                enableZeropageY = true;
+                return this;
+            }
         private:
             char absolute;
             char absoluteX;
             char absoluteY;
             char zeropage;
             char zeropageX;
+            char zeropageY;
+
+            bool enableAbsolute = false;
+            bool enableAbsoluteX = false;
+            bool enableAbsoluteY = false;
+            bool enableZeropage = false;
+            bool enableZeropageX = false;
+            bool enableZeropageY = false;
             InstructionSet6502 *is;
     };
 
@@ -51,6 +94,34 @@ namespace lasm {
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt);
+    };
+
+    /**
+     * Relative modes
+     */
+    class InstructionParser6502Indirect: public InstructionParser {
+        public:
+            InstructionParser6502Indirect(InstructionSet6502 *is);
+            virtual std::shared_ptr<Stmt> parse(Parser *parser);
+
+            InstructionParser6502Indirect* withIndirectX(char opcode) {
+                indirectX = opcode;
+                enableIndirectX = true;
+                return this;
+            }
+
+            InstructionParser6502Indirect* withIndirectY(char opcode) {
+                indirectY = opcode;
+                enableIndirectY = true;
+                return this;
+            }
+        private:
+            char indirectX;
+            char indirectY;
+
+            bool enableIndirectX = false;
+            bool enableIndirectY = false;
+            InstructionSet6502 *is;
     };
 
     /**
