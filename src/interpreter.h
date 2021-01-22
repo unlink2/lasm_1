@@ -82,6 +82,8 @@ namespace lasm {
             unsigned int getPass() { return pass; }
 
             std::shared_ptr<Enviorment> getEnv() { return enviorment; }
+            std::vector<std::shared_ptr<Enviorment>>& getLabelTable() { return labelTable; }
+            std::shared_ptr<Enviorment> getGlobals() { return globals; }
         private:
             BaseError &onError;
             BaseInstructionSet &instructions;
@@ -94,6 +96,10 @@ namespace lasm {
             // interpreter label chain
             std::shared_ptr<Enviorment> globalLabels;
             std::shared_ptr<Enviorment> labels;
+
+            // flat list of all labels that were generated during assembly.
+            // used for label list file
+            std::vector<std::shared_ptr<Enviorment>> labelTable;
 
             unsigned long address = 0;
             unsigned short pass = 0;

@@ -43,8 +43,14 @@ int main(int argc, char **argv) {
 
     parser.addArgument("-input", argcc::ARGPARSE_STRING, 1, "Input file", "-i");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
+    parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
 
     auto parsed = parser.parse(argc, argv);
+    std::string symbols = "";
+
+    if (parsed.containsAny("-symbols")) {
+        symbols = parsed.toString("-symbols");
+    }
 
     if (parsed.containsAny("-input") && parsed.containsAny("-output")) {
         InstructionSet6502 instructions;
@@ -52,6 +58,6 @@ int main(int argc, char **argv) {
         LocalFileWriter writer;
         Frontend frontend(instructions, reader, writer);
 
-        frontend.assemble(parsed.toString("-input"), parsed.toString("-output"), "");
+        frontend.assemble(parsed.toString("-input"), parsed.toString("-output"), symbols);
     }
 }

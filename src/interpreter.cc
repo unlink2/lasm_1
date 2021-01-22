@@ -36,6 +36,8 @@ namespace lasm {
         enviorment = globals;
 
         enviorment->clear();
+        labelTable.clear();
+        labelTable.push_back(globalLabels);
         code.clear();
         initGlobals();
         address = 0;
@@ -378,6 +380,8 @@ namespace lasm {
         if (!labels.get()) {
             labels = std::make_shared<Enviorment>(Enviorment(this->labels));
         }
+
+        labelTable.push_back(labels);
 
         auto previous = this->enviorment;
         auto previousLabels = this->labels;

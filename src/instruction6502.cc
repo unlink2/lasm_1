@@ -310,20 +310,121 @@ namespace lasm {
         addFullInstruction("adc", 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71);
         addFullInstruction("and", 0x29, 0x25, 0x35, 0x2D, 0x3D, 0x39, 0x21, 0x31);
 
-        // nop
-        {
-            addInstruction("nop", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x00, this)));
-        }
-
         // asl
         {
-            addInstruction("asl", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x0A, this, true)));
+            addInstruction("asl", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x0A, this, true)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0x0E)->withAbsoluteX(0x1E)
+                ->withZeropage(0x06)->withZeropageX(0x16);
+            addInstruction("asl", absoluteOrZp);
         }
 
-        // branch
+        // bit
         {
-            addInstruction("beq", std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xF0, this)));
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0x24)
+                ->withZeropage(0x2C);
+            addInstruction("bit", absoluteOrZp);
         }
+
+        // branches
+        {
+            addInstruction("bpl",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x10, this)));
+            addInstruction("bmi",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x30, this)));
+            addInstruction("bvc",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x50, this)));
+            addInstruction("bvs",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x70, this)));
+            addInstruction("bcc",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x90, this)));
+            addInstruction("bcs",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xB0, this)));
+            addInstruction("bne",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xD0, this)));
+            addInstruction("beq",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xF0, this)));
+        }
+
+        // brk
+        addInstruction("brk", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x00, this)));
+
+        // cmp
+        addFullInstruction("cmp", 0xC9, 0xC5, 0xD5, 0xCD, 0xDD, 0xD9, 0xC1, 0xD1);
+
+        // cpx
+        {
+            auto name = "cpx";
+            addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0xE0, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xE4)
+                ->withZeropage(0xEC);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // cpy
+        {
+            auto name = "cpx";
+            addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0xC0, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xC4)
+                ->withZeropage(0xCC);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // dec
+        {
+            auto name = "dec";
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xCE)->withAbsoluteX(0xDE)
+                ->withZeropage(0xC6)->withZeropageX(0xD6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // eor
+        addFullInstruction("eor", 0x49, 0x45, 0x55, 0x4D, 0x5D, 0x59, 0x41, 0x51);
+
+        // flags
+        {
+            addInstruction("clc",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x18, this)));
+            addInstruction("sec",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x38, this)));
+            addInstruction("cli",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x58, this)));
+            addInstruction("sei",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x78, this)));
+            addInstruction("clv",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xB8, this)));
+            addInstruction("cld",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xD8, this)));
+            addInstruction("sed",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xF8, this)));
+        }
+
+        // inc
+        {
+            auto name = "inc";
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xEE)->withAbsoluteX(0xFE)
+                ->withZeropage(0xE6)->withZeropageX(0xF6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // nop
+        addInstruction("nop", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xEA, this)));
     }
 
     InstructionResult InstructionSet6502::generate(Interpreter *interpreter,

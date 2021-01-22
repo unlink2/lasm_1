@@ -224,7 +224,7 @@ void test_interpreter(void **state) {
     assert_code6502_a("adc (0x21), y;", 2, 0, 0, {0x71, 0x21});
 
     // implicit
-    assert_code6502_a("nop;", 1, 0, 0, {0x00});
+    assert_code6502_a("brk;", 1, 0, 0, {0x00});
     assert_code6502_a("asl;", 1, 0, 0, {0x0A});
     assert_code6502_a("asl a;", 1, 0, 0, {0x0A});
 
