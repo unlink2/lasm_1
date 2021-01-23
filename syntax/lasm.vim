@@ -2,7 +2,7 @@
 " Language:	MOS 6502 assembler
 " By: Oyd E. Leven <oyd11@softhome.net>
 " Creation date: 03-Apr-2020
-" Modified By: Lukas Krickl <lukaskrickl@outlook.com>
+" Modified By: Lukas Krickl <lukas@krickl.dev>
 " Version 0.01
 
 " Remove any old syntax stuff hanging about
