@@ -1,5 +1,22 @@
 #!/bin/sh
 
+function check() {
+    if ! command -v $1 &> /dev/null
+    then
+        printf "[NOT INSTALLED] %s. Please install %s!\n" $1 $1
+        exit 1
+    else
+        printf "[INSTALLED] %s\n" $1
+    fi
+}
+
+# check tools we need
+check "g++"
+check "make"
+check "git"
+
+echo "Updating external libraries..."
+
 # get libraries
 mkdir -p libs
 cd libs
