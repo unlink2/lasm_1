@@ -17,7 +17,7 @@ namespace lasm {
             error.onError(e.getType(), 0, inPath, &e);
             return e.getType();
         }
-        reader.changeDir(inPath);
+        reader.changeDir(inPath, true);
 
         auto buffer = reader.readFullFile(is);
         // now we have the entire file read

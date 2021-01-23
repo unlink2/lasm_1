@@ -25,11 +25,13 @@ class LocalFileReader: public FileReader {
             return stream;
         }
 
-        virtual void changeDir(std::string path) {
+        virtual void changeDir(std::string path, bool hasFilename) {
             std::filesystem::path p(path);
-            p.remove_filename();
+            if (hasFilename) {
+                p.remove_filename();
+            }
             auto parent = p.native();
-            if (parent == path || parent == "") {
+            if (parent == "") {
                 return;
             }
             std::filesystem::current_path(parent);

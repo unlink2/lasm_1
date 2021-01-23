@@ -31,7 +31,7 @@ namespace lasm {
                 return buffer;
             }
 
-            virtual void changeDir(std::string path) {
+            virtual void changeDir(std::string path, bool hasFilename=false) {
             }
 
             virtual std::string getDir() {

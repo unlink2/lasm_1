@@ -675,7 +675,7 @@ namespace lasm {
             stmt->wasparsed = true;
 
             auto previousPath = reader->getDir();
-            reader->changeDir(path.toString());
+            reader->changeDir(path.toString(), true);
 
             auto stream = reader->openFile(path.toString());
             auto source = std::string(reader->readFullFile(stream).get());
