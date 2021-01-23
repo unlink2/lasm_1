@@ -24,6 +24,10 @@ namespace lasm {
         auto address = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
                     std::shared_ptr<NativeAddress>(new NativeAddress())));
         globals->define("_A", address);
+
+        auto ord = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
+                    std::shared_ptr<NativeOrd>(new NativeOrd())));
+        globals->define("ord", ord);
     }
 
     std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts,

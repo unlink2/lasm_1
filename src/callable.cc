@@ -37,4 +37,12 @@ namespace lasm {
     LasmObject NativeAddress::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
         return LasmObject(NUMBER_O, lasmNumber(interpreter->getAddress()));
     }
+
+    LasmObject NativeOrd::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
+        auto c = arguments[0];
+        if (!c.isString() || c.toString().length() != 1) {
+            return LasmObject(NIL_O, nullptr);
+        }
+        return LasmObject(NUMBER_O, lasmNumber(c.toString()[0]));
+    }
 }

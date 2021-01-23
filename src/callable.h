@@ -69,6 +69,15 @@ namespace lasm {
 
             virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
     };
+
+    class NativeOrd: public Callable {
+        public:
+            NativeOrd():
+                Callable::Callable(1) {}
+            ~NativeOrd() {}
+
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+    };
 }
 
 #endif 
