@@ -16,7 +16,7 @@ namespace lasm {
             Parser(BaseError &error, std::vector<std::shared_ptr<Token>> &tokens, BaseInstructionSet &instructions);
             std::vector<std::shared_ptr<Stmt>> parse();
 
-            std::shared_ptr<Token> consume(TokenType token, ErrorType error);
+            std::shared_ptr<Token> consume(TokenType token, ErrorType error, bool optional=false);
 
             bool match(std::vector<TokenType> types);
             bool check(TokenType type);

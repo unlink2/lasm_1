@@ -115,10 +115,18 @@ namespace lasm {
                 enableIndirectY = true;
                 return this;
             }
+
+            InstructionParser6502Indirect* withIndirect(char opcode) {
+                indirect = opcode;
+                enableIndirect = true;
+                return this;
+            }
         private:
+            char indirect;
             char indirectX;
             char indirectY;
 
+            bool enableIndirect;
             bool enableIndirectX = false;
             bool enableIndirectY = false;
             InstructionSet6502 *is;

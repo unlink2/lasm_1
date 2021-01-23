@@ -469,9 +469,13 @@ namespace lasm {
         return std::make_shared<ListExpr>(ListExpr(inits, paren));
     }
 
-    std::shared_ptr<Token> Parser::consume(TokenType token, ErrorType error) {
+    std::shared_ptr<Token> Parser::consume(TokenType token, ErrorType error, bool optional) {
         if (check(token)) {
             return advance();
+        }
+
+        if (optional) {
+            return std::shared_ptr<Token>(nullptr);
         }
 
         throw handleError(error);

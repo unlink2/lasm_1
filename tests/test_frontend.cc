@@ -47,6 +47,7 @@ void test_frontend(void **state) {
             "test: let j = 20;"
             "let i = 100;\n"
             "cmp i;",
+
             "test = 0x2\n"
             "i = 0x64\n"
             "j = 0x14\n",

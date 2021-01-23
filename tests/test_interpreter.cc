@@ -223,6 +223,10 @@ void test_interpreter(void **state) {
     // indirect, y
     assert_code6502_a("adc (0x21), y;", 2, 0, 0, {0x71, 0x21});
 
+    // indirect address
+    assert_code6502_a("jmp (0x2122);", 3, 0, 0, {0x6C, 0x22, 0x21});
+    assert_code6502_a("jmp 0x2122;", 3, 0, 0, {0x4C, 0x22, 0x21});
+
     // implicit
     assert_code6502_a("brk;", 1, 0, 0, {0x00});
     assert_code6502_a("asl;", 1, 0, 0, {0x0A});

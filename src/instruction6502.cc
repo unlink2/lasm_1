@@ -187,6 +187,9 @@ namespace lasm {
                             }
                         }
                     }
+                } else if (enableIndirect) {
+                    // this is only for (jmp). 16 bit indirect
+                    info->addOpcode(indirect, "absolute");
                 }
             }
 
@@ -420,6 +423,21 @@ namespace lasm {
                     InstructionParser6502AbsoluteOrZp(this));
             absoluteOrZp->withAbsolute(0xEE)->withAbsoluteX(0xFE)
                 ->withZeropage(0xE6)->withZeropageX(0xF6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // jmp
+        {
+            auto name = "jmp";
+
+            auto indirect = std::make_shared<InstructionParser6502Indirect>(
+                    InstructionParser6502Indirect(this));
+            indirect->withIndirect(0x6C);
+            addInstruction(name, indirect);
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0x4C);
             addInstruction(name, absoluteOrZp);
         }
 
