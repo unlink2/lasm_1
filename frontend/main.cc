@@ -27,6 +27,7 @@ class LocalFileReader: public FileReader {
 
         virtual void changeDir(std::string path) {
             std::filesystem::path p(path);
+            p.remove_filename();
             auto parent = p.native();
             if (parent == path || parent == "") {
                 return;
@@ -89,5 +90,5 @@ int main(int argc, char **argv) {
     LocalFileWriter writer;
     Frontend frontend(instructions, reader, writer);
 
-    frontend.assemble(infile, outfile, symbols);
+    return frontend.assemble(infile, outfile, symbols);
 }

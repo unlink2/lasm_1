@@ -6,34 +6,40 @@
 
 namespace lasm {
     // TODO this is a temporary implementation
-    void Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
+    int Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
         auto previousPath = reader.getDir();
-        reader.changeDir(inPath);
 
-        auto is = reader.openFile(inPath);
+        FrontendErrorHandler error(errorOut);
+        std::shared_ptr<std::istream> is;
+        try {
+            is = reader.openFile(inPath);
+        } catch (LasmException &e) {
+            error.onError(e.getType(), 0, inPath, &e);
+            return e.getType();
+        }
+        reader.changeDir(inPath);
 
         auto buffer = reader.readFullFile(is);
         // now we have the entire file read
         std::string source(buffer.get());
         reader.closeFile(is);
 
-        FrontendErrorHandler error(errorOut);
         Scanner scanner(error, instructions, source, inPath);
         auto tokens = scanner.scanTokens();
 
         if (error.didError()) {
-            return;
+            return error.getType();
         }
         Parser parser(error, tokens, instructions);
         auto ast = parser.parse();
 
         if (error.didError()) {
-            return;
+            return error.getType();
         }
         Interpreter interpreter(error, instructions, nullptr, &reader);
 
         if (error.didError()) {
-            return;
+            return error.getType();
         }
         auto binary = interpreter.interprete(ast, true);
 
@@ -45,7 +51,7 @@ namespace lasm {
         writer.closeFile(os);
 
         if (symbolPath == "") {
-            return; // no symbol file!
+            return 0; // no symbol file!
         }
 
         // output symbols to file
@@ -57,7 +63,7 @@ namespace lasm {
         }
         outputSymbolsEnviorment(writer, sos, interpreter.getGlobals());
         writer.closeFile(sos);
-
+        return 0;
     }
 
     void Frontend::outputSymbolsEnviorment(FileWriter &writer,

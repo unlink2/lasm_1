@@ -41,7 +41,7 @@ namespace lasm {
                     FileReader &reader, FileWriter &writer, std::ostream &errorOut=std::cerr):
                 instructions(instructions), reader(reader), writer(writer), errorOut(errorOut) {}
 
-            void assemble(std::string inPath, std::string outPath, std::string symbolPath="");
+            int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
         private:
             void outputSymbolsEnviorment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env);
