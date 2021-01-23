@@ -27,7 +27,11 @@ class LocalFileReader: public FileReader {
 
         virtual void changeDir(std::string path) {
             std::filesystem::path p(path);
-            std::filesystem::current_path(p.root_directory());
+            auto parent = p.native();
+            if (parent == path || parent == "") {
+                return;
+            }
+            std::filesystem::current_path(parent);
         }
 
         virtual std::string getDir() {
