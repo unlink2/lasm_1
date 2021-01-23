@@ -56,4 +56,12 @@ namespace lasm {
     std::any BssStmt::accept(StmtVisitor *visitor) {
         return visitor->visitBss(this);
     }
+
+    std::any IncbinStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitIncbin(this);
+    }
+
+    std::any IncludeStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitInclude(this);
+    }
 }

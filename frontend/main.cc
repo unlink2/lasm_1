@@ -6,6 +6,7 @@
 #include "frontend.h"
 #include <fstream>
 #include "instruction6502.h"
+#include "token.h"
 
 using namespace lasm;
 
@@ -15,6 +16,10 @@ class LocalFileReader: public FileReader {
     public:
         virtual std::shared_ptr<std::istream> openFile(std::string fromPath) {
             auto stream = std::make_shared<std::ifstream>(std::ifstream(fromPath, std::ifstream::in));
+
+            if (!stream->is_open()) {
+                throw LasmException(FILE_NOT_FOUND, std::make_shared<Token>(Token(NIL, "", LasmObject(NIL_O, nullptr), 0, fromPath)));
+            }
 
             return stream;
         }

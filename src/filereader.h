@@ -13,7 +13,7 @@ namespace lasm {
                 return std::make_shared<std::istringstream>(std::istringstream(std::string("")));
             }
 
-            virtual std::shared_ptr<char[]> readFullFile(std::shared_ptr<std::istream> is) {
+            virtual std::shared_ptr<char[]> readFullFile(std::shared_ptr<std::istream> is, unsigned long *size=nullptr) {
                 // get length of file:
                 is->seekg (0, is->end);
                 int length = is->tellg();
@@ -23,6 +23,10 @@ namespace lasm {
                 memset(buffer.get(), 0x00, length+1);
                 is->read(buffer.get(), length);
                 buffer[length] = '\0';
+
+                if (size) {
+                    *size = length;
+                }
 
                 return buffer;
             }

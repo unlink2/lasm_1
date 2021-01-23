@@ -101,6 +101,10 @@ namespace lasm {
             return defineDoubleWorldStatement();
         } else if (match(std::vector<TokenType> {BSS})) {
             return bssStatement();
+        } else if (match(std::vector<TokenType> {INCBIN})) {
+            return incbinStatement();
+        } else if (match(std::vector<TokenType> {INCLUDE})) {
+            return includeStatement();
         }
         return expressionStatement();
     }
@@ -258,6 +262,18 @@ namespace lasm {
         }
         consume(RIGHT_BRACE, BLOCK_NOT_CLOSED_ERROR);
         return std::make_shared<BssStmt>(BssStmt(token, startAddress, declarations));
+    }
+
+    std::shared_ptr<Stmt> Parser::incbinStatement() {
+        auto token = previous();
+        auto filePath = expression();
+        return std::make_shared<IncbinStmt>(IncbinStmt(token, filePath));
+    }
+
+    std::shared_ptr<Stmt> Parser::includeStatement() {
+        auto token = previous();
+        auto filePath = expression();
+        return std::make_shared<IncludeStmt>(IncludeStmt(token, filePath));
     }
 
     std::vector<std::shared_ptr<Stmt>> Parser::block() {

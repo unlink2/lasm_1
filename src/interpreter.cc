@@ -2,12 +2,15 @@
 #include <cstring>
 #include <cmath>
 #include <algorithm>
+#include "scanner.h"
+#include "parser.h"
 
 namespace lasm {
-    Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback):
+    Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback,
+            FileReader *reader):
         onError(onError), instructions(is), callback(callback),
         globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals),
-        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels) {
+        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels), reader(reader) {
         initGlobals();
     }
 
@@ -620,6 +623,71 @@ namespace lasm {
     std::any Interpreter::visitLabel(LabelStmt *stmt) {
         LasmObject obj(NUMBER_O, (lasmNumber)address);
         labels->define(stmt->name->getLexeme().substr(0, stmt->name->getLexeme().length()-1), obj);
+        return std::any();
+    }
+
+    std::any Interpreter::visitIncbin(IncbinStmt *stmt) {
+        if (!reader) { return std::any(); }
+        // either read file using the included file reader
+        // or just use the already buffered value
+
+        if (!stmt->data.get()) {
+            auto path = evaluate(stmt->filePath);
+
+            if (path.getType() != STRING_O) {
+                throw LasmTypeError(std::vector<ObjectType> {STRING_O}, path.getType(), stmt->token);
+            }
+
+            auto stream = reader->openFile(path.toString());
+            unsigned long size = 0;
+            auto data = reader->readFullFile(stream, &size);
+            reader->closeFile(stream);
+
+            stmt->data = data;
+            stmt->size = size;
+        }
+        // return result
+        code.push_back(InstructionResult(stmt->data, stmt->size, getAddress(), stmt->token));
+        address += stmt->size;
+
+        return std::any();
+    }
+
+    std::any Interpreter::visitInclude(IncludeStmt *stmt) {
+        if (!reader) { return std::any(); }
+
+        // either read file and then interprete or just interprete right now!
+        if (!stmt->wasparsed) {
+            auto path = evaluate(stmt->filePath);
+
+            if (path.getType() != STRING_O) {
+                throw LasmTypeError(std::vector<ObjectType> {STRING_O}, path.getType(), stmt->token);
+            }
+
+            stmt->wasparsed = true;
+
+            auto stream = reader->openFile(path.toString());
+            auto source = std::string(reader->readFullFile(stream).get());
+            reader->closeFile(stream);
+
+            Scanner scanner(onError, instructions, source, path.toString());
+            auto tokens = scanner.scanTokens();
+
+            if (onError.didError()) {
+                return std::any();
+            }
+            Parser parser(onError, tokens, instructions);
+            auto ast = parser.parse();
+
+            if (onError.didError()) {
+                return std::any();
+            }
+            stmt->stmts = ast;
+        }
+        for (auto stmt : stmt->stmts) {
+            execute(stmt);
+        }
+
         return std::any();
     }
 }

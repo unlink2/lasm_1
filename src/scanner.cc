@@ -22,6 +22,8 @@ namespace lasm {
             addKeyword("dw", DEFINE_WORD);
             addKeyword("dd", DEFINE_DOUBLE);
             addKeyword("bss", BSS);
+            addKeyword("include", INCLUDE);
+            addKeyword("incbin", INCBIN);
     }
 
     std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {

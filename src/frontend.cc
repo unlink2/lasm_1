@@ -27,7 +27,7 @@ namespace lasm {
         if (error.didError()) {
             return;
         }
-        Interpreter interpreter(error, instructions);
+        Interpreter interpreter(error, instructions, nullptr, &reader);
 
         if (error.didError()) {
             return;

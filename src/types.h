@@ -33,7 +33,7 @@ namespace lasm {
         INSTRUCTION, LABEL, ASM_DIRECTIVE,
         ORG, FILL, ALIGN,
         DEFINE_BYTE, DEFINE_HALF, DEFINE_WORD, DEFINE_DOUBLE,
-        BSS,
+        BSS, INCBIN, INCLUDE,
 
         EOF_T
     } TokenType;

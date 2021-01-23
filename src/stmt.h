@@ -24,7 +24,9 @@ namespace lasm {
         DEFINE_BYTE_STMT,
         FILL_STMT,
         ENUM_STMT,
-        BSS_STMT
+        BSS_STMT,
+        INCLUDE_STMT,
+        INCBIN_STMT
     };
 
     class StmtVisitor;
@@ -213,6 +215,35 @@ namespace lasm {
             std::vector<std::shared_ptr<LetStmt>> declarations;
     };
 
+    class IncbinStmt: public Stmt {
+        public:
+            IncbinStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> filePath):
+                Stmt::Stmt(INCBIN_STMT), token(token), filePath(filePath) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> filePath;
+
+            // do not re-read once this is not null
+            std::shared_ptr<char[]> data = std::shared_ptr<char[]>(nullptr);
+            unsigned long size; 
+    };
+
+    class IncludeStmt: public Stmt {
+        public:
+            IncludeStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> filePath):
+                Stmt::Stmt(INCLUDE_STMT), token(token), filePath(filePath) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> token;
+            std::shared_ptr<Expr> filePath;
+
+            std::vector<std::shared_ptr<Stmt>> stmts;
+            bool wasparsed = false; // set to true to not re-parse
+    };
+
     class StmtVisitor {
         public:
             virtual ~StmtVisitor () {}
@@ -231,6 +262,8 @@ namespace lasm {
             virtual std::any visitFill(FillStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitDefineByte(DefineByteStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitBss(BssStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitIncbin(IncbinStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitInclude(IncludeStmt *stmt) { return std::any(nullptr); };
     };
 }
 

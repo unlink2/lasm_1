@@ -31,6 +31,7 @@ namespace lasm {
         INVALID_INSTRUCTION,
         MISSING_COMMA,
         INDEX_OUT_OF_BOUNDS,
+        FILE_NOT_FOUND
     } ErrorType;
 
     std::string errorToString(ErrorType error);

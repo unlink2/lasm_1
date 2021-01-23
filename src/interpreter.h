@@ -13,6 +13,7 @@
 #include "enviorment.h"
 #include "callable.h"
 #include "instruction.h"
+#include "filereader.h"
 
 namespace lasm {
     class InterpreterCallback {
@@ -24,7 +25,8 @@ namespace lasm {
 
     class Interpreter: public ExprVisitor, public StmtVisitor {
         public:
-            Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback=nullptr);
+            Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback=nullptr,
+                    FileReader *reader=nullptr);
 
             void initGlobals();
 
@@ -71,9 +73,12 @@ namespace lasm {
             std::any visitDefineByte(DefineByteStmt *stmt);
             std::any visitBss(BssStmt *stmt);
             std::any visitLabel(LabelStmt *stmt);
+            std::any visitIncbin(IncbinStmt *stmt);
+            std::any visitInclude(IncludeStmt *stmt);
 
             void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment,
                     std::shared_ptr<Enviorment> labels=std::shared_ptr<Enviorment>(nullptr));
+
 
             unsigned long getAddress() { return address; }
             void setAddress(unsigned long newAddress) { address = newAddress; }
@@ -105,6 +110,8 @@ namespace lasm {
             unsigned short pass = 0;
 
             std::vector<InstructionResult> code;
+
+            FileReader *reader;
     };
 }
 

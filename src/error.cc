@@ -43,6 +43,8 @@ namespace lasm {
                 return "Expected comma";
             case INDEX_OUT_OF_BOUNDS:
                 return "Index out of bounds";
+            case FILE_NOT_FOUND:
+                return "File not found";
             default:
                 return "";
         }
