@@ -12,6 +12,11 @@ class DummyReader: public FileReader {
             content(std::make_shared<std::istringstream>(std::istringstream(filecontent))) {}
 
         virtual std::shared_ptr<std::istream> openFile(std::string fromPath) {
+            if (fromPath == "inc.asm") {
+                return std::make_shared<std::istringstream>(std::istringstream("lda #0xFF;\nincluded_label:\nnop;"));
+            } else if (fromPath == "inc.bin") {
+                return std::make_shared<std::istringstream>(std::istringstream("Hello"));
+            }
             return content;
         }
     private:
@@ -52,4 +57,11 @@ void test_frontend(void **state) {
             "i = 0x64\n"
             "j = 0x14\n",
             {0x69, (char)0xFF, (char)0xC5, (char)0x64});
+
+
+    // test include and incbin
+    test_full("org 0x8000; nop; include \"inc.asm\"\nnop;\nincbin \"inc.bin\"\nnop;",
+            "included_label = 0x8003\n",
+            {(char)0xEA, (char)0xA9, (char)0xFF, (char)0xEA, (char)0xEA,
+            'H', 'e', 'l', 'l', 'o', (char)0xEA});
 }
