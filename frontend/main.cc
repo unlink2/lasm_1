@@ -31,7 +31,7 @@ class LocalFileReader: public FileReader {
         }
 
         virtual std::string getDir() {
-            std::filesystem::current_path();
+            return std::filesystem::current_path();
         }
 
         virtual void closeFile(std::shared_ptr<std::istream> stream) {
