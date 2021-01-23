@@ -307,6 +307,17 @@ namespace lasm {
         addInstruction(name, ldaAbsoluteOrZp);
     }
 
+    void InstructionSet6502::addHalfInstruction(std::string name, char zeropage, char zeropageX,
+                    char absolute, char absoluteX) {
+        auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                InstructionParser6502AbsoluteOrZp(this));
+        absoluteOrZp
+            ->withAbsolute(0xAC)->withAbsoluteX(0xBC)
+            ->withZeropage(0xA4)->withZeropageX(0xB4);
+        addInstruction(name, absoluteOrZp);
+
+    }
+
     InstructionSet6502::InstructionSet6502() {
         // TODO add all instructions
 
@@ -317,12 +328,7 @@ namespace lasm {
         {
             addInstruction("asl", std::make_shared<InstructionParser6502Implicit>(
                         InstructionParser6502Implicit(0x0A, this, true)));
-
-            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
-                    InstructionParser6502AbsoluteOrZp(this));
-            absoluteOrZp->withAbsolute(0x0E)->withAbsoluteX(0x1E)
-                ->withZeropage(0x06)->withZeropageX(0x16);
-            addInstruction("asl", absoluteOrZp);
+            addHalfInstruction("asl", 0x06, 0x16, 0x0E, 0x1E);
         }
 
         // bit
@@ -441,8 +447,152 @@ namespace lasm {
             addInstruction(name, absoluteOrZp);
         }
 
+        // jsr
+        {
+            auto name = "jsr";
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0x20);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // lda
+        addFullInstruction("lda", (char)0xA9, (char)0xA5,
+                (char)0xB5, (char)0xAD, (char)0xBD,
+                (char)0xB9, (char)0xA1, (char)0xB1);
+
+        // ldx
+        {
+            auto name = "ldx";
+            addInstruction(name,
+                    std::make_shared<InstructionParser6502Immediate>
+                    (InstructionParser6502Immediate(0xA2, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0xAE)->withAbsoluteY(0xBE)
+                ->withZeropage(0xA6)->withZeropageY(0xB6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // ldx
+        {
+            auto name = "ldy";
+            addInstruction(name,
+                    std::make_shared<InstructionParser6502Immediate>
+                    (InstructionParser6502Immediate(0xA0, this)));
+            addHalfInstruction(name, 0xA4, 0xB4, 0xAC, 0xBC);
+        }
+
+        // lsr
+        {
+            addInstruction("lsr", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x4A, this, true)));
+            addHalfInstruction("lsr", 0x46, 0x56, 0x4E, 0x5E);
+        }
+
         // nop
         addInstruction("nop", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xEA, this)));
+
+        // ora
+        {
+            addFullInstruction("ora", 0x09, 0x05, 0x15, 0x0D, 0x1D, 0x19, 0x01, 0x11);
+        }
+
+        // register instructions
+        {
+            addInstruction("tax", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x4A, this)));
+            addInstruction("txa", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x8A, this)));
+            addInstruction("dex", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xCA, this)));
+            addInstruction("inx", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xE8, this)));
+            addInstruction("tay", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xA8, this)));
+            addInstruction("tya", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x98, this)));
+            addInstruction("dey", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x88, this)));
+            addInstruction("iny", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xC8, this)));
+        }
+
+        // rol
+        {
+            addInstruction("rol", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x2A, this, true)));
+            addHalfInstruction("rol", 0x26, 0x36, 0x2E, 0x3E);
+        }
+
+        // ror
+        {
+            addInstruction("ror", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x6A, this, true)));
+            addHalfInstruction("ror", 0x66, 0x76, 0x6E, 0x7E);
+        }
+
+        // rti
+        addInstruction("rti", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x40, this)));
+
+        // rts
+        addInstruction("rts", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x60, this)));
+
+        // sta
+        {
+            auto name = "sta";
+            auto indirect = std::make_shared<InstructionParser6502Indirect>(
+                    InstructionParser6502Indirect(this));
+            indirect->withIndirectX(0x81)->withIndirectY(0x91);
+            addInstruction(name, indirect);
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0x8D)->withAbsoluteX(0x9D)->withAbsoluteY(0x9D)
+                ->withZeropage(0x85)->withZeropageX(0x95);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // stack
+        {
+            addInstruction("txs", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x9A, this)));
+            addInstruction("tsx", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xBA, this)));
+            addInstruction("pha", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x48, this)));
+            addInstruction("pla", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x68, this)));
+            addInstruction("php", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x08, this)));
+            addInstruction("plp", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x28, this)));
+        }
+
+        // stx
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x8E)
+                ->withZeropage(0x86)->withZeropageY(0x96);
+            addInstruction("stx", absoluteOrZp);
+        }
+
+        // sty
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x8C)
+                ->withZeropage(0x84)->withZeropageX(0x94);
+            addInstruction("sty", absoluteOrZp);
+        }
     }
 
     InstructionResult InstructionSet6502::generate(Interpreter *interpreter,

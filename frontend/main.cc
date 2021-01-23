@@ -41,7 +41,7 @@ class LocalFileWriter: public FileWriter {
 int main(int argc, char **argv) {
     argcc::Argparse parser("lasm");
 
-    parser.addArgument("-input", argcc::ARGPARSE_STRING, 1, "Input file", "-i");
+    parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
 
@@ -52,12 +52,23 @@ int main(int argc, char **argv) {
         symbols = parsed.toString("-symbols");
     }
 
-    if (parsed.containsAny("-input") && parsed.containsAny("-output")) {
-        InstructionSet6502 instructions;
-        LocalFileReader reader;
-        LocalFileWriter writer;
-        Frontend frontend(instructions, reader, writer);
-
-        frontend.assemble(parsed.toString("-input"), parsed.toString("-output"), symbols);
+    std::string outfile = "a.out";
+    if (parsed.containsAny("-output")) {
+        outfile = parsed.toString("-output");
     }
+
+    if (!parsed.containsAny("consumer")) {
+        std::cerr << "Fatal: No input file" << std::endl;
+        return -1;
+    }
+
+    auto infile = parsed.toString("consumer");
+
+
+    InstructionSet6502 instructions;
+    LocalFileReader reader;
+    LocalFileWriter writer;
+    Frontend frontend(instructions, reader, writer);
+
+    frontend.assemble(infile, outfile, symbols);
 }
