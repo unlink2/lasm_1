@@ -666,6 +666,9 @@ namespace lasm {
 
             stmt->wasparsed = true;
 
+            auto previousPath = reader->getDir();
+            reader->changeDir(path.toString());
+
             auto stream = reader->openFile(path.toString());
             auto source = std::string(reader->readFullFile(stream).get());
             reader->closeFile(stream);
@@ -683,6 +686,8 @@ namespace lasm {
                 return std::any();
             }
             stmt->stmts = ast;
+
+            reader->changeDir(previousPath);
         }
         for (auto stmt : stmt->stmts) {
             execute(stmt);

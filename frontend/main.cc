@@ -7,6 +7,7 @@
 #include <fstream>
 #include "instruction6502.h"
 #include "token.h"
+#include <filesystem>
 
 using namespace lasm;
 
@@ -22,6 +23,15 @@ class LocalFileReader: public FileReader {
             }
 
             return stream;
+        }
+
+        virtual void changeDir(std::string path) {
+            std::filesystem::path p(path);
+            std::filesystem::current_path(p.root_directory());
+        }
+
+        virtual std::string getDir() {
+            std::filesystem::current_path();
         }
 
         virtual void closeFile(std::shared_ptr<std::istream> stream) {

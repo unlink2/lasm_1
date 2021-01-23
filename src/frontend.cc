@@ -7,6 +7,9 @@
 namespace lasm {
     // TODO this is a temporary implementation
     void Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
+        auto previousPath = reader.getDir();
+        reader.changeDir(inPath);
+
         auto is = reader.openFile(inPath);
 
         auto buffer = reader.readFullFile(is);
@@ -34,6 +37,7 @@ namespace lasm {
         }
         auto binary = interpreter.interprete(ast, true);
 
+        reader.changeDir(previousPath);
         auto os = writer.openFile(outPath);
         for (auto b : binary) {
             os->write(b.getData().get(), b.getSize());

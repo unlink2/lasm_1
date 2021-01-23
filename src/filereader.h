@@ -31,6 +31,13 @@ namespace lasm {
                 return buffer;
             }
 
+            virtual void changeDir(std::string path) {
+            }
+
+            virtual std::string getDir() {
+                return "";
+            }
+
             virtual void closeFile(std::shared_ptr<std::istream> stream) { }
     };
 }
