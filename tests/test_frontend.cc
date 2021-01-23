@@ -60,8 +60,9 @@ void test_frontend(void **state) {
 
 
     // test include and incbin
-    test_full("org 0x8000; nop; include \"inc.asm\"\nnop;\nincbin \"inc.bin\"\nnop; db ord('a');",
+    test_full("org 0x8000; nop; include \"inc.asm\"\nnop;\nincbin \"inc.bin\"\nnop; db ord('a'), len(\"Hello\"),"
+            "len([1, 2, 3]);",
             "included_label = 0x8003\n",
             {(char)0xEA, (char)0xA9, (char)0xFF, (char)0xEA, (char)0xEA,
-            'H', 'e', 'l', 'l', 'o', (char)0xEA, 'a'});
+            'H', 'e', 'l', 'l', 'o', (char)0xEA, 'a', 0x05, 0x03});
 }

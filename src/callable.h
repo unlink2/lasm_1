@@ -78,6 +78,15 @@ namespace lasm {
 
             virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
     };
+
+    class NativeLen: public Callable {
+        public:
+            NativeLen():
+                Callable::Callable(1) {}
+            ~NativeLen() {}
+
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+    };
 }
 
 #endif 

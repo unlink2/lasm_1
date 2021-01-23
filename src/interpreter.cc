@@ -28,6 +28,10 @@ namespace lasm {
         auto ord = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
                     std::shared_ptr<NativeOrd>(new NativeOrd())));
         globals->define("ord", ord);
+
+        auto len = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
+                    std::shared_ptr<NativeLen>(new NativeLen())));
+        globals->define("len", len);
     }
 
     std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts,

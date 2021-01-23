@@ -45,4 +45,15 @@ namespace lasm {
         }
         return LasmObject(NUMBER_O, lasmNumber(c.toString()[0]));
     }
+
+    LasmObject NativeLen::call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
+        auto c = arguments[0];
+        if (c.isString()) {
+            return LasmObject(NUMBER_O, lasmNumber(c.toString().length()));
+        } else if (c.isList()) {
+            return LasmObject(NUMBER_O, lasmNumber(c.toList()->size()));
+        } else {
+            return LasmObject(NIL_O, nullptr);
+        }
+    }
 }
