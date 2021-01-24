@@ -38,10 +38,10 @@ namespace lasm {
         }
         Interpreter interpreter(error, instructions, nullptr, &reader);
 
+        auto binary = interpreter.interprete(ast, true);
         if (error.didError()) {
             return error.getType();
         }
-        auto binary = interpreter.interprete(ast, true);
 
         reader.changeDir(previousPath);
         auto os = writer.openFile(outPath);

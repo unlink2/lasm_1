@@ -239,7 +239,7 @@ namespace lasm {
         // label enviorment. used for n+1th pass
         // only set if it has not already been assigned
         bool wasFirstPass = false;
-        if (!expr->getEnv(address).get()) {
+        if (!expr->getEnv(address).get() && pass == 0) {
             wasFirstPass = true; // if so do not throw
             expr->setEnv(address, labels);
         }
@@ -697,8 +697,12 @@ namespace lasm {
 
             reader->changeDir(previousPath);
         }
-        for (auto stmt : stmt->stmts) {
-            execute(stmt);
+        try {
+            for (auto stmt : stmt->stmts) {
+                execute(stmt);
+            }
+        } catch (LasmException &e) {
+            onError.onError(e.getType(), e.getToken(), &e);
         }
 
         return std::any();
