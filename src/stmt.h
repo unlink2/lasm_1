@@ -150,6 +150,9 @@ namespace lasm {
             std::shared_ptr<Token> name;
             std::shared_ptr<InstructionInfo> info;
             std::vector<std::shared_ptr<Expr>> args;
+            // use this to makr an instruction as not
+            // fully resolved on the first pass
+            bool fullyResolved = true;
     };
 
     class AlignStmt: public Stmt {

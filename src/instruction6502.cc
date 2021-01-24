@@ -43,6 +43,7 @@ namespace lasm {
         if (!value.isScalar()) {
             // handle first pass
             if (value.isNil() && interpreter->getPass() == 0) {
+                stmt->fullyResolved = false;
                 value = LasmObject(NUMBER_O, (lasmNumber)0);
             } else {
                 throw LasmException(TYPE_ERROR, stmt->name);
@@ -125,13 +126,15 @@ namespace lasm {
         if (!value.isScalar()) {
             // handle first pass
             if (value.isNil() && interpreter->getPass() == 0) {
+                stmt->fullyResolved = false;
                 value = LasmObject(NUMBER_O, (lasmNumber)0);
             } else {
                 throw LasmException(TYPE_ERROR, stmt->name);
             }
         } else if (value.toNumber() > 0xFFFF) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
-        } else if ((value.toNumber() > 0xFF || !info->hasOpcode("zeropage")) && info->hasOpcode("absolute")) {
+        } else if ((value.toNumber() > 0xFF || !stmt->fullyResolved || !info->hasOpcode("zeropage"))
+                && info->hasOpcode("absolute")) {
             size = 3;
             data = std::shared_ptr<char[]>(new char[size]);
             data[0] = info->getOpcode("absolute");
@@ -269,6 +272,7 @@ namespace lasm {
         if (!value.isScalar()) {
             // handle first pass
             if (value.isNil() && interpreter->getPass() == 0) {
+                stmt->fullyResolved = false;
                 value = LasmObject(NUMBER_O, (lasmNumber)0);
             } else {
                 throw LasmException(TYPE_ERROR, stmt->name);
@@ -279,6 +283,7 @@ namespace lasm {
         if (interpreter->getPass() != 0 && (offset > 127 || offset < -128)) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
         } else if (interpreter->getPass() == 0) {
+            stmt->fullyResolved = false;
             offset = 0;
         }
         std::shared_ptr<char[]> data(new char[size]);
