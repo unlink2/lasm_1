@@ -90,6 +90,8 @@ namespace lasm {
             std::vector<std::shared_ptr<Enviorment>>& getLabelTable() { return labelTable; }
             std::shared_ptr<Enviorment> getGlobals() { return globals; }
         private:
+            void onInstructionResult(InstructionResult result);
+
             BaseError &onError;
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;

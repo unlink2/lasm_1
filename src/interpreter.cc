@@ -446,7 +446,7 @@ namespace lasm {
         // and set unresolved flag along with the expression.
         // after assembly ends do a second pass and attempt to
         // resolve again
-        code.push_back(instructions.generate(this, stmt->info, stmt));
+        onInstructionResult(instructions.generate(this, stmt->info, stmt));
         return std::any();
     }
 
@@ -472,7 +472,7 @@ namespace lasm {
         // make byte array with fill value as instruction result
         std::shared_ptr<char[]> data(new char[size]);
         memset(data.get(), fillValue.toNumber(), size);
-        code.push_back(InstructionResult(data, size, getAddress()-size, stmt->token));
+        onInstructionResult(InstructionResult(data, size, getAddress()-size, stmt->token));
 
         return std::any();
     }
@@ -494,7 +494,7 @@ namespace lasm {
         std::shared_ptr<char[]> data(new char[size]);
         memset(data.get(), fillValue.toNumber(), size);
         address += size;
-        code.push_back(InstructionResult(data, size, getAddress()-size, stmt->token));
+        onInstructionResult(InstructionResult(data, size, getAddress()-size, stmt->token));
 
         return std::any();
     }
@@ -525,7 +525,7 @@ namespace lasm {
                 data = std::shared_ptr<char[]>(new char[evaluated.toString().length()+1]);
                 // for string we ignore endianess anyway
                 strncpy(data.get(), evaluated.toString().c_str(), evaluated.toString().length()+1);
-                code.push_back(InstructionResult(data, evaluated.toString().length()+1, getAddress(), stmt->token));
+                onInstructionResult(InstructionResult(data, evaluated.toString().length()+1, getAddress(), stmt->token));
                 address += evaluated.toString().length()+1;
             } else if (evaluated.isScalar() || evaluated.isBool()) {
                 data = std::shared_ptr<char[]>(new char[stmt->size]);
@@ -597,7 +597,7 @@ namespace lasm {
                     data = swapped;
                 }
 
-                code.push_back(InstructionResult(data, stmt->size, getAddress(), stmt->token));
+                onInstructionResult(InstructionResult(data, stmt->size, getAddress(), stmt->token));
                 address += stmt->size;
             } else {
                 throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O, BOOLEAN_O, STRING_O},
@@ -655,7 +655,7 @@ namespace lasm {
             stmt->size = size;
         }
         // return result
-        code.push_back(InstructionResult(stmt->data, stmt->size, getAddress(), stmt->token));
+        onInstructionResult(InstructionResult(stmt->data, stmt->size, getAddress(), stmt->token));
         address += stmt->size;
 
         return std::any();
@@ -706,5 +706,11 @@ namespace lasm {
         }
 
         return std::any();
+    }
+
+    void Interpreter::onInstructionResult(InstructionResult result) {
+        if (pass != 0) {
+            code.push_back(result);
+        }
     }
 }
