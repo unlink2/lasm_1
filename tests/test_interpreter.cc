@@ -243,6 +243,7 @@ void test_interpreter_errors(void **state) {
     assert_parser_error("\"Hi\" >= 3", MISSING_SEMICOLON);
 
     assert_interpreter_error("2 / 0;", 1, DIVISION_BY_ZERO);
+    assert_interpreter_error("2 % 0;", 1, DIVISION_BY_ZERO);
 
     assert_interpreter_error("a + 1;", 1, UNDEFINED_REF);
 

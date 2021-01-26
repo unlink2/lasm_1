@@ -98,6 +98,15 @@ namespace lasm {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
                 }
                 break;
+            case PERCENT:
+                if (left.isNumber() && right.isNumber()) {
+                    if (right.toNumber() == 0) {
+                        throw LasmDivisionByZero(expr->op);
+                    }
+                    return LasmObject(NUMBER_O, left.toNumber() % right.toNumber());
+                } else {
+                    throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, left.getType(), expr->op);
+                }
             case STAR:
                 // first number decides auto-cast
                 if (left.isNumber() && left.isScalar()) {
