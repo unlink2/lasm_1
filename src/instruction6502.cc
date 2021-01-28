@@ -222,9 +222,16 @@ namespace lasm {
             if (reg->getLexeme() != "a") {
                 throw ParserException(name, INVALID_INSTRUCTION);
             }
+            // if accumulator we need to consume ;
+            parser->consume(SEMICOLON, MISSING_SEMICOLON);
+        } else {
+            // else just check for ; if not presetn return null
+            if (parser->peek()->getType() == SEMICOLON) {
+                parser->consume(SEMICOLON, MISSING_SEMICOLON);
+            } else {
+                return std::shared_ptr<InstructionStmt>(nullptr);
+            }
         }
-
-        parser->consume(SEMICOLON, MISSING_SEMICOLON);
 
         return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
     }

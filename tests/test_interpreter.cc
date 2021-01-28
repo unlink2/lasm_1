@@ -231,6 +231,7 @@ void test_interpreter(void **state) {
     assert_code6502_a("brk;", 1, 0, 0, {0x00});
     assert_code6502_a("asl;", 1, 0, 0, {0x0A});
     assert_code6502_a("asl a;", 1, 0, 0, {0x0A});
+    assert_code6502_a("asl 0x100;", 3, 0, 0, {0x0E, 0x00, 0x01});
 
     // branch
     assert_code6502_a("org 0x8000; beq test; org 0x8010; test:", 2, 0x8000, 0, {char(0xF0), 0x0E});
@@ -310,7 +311,7 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("adc (0xFF+1), l;", 1, INVALID_INSTRUCTION);
 
     // nop does not allow accumulator mode
-    assert_parser_error("nop a;", MISSING_SEMICOLON);
+    assert_parser_error("nop a;", INVALID_INSTRUCTION);
 
     // out of range branch
     assert_interpreter_error("org 0x7990; test: org 0x8000; beq test;", 4, VALUE_OUT_OF_RANGE);
