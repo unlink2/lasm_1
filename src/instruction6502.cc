@@ -377,8 +377,8 @@ namespace lasm {
 
             auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
                     InstructionParser6502AbsoluteOrZp(this));
-            absoluteOrZp->withAbsolute(0xE4)
-                ->withZeropage(0xEC);
+            absoluteOrZp->withAbsolute(0xEC)
+                ->withZeropage(0xE4);
             addInstruction(name, absoluteOrZp);
         }
 
@@ -389,8 +389,8 @@ namespace lasm {
 
             auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
                     InstructionParser6502AbsoluteOrZp(this));
-            absoluteOrZp->withAbsolute(0xC4)
-                ->withZeropage(0xCC);
+            absoluteOrZp->withAbsolute(0xCC)
+                ->withZeropage(0xC4);
             addInstruction(name, absoluteOrZp);
         }
 
