@@ -317,8 +317,8 @@ namespace lasm {
         auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
                 InstructionParser6502AbsoluteOrZp(this));
         absoluteOrZp
-            ->withAbsolute(0xAC)->withAbsoluteX(0xBC)
-            ->withZeropage(0xA4)->withZeropageX(0xB4);
+            ->withAbsolute(absolute)->withAbsoluteX(absoluteX)
+            ->withZeropage(zeropage)->withZeropageX(zeropageX);
         addInstruction(name, absoluteOrZp);
 
     }
