@@ -391,7 +391,7 @@ namespace lasm {
 
         // cpy
         {
-            auto name = "cpx";
+            auto name = "cpy";
             addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0xC0, this)));
 
             auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
