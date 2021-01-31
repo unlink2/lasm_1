@@ -34,7 +34,14 @@ namespace lasm {
 
     InstructionResult Immediate6502Generator::generate(Interpreter *interpreter,
             std::shared_ptr<InstructionInfo> info, InstructionStmt *stmt) {
-        auto value = interpreter->evaluate(stmt->args[0]);
+        LasmObject value = LasmObject(NIL_O, nullptr);
+        try {
+            value = interpreter->evaluate(stmt->args[0]);
+        } catch (LasmTypeError &e) {
+            if (interpreter->getPass() != 0) {
+                throw e;
+            }
+        }
 
         const unsigned int size = 2;
 
@@ -121,7 +128,14 @@ namespace lasm {
             throw LasmException(INVALID_INSTRUCTION, stmt->name);
         }
 
-        auto value = interpreter->evaluate(stmt->args[0]);
+        LasmObject value = LasmObject(NIL_O, nullptr);
+        try {
+            value = interpreter->evaluate(stmt->args[0]);
+        } catch (LasmTypeError &e) {
+            if (interpreter->getPass() != 0) {
+                throw e;
+            }
+        }
         std::shared_ptr<char[]> data;
         if (!value.isScalar()) {
             // handle first pass
@@ -272,7 +286,14 @@ namespace lasm {
     InstructionResult Relative6502Generator::generate(Interpreter *interpreter,
             std::shared_ptr<InstructionInfo> info,
             InstructionStmt *stmt) {
-        auto value = interpreter->evaluate(stmt->args[0]);
+        LasmObject value = LasmObject(NIL_O, nullptr);
+        try {
+            value = interpreter->evaluate(stmt->args[0]);
+        } catch (LasmTypeError &e) {
+            if (interpreter->getPass() != 0) {
+                throw e;
+            }
+        }
 
         const unsigned int size = 2;
 
