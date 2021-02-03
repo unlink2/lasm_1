@@ -9,6 +9,8 @@
 #include "token.h"
 #include "error.h"
 
+// TODO typo here, fix it eventually
+
 namespace lasm {
     class Enviorment {
         public:

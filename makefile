@@ -38,7 +38,7 @@ MODULES_TEST = test_scanner test_token test_object test_instruction test_utility
 
 # modules from core that can be testsd
 TESTABLE_MODULES = scanner token object instruction error utility expr astprinter parser interpreter stmt enviorment callable\
-				   instruction6502 filereader filewriter frontend
+				   instruction6502 filereader filewriter frontend codewriter
 
 # modules for tui frontend
 MODULES_FRONT =

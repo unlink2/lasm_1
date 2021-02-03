@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "interpreter.h"
 #include <string>
+#include "codewriter.h"
 
 namespace lasm {
     // TODO this is a temporary implementation
@@ -42,55 +43,18 @@ namespace lasm {
         if (error.didError()) {
             return error.getType();
         }
-
         reader.changeDir(previousPath);
-        auto os = writer.openFile(outPath);
-        for (auto b : binary) {
-            os->write(b.getData().get(), b.getSize());
-        }
-        writer.closeFile(os);
 
-        if (symbolPath == "") {
-            return 0; // no symbol file!
+        BinaryWriter binWriter(writer, binary);
+        binWriter.write(outPath);
+
+
+        if (symbolPath != "") {
+            SymbolsWriter symWriter(writer, interpreter);
+            symWriter.write(symbolPath);
         }
 
-        // output symbols to file
-        // TODO also dump a mapping of code to addresses
-        auto sos = writer.openFile(symbolPath);
-
-        for (auto env : interpreter.getLabelTable()) {
-            outputSymbolsEnviorment(writer, sos, env);
-        }
-        outputSymbolsEnviorment(writer, sos, interpreter.getGlobals());
-        writer.closeFile(sos);
         return 0;
     }
 
-    void Frontend::outputSymbolsEnviorment(FileWriter &writer,
-            std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env) {
-        // dump strings, numbers and floats only
-        // in format <name> = <value>
-        std::ostream &stream = *(os.get());
-
-        auto values = env->getValues();
-        for (auto it = values.begin(); it != values.end(); it++) {
-            auto obj = it->second;
-            std::string name = it->first;
-
-            switch (obj->getType()) {
-                case STRING_O:
-                    stream << name << " = " << obj->toString() << std::endl;
-                    break;
-                case NUMBER_O:
-                    stream << name << " = 0x" << std::hex << obj->toNumber() << std::endl;
-                    break;
-                case REAL_O:
-                    stream << name << " = " << obj->toReal() << std::endl;
-                    break;
-                default:
-                    // skip 
-                    break;
-            }
-        }
-    }
 }

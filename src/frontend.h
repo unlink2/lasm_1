@@ -44,7 +44,6 @@ namespace lasm {
             int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
         private:
-            void outputSymbolsEnviorment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env);
 
             BaseInstructionSet &instructions;
             FileReader &reader;
