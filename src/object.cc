@@ -45,7 +45,7 @@ namespace lasm {
     }
 
     lasmNil LasmObject::toNil() {
-        return castTo<nullptr_t>();
+        return castTo<std::nullptr_t>();
     }
 
     std::shared_ptr<Callable> LasmObject::toCallable() {

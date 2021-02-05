@@ -13,7 +13,7 @@ namespace lasm {
     typedef std::string lasmString;
     typedef char lasmChar;
     typedef bool lasmBool;
-    typedef nullptr_t lasmNil;
+    typedef std::nullptr_t lasmNil;
     class Callable;
 
     enum ObjectType {
