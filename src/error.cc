@@ -51,4 +51,27 @@ namespace lasm {
 
         return "";
     }
+
+
+    std::string LasmTypeError::typeToString(ObjectType type) {
+        switch (type) {
+            case NIL_O:
+                return "nil";
+            case NUMBER_O:
+                return "number";
+            case REAL_O:
+                return "nil";
+            case STRING_O:
+                return "string";
+            case CALLABLE_O:
+                return "callable";
+            case LIST_O:
+                return "list";
+            case BOOLEAN_O:
+                return "boolean";
+
+        }
+
+        return "unknown type";
+    }
 }

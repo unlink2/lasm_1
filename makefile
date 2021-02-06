@@ -27,7 +27,7 @@ CFLAGS=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/
 CFLAGS_LIB=-Wall -g
 LIBS_TEST=-lm
 CFLAGS_TEST=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/
-OTHER_FLAGS=-rdynamic
+OTHER_FLAGS=
 MAIN = main # main for frontend
 TEST_MAIN = test # main for test
 INSTALLDIR = /usr/local/bin

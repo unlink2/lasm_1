@@ -43,7 +43,7 @@ namespace lasm {
             ~LasmException() {}
 
             virtual const char* what() const throw()  {
-                return errorToString(type).c_str();
+                return "LasmException";
             }
 
             ErrorType getType() { return type; }
@@ -54,6 +54,7 @@ namespace lasm {
         private:
             ErrorType type;
             std::shared_ptr<Token> token;
+            std::string errorTemp; 
     };
 
     class LasmTypeError: public LasmException {
@@ -62,7 +63,20 @@ namespace lasm {
                 LasmException(TYPE_ERROR, token), expected(expected), got(got) {}
             ~LasmTypeError() {}
 
+            std::string gotToString() {
+                return typeToString(got);
+            }
+
+            std::vector<std::string> expectedToString() {
+                std::vector<std::string> expectedStr;
+                for (auto ex : this->expected) {
+                    expectedStr.push_back(typeToString(ex));
+                }
+                return expectedStr;
+            }
+
         private:
+            std::string typeToString(ObjectType type);
             std::vector<ObjectType> expected;
             ObjectType got;
     };
