@@ -23,7 +23,7 @@ namespace lasm {
         public:
             Callable(unsigned short arity=0):
                 arity(arity) {}
-            ~Callable() {}
+            virtual ~Callable() {}
             virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
                 return LasmObject(NIL_O, nullptr);
             }

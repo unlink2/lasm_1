@@ -27,6 +27,8 @@ namespace lasm {
             Expr(ExprType type):
                 type(type) {}
 
+            virtual ~Expr() {}
+
             template<typename T>
             T* castTo() {
                 return static_cast<T>(this);

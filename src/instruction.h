@@ -40,6 +40,7 @@ namespace lasm {
      */
     class InstructionParser {
         public:
+            virtual ~InstructionParser() {}
             virtual std::shared_ptr<Stmt> parse(Parser *parser) { return std::shared_ptr<Stmt>(nullptr); }
     };
 
@@ -48,6 +49,7 @@ namespace lasm {
      */
     class InstructionGenerator {
         public:
+            virtual ~InstructionGenerator() {}
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt) {
@@ -84,6 +86,8 @@ namespace lasm {
      */
     class BaseInstructionSet {
         public:
+            virtual ~BaseInstructionSet() {}
+
             bool isInstruction(std::string name) {
                 return instructions.find(name) != instructions.end();
             }
