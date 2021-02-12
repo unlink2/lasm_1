@@ -143,7 +143,7 @@ namespace lasm {
             case LESS:
                 if (left.isNumber() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() < right.toNumber());
-                } else if (right.isReal() && right.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() < right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
@@ -151,7 +151,7 @@ namespace lasm {
             case GREATER_EQUAL:
                 if (left.isNumber() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() >= right.toNumber());
-                } else if (right.isReal() && right.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() >= right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
@@ -159,7 +159,7 @@ namespace lasm {
             case LESS_EQUAL:
                 if (left.isNumber() && left.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() <= right.toNumber());
-                } else if (right.isReal() && left.isScalar()) {
+                } else if (left.isReal() && left.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() <= right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
