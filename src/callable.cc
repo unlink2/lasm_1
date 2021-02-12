@@ -18,7 +18,6 @@ namespace lasm {
         } catch (LasmException &e) {
             // wrap any exception inside a function in another esception to
             // represent the call stack
-            std::cout<< e.getToken() << std::endl;
             throw CallStackUnwind(expr->paren, &e);
         }
     }
