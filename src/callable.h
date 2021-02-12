@@ -24,7 +24,7 @@ namespace lasm {
             Callable(unsigned short arity=0):
                 arity(arity) {}
             virtual ~Callable() {}
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments) {
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr) {
                 return LasmObject(NIL_O, nullptr);
             }
 
@@ -38,7 +38,7 @@ namespace lasm {
             LasmFunction(FunctionStmt *stmt):
                 Callable::Callable(stmt->params.size()), stmt(stmt) {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
         private:
             FunctionStmt *stmt;
     };
@@ -49,7 +49,7 @@ namespace lasm {
                 Callable::Callable(1) {}
             ~NativeHi() {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
 
     class NativeLo: public Callable {
@@ -58,7 +58,7 @@ namespace lasm {
                 Callable::Callable(1) {}
             ~NativeLo() {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
 
     class NativeAddress: public Callable {
@@ -67,7 +67,7 @@ namespace lasm {
                 Callable::Callable(0) {}
             ~NativeAddress() {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
 
     class NativeOrd: public Callable {
@@ -76,7 +76,7 @@ namespace lasm {
                 Callable::Callable(1) {}
             ~NativeOrd() {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
 
     class NativeLen: public Callable {
@@ -85,8 +85,8 @@ namespace lasm {
                 Callable::Callable(1) {}
             ~NativeLen() {}
 
-            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments);
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
 }
 
-#endif 
+#endif

@@ -31,7 +31,8 @@ namespace lasm {
         INVALID_INSTRUCTION,
         MISSING_COMMA,
         INDEX_OUT_OF_BOUNDS,
-        FILE_NOT_FOUND
+        FILE_NOT_FOUND,
+        CALLSTACK_UNWIND
     } ErrorType;
 
     std::string errorToString(ErrorType error);
@@ -118,6 +119,17 @@ namespace lasm {
         public:
             LasmArityError(std::shared_ptr<Token> token):
                 LasmException::LasmException(ARITY_ERROR, token) {}
+    };
+
+    class CallStackUnwind: public LasmException {
+        public:
+            CallStackUnwind(std::shared_ptr<Token> token, LasmException *parent):
+                LasmException::LasmException(CALLSTACK_UNWIND, token), parent(parent) {}
+
+            LasmException* getParent() { return parent; }
+        private:
+            LasmException *parent = nullptr;
+
     };
 
     /**

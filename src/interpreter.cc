@@ -77,22 +77,22 @@ namespace lasm {
         switch (expr->op->getType()) {
             case MINUS:
                 // first number decides auto-cast
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(NUMBER_O, left.toNumber() - right.toNumber());
-                } else if (left.isReal() && left.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(REAL_O, left.toReal() - right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
                 }
                 break;
             case SLASH:
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     // integer division by 0 is not valid!
                     if (right.toNumber() == 0) {
                         throw LasmDivisionByZero(expr->op);
                     }
                     return LasmObject(NUMBER_O, left.toNumber() / right.toNumber());
-                } else if (left.isReal() && left.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(REAL_O, left.toReal() / right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
@@ -109,9 +109,9 @@ namespace lasm {
                 }
             case STAR:
                 // first number decides auto-cast
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(NUMBER_O, left.toNumber() * right.toNumber());
-                } else if (left.isReal() && left.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(REAL_O, left.toReal() * right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
@@ -119,9 +119,9 @@ namespace lasm {
                 break;
             case PLUS:
                 // first number decides auto-cast
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(NUMBER_O, left.toNumber() + right.toNumber());
-                } else if (left.isReal() && left.isScalar()) {
+                } else if (left.isReal() && right.isScalar()) {
                     return LasmObject(REAL_O, left.toReal() + right.toReal());
                 } else if (left.isString() && right.isString()) {
                     // string cat
@@ -133,25 +133,25 @@ namespace lasm {
 
             // comparison
             case GREATER:
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() > right.toNumber());
-                } else if (right.isReal() && left.isScalar()) {
+                } else if (right.isReal() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() > right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
                 }
             case LESS:
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() < right.toNumber());
-                } else if (right.isReal() && left.isScalar()) {
+                } else if (right.isReal() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() < right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
                 }
             case GREATER_EQUAL:
-                if (left.isNumber() && left.isScalar()) {
+                if (left.isNumber() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toNumber() >= right.toNumber());
-                } else if (right.isReal() && left.isScalar()) {
+                } else if (right.isReal() && right.isScalar()) {
                     return LasmObject(BOOLEAN_O, left.toReal() >= right.toReal());
                 } else {
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, left.getType(), expr->op);
@@ -308,7 +308,7 @@ namespace lasm {
             throw LasmArityError(expr->paren);
         }
 
-        return function->call(this, arguments);
+        return function->call(this, arguments, expr);
     }
 
     std::any Interpreter::visitList(ListExpr *expr) {

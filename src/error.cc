@@ -45,6 +45,8 @@ namespace lasm {
                 return "Index out of bounds";
             case FILE_NOT_FOUND:
                 return "File not found";
+            case CALLSTACK_UNWIND:
+                return "Stack trace";
             default:
                 return "";
         }
