@@ -10,6 +10,21 @@ function check() {
     fi
 }
 
+function getHeaderOnlyLib() {
+    # get libraries
+    mkdir -p libs
+    cd libs
+    if [ -d $1 ]; then
+        cd argcc
+        git pull
+    else
+        git clone $2
+    fi
+
+    # back
+    cd ../../
+}
+
 # check tools we need
 check "g++"
 check "make"
@@ -17,12 +32,4 @@ check "git"
 
 echo "Updating external libraries..."
 
-# get libraries
-mkdir -p libs
-cd libs
-if [ -d "argcc" ]; then
-    cd argcc
-    git pull
-else
-    git clone https://github.com/unlink2/argcc
-fi
+getHeaderOnlyLib "argcc" "https://github.com/unlink2/argcc"
