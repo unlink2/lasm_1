@@ -15,7 +15,7 @@ function getHeaderOnlyLib() {
     mkdir -p libs
     cd libs
     if [ -d $1 ]; then
-        cd argcc
+        cd $1
         git pull
     else
         git clone $2
