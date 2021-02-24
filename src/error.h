@@ -32,10 +32,21 @@ namespace lasm {
         MISSING_COMMA,
         INDEX_OUT_OF_BOUNDS,
         FILE_NOT_FOUND,
-        CALLSTACK_UNWIND
+        CALLSTACK_UNWIND,
+        BAD_CPU_TYPE
     } ErrorType;
 
     std::string errorToString(ErrorType error);
+
+    class LasmBadCpuTarget: public std::exception {
+        public:
+            LasmBadCpuTarget() {}
+            ~LasmBadCpuTarget() {}
+
+            virtual const char* what() const throw()  {
+                return "BadCpuTarget";
+            }
+    };
 
     class LasmException: public std::exception {
         public:

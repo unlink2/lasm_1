@@ -2,10 +2,30 @@
 #include "scanner.h"
 #include "parser.h"
 #include "interpreter.h"
+#include "instruction6502.h"
 #include <string>
 #include "codewriter.h"
 
 namespace lasm {
+    CpuType parseCpuType(std::string input) {
+        if (input == "6502") {
+            return CPU_6502; // defaults to 6502
+        }
+
+        return CPU_INVALID;
+    }
+
+    std::shared_ptr<BaseInstructionSet> makeInstructionSet(CpuType type) {
+        switch (type) {
+            case CPU_6502:
+                return std::shared_ptr<InstructionSet6502>(new InstructionSet6502());
+            default:
+                break;
+        }
+        // invalid set!
+        throw LasmBadCpuTarget();
+    }
+
     // TODO this is a temporary implementation
     int Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
         auto previousPath = reader.getDir();

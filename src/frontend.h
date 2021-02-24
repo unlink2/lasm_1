@@ -10,6 +10,17 @@
 #include "enviorment.h"
 
 namespace lasm {
+    enum CpuType {
+        CPU_6502,
+        CPU_INVALID
+    };
+
+    CpuType parseCpuType(std::string input);
+
+    // cpu instruction set factory
+    // throws LasmBadCpuTarget
+    std::shared_ptr<BaseInstructionSet> makeInstructionSet(CpuType type);
+
     class FrontendErrorHandler: public BaseError {
         public:
             FrontendErrorHandler(std::ostream &errorOut):

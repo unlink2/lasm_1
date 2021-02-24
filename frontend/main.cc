@@ -66,6 +66,7 @@ int main(int argc, char **argv) {
     parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
+    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502)", "-c");
 
     auto parsed = parser.parse(argc, argv);
     std::string symbols = "";
@@ -84,13 +85,24 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    std::string cpuString = "6502";
+
+    if (parsed.containsAny("-cpu")) {
+        cpuString = parsed.toString("-cpu");
+    }
     auto infile = parsed.toString("consumer");
 
-
-    InstructionSet6502 instructions;
+    std::shared_ptr<BaseInstructionSet> instructions;
+    try {
+        instructions = makeInstructionSet(parseCpuType(cpuString));
+    } catch (LasmBadCpuTarget &e) {
+        std::cerr << "Fatal: Unknown instruction set" << std::endl;
+        return -1;
+    }
+            
     LocalFileReader reader;
     LocalFileWriter writer;
-    Frontend frontend(instructions, reader, writer);
+    Frontend frontend(*instructions.get(), reader, writer);
 
     return frontend.assemble(infile, outfile, symbols);
 }
