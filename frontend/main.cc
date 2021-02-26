@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
-    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502)", "-c");
+    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, bf)", "-c");
 
     auto parsed = parser.parse(argc, argv);
     std::string symbols = "";

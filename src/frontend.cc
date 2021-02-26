@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "interpreter.h"
 #include "instruction6502.h"
+#include "instructionbf.h"
 #include <string>
 #include "codewriter.h"
 
@@ -10,6 +11,8 @@ namespace lasm {
     CpuType parseCpuType(std::string input) {
         if (input == "6502") {
             return CPU_6502; // defaults to 6502
+        } else if (input == "bf") {
+            return CPU_BF;
         }
 
         return CPU_INVALID;
@@ -19,6 +22,8 @@ namespace lasm {
         switch (type) {
             case CPU_6502:
                 return std::shared_ptr<InstructionSet6502>(new InstructionSet6502());
+            case CPU_BF:
+                return std::shared_ptr<InstructionSetBf>(new InstructionSetBf());
             default:
                 break;
         }
