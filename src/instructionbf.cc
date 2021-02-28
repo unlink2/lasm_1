@@ -38,28 +38,36 @@ namespace lasm {
     }
 
     InstructionSetBf::InstructionSetBf() {
-        addInstruction("incp", std::make_shared<InstructionParserBfImplicit>(
+        // next
+        addInstruction("nxt", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('>', this)));
 
-        addInstruction("decp", std::make_shared<InstructionParserBfImplicit>(
+        // previous
+        addInstruction("prv", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('<', this)));
 
-        addInstruction("incv", std::make_shared<InstructionParserBfImplicit>(
+        // ++
+        addInstruction("inc", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('+', this)));
 
-        addInstruction("decv", std::make_shared<InstructionParserBfImplicit>(
+        // --
+        addInstruction("dec", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('-', this)));
 
-        addInstruction("out", std::make_shared<InstructionParserBfImplicit>(
+        // write byte to stdout
+        addInstruction("wrb", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('.', this)));
 
-        addInstruction("inp", std::make_shared<InstructionParserBfImplicit>(
+        // read byte from stdin
+        addInstruction("rdb", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit(',', this)));
 
-        addInstruction("jmpf", std::make_shared<InstructionParserBfImplicit>(
+        // jump forward if equal
+        addInstruction("jeq", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit('[', this)));
 
-        addInstruction("jmpb", std::make_shared<InstructionParserBfImplicit>(
+        // jump back if not equal
+        addInstruction("jne", std::make_shared<InstructionParserBfImplicit>(
                     InstructionParserBfImplicit(']', this)));
     }
 
