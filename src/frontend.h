@@ -40,13 +40,13 @@ namespace lasm {
                 this->type = type;
                 this->path = token->getPath();
                 this->line = token->getLine();
-                if (e->getType() == CALLSTACK_UNWIND) {
+                if (e && e->getType() == CALLSTACK_UNWIND) {
                     auto cs = (CallStackUnwind*)e;
                     if (cs->getParent()) {
                         onError(cs->getParent()->getType(), cs->getParent()->getToken(), cs->getParent());
                     }
                 }
-                errorOut << errorToString(e->getType()) << " (" << token->getLexeme() << ")" << " in " <<
+                errorOut << errorToString(e ? e->getType() : type) << " (" << token->getLexeme() << ")" << " in " <<
                     token->getPath() << ":" << token->getLine() << std::endl;
             }
 
