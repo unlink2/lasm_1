@@ -66,6 +66,8 @@ int main(int argc, char **argv) {
     parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
+    parser.addArgument("-hprefix", argcc::ARGPARSE_STRING, 1, "Hex-prefix for symbols file", "-hp");
+    parser.addArgument("-bprefix", argcc::ARGPARSE_STRING, 1, "Binary-prefix for symbols file", "-bp");
     parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, bf)", "-c");
 
     auto parsed = parser.parse(argc, argv);
@@ -92,6 +94,16 @@ int main(int argc, char **argv) {
     }
     auto infile = parsed.toString("consumer");
 
+    std::string hexPrefix = "0x";
+    if (parsed.containsAny("-hprefix")) {
+        hexPrefix = parsed.toString("-hprefix");
+    }
+
+    std::string binPrefix = "0b";
+    if (parsed.containsAny("-bprefix")) {
+        binPrefix = parsed.toString("-bprefix");
+    }
+
     std::shared_ptr<BaseInstructionSet> instructions;
     try {
         instructions = makeInstructionSet(parseCpuType(cpuString));
@@ -99,10 +111,10 @@ int main(int argc, char **argv) {
         std::cerr << "Fatal: Unknown instruction set" << std::endl;
         return -1;
     }
-            
+
     LocalFileReader reader;
     LocalFileWriter writer;
-    Frontend frontend(*instructions.get(), reader, writer);
+    Frontend frontend(*instructions.get(), reader, writer, std::cerr, hexPrefix, binPrefix);
 
     return frontend.assemble(infile, outfile, symbols);
 }

@@ -38,7 +38,7 @@ namespace lasm {
                     stream << name << " = " << obj->toString() << std::endl;
                     break;
                 case NUMBER_O:
-                    stream << name << " = 0x" << std::hex << obj->toNumber() << std::endl;
+                    stream << name << " = " << hexPrefix << std::hex << obj->toNumber() << std::endl;
                     break;
                 case REAL_O:
                     stream << name << " = " << obj->toReal() << std::endl;

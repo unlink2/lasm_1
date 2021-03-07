@@ -39,14 +39,15 @@ namespace lasm {
 
     class SymbolsWriter: public CodeWriter {
         public:
-            SymbolsWriter(FileWriter &writer, Interpreter &interpreter):
-                CodeWriter::CodeWriter(writer), interpreter(interpreter) {
+            SymbolsWriter(FileWriter &writer, Interpreter &interpreter, std::string hexPrefix="0x", std::string binPrefix="0b"):
+                CodeWriter::CodeWriter(writer), interpreter(interpreter), hexPrefix(hexPrefix) {
                 }
 
             virtual void write(std::string path);
         private:
             void outputSymbolsEnviorment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env);
             Interpreter &interpreter;
+            std::string hexPrefix;
     };
 }
 

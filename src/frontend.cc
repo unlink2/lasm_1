@@ -75,7 +75,7 @@ namespace lasm {
 
 
         if (symbolPath != "") {
-            SymbolsWriter symWriter(writer, interpreter);
+            SymbolsWriter symWriter(writer, interpreter, hexPrefix, binPrefix);
             symWriter.write(symbolPath);
         }
 

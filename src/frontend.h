@@ -57,8 +57,10 @@ namespace lasm {
     class Frontend {
         public:
             Frontend(BaseInstructionSet &instructions,
-                    FileReader &reader, FileWriter &writer, std::ostream &errorOut=std::cerr):
-                instructions(instructions), reader(reader), writer(writer), errorOut(errorOut) {}
+                    FileReader &reader, FileWriter &writer, std::ostream &errorOut=std::cerr,
+                    std::string hexPrefix="0x", std::string binPrefix="0b"):
+                instructions(instructions), reader(reader), writer(writer), errorOut(errorOut),
+                hexPrefix(hexPrefix), binPrefix(binPrefix) {}
 
             int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
@@ -68,6 +70,8 @@ namespace lasm {
             FileReader &reader;
             FileWriter &writer;
             std::ostream &errorOut;
+            std::string hexPrefix;
+            std::string binPrefix;
     };
 }
 
