@@ -1,11 +1,11 @@
 #include "callable.h"
-#include "enviorment.h"
+#include "environment.h"
 #include "interpreter.h"
 #include "utility.h"
 
 namespace lasm {
     LasmObject LasmFunction::call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr) {
-        std::shared_ptr<Enviorment> env = std::make_shared<Enviorment>(Enviorment(interpreter->getEnv()));
+        std::shared_ptr<Environment> env = std::make_shared<Environment>(Environment(interpreter->getEnv()));
 
         for (unsigned int i = 0; i < stmt->params.size(); i++) {
             env->define(stmt->params[i]->getLexeme(), arguments[i]);

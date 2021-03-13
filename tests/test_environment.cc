@@ -1,11 +1,11 @@
-#include "enviorment.h"
+#include "environment.h"
 
 #include "macros.h"
 
 using namespace lasm;
 
-void test_enviorment(void **state) {
-    Enviorment env;
+void test_environment(void **state) {
+    Environment env;
     LasmObject obj(NUMBER_O, lasmNumber(123));
     env.define("test", obj);
 

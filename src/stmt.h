@@ -6,7 +6,7 @@
 #include <memory>
 #include "expr.h"
 #include "instruction.h"
-#include "enviorment.h"
+#include "environment.h"
 
 namespace lasm {
     enum StmtType {

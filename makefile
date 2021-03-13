@@ -34,10 +34,10 @@ INSTALLDIR = /usr/local/bin
 
 # test source modules
 MODULES_TEST = test_scanner test_token test_object test_instruction test_utility test_expr test_parser test_interpreter\
-			   test_enviorment test_frontend
+			   test_environment test_frontend
 
 # modules from core that can be testsd
-TESTABLE_MODULES = scanner token object instruction error utility expr astprinter parser interpreter stmt enviorment callable\
+TESTABLE_MODULES = scanner token object instruction error utility expr astprinter parser interpreter stmt environment callable\
 				   instruction6502 filereader filewriter frontend codewriter instructionbf
 
 # modules for tui frontend

@@ -6,7 +6,7 @@
 #include "test_expr.h"
 #include "test_parser.h"
 #include "test_interpreter.h"
-#include "test_enviorment.h"
+#include "test_environment.h"
 #include "test_frontend.h"
 
 #include <stdarg.h>
@@ -51,8 +51,8 @@ extern "C" {
             cmocka_unit_test(test_interpreter_errors),
             cmocka_unit_test(test_misc_interpreter),
 
-            // enviorment
-            cmocka_unit_test(test_enviorment),
+            // environment
+            cmocka_unit_test(test_environment),
 
             // frontend
             cmocka_unit_test(test_frontend)

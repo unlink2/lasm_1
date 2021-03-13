@@ -1,11 +1,11 @@
-#include "enviorment.h"
+#include "environment.h"
 
 namespace lasm {
-    void Enviorment::define(std::string name, LasmObject &value) {
+    void Environment::define(std::string name, LasmObject &value) {
         values[name] = std::make_shared<LasmObject>(LasmObject(value));
     }
 
-    std::shared_ptr<LasmObject> Enviorment::get(std::shared_ptr<Token> name) {
+    std::shared_ptr<LasmObject> Environment::get(std::shared_ptr<Token> name) {
         auto it = values.find(name->getLexeme());
         if (it == values.end()) {
             if (parent.get()) {
@@ -17,7 +17,7 @@ namespace lasm {
         return it->second;
     }
 
-    void Enviorment::assign(std::shared_ptr<Token> name, LasmObject &value) {
+    void Environment::assign(std::shared_ptr<Token> name, LasmObject &value) {
         auto it = values.find(name->getLexeme());
         if (it == values.end()) {
             if (parent.get()) {
@@ -29,7 +29,7 @@ namespace lasm {
         define(name->getLexeme(), value);
     }
 
-    void Enviorment::clear() {
+    void Environment::clear() {
         values.clear();
     }
 }

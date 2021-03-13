@@ -15,15 +15,15 @@ namespace lasm {
         auto sos = writer.openFile(path);
 
         for (auto env : interpreter.getLabelTable()) {
-            outputSymbolsEnviorment(writer, sos, env);
+            outputSymbolsEnvironment(writer, sos, env);
         }
-        outputSymbolsEnviorment(writer, sos, interpreter.getGlobals());
+        outputSymbolsEnvironment(writer, sos, interpreter.getGlobals());
         writer.closeFile(sos);
     }
 
 
-    void SymbolsWriter::outputSymbolsEnviorment(FileWriter &writer,
-            std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env) {
+    void SymbolsWriter::outputSymbolsEnvironment(FileWriter &writer,
+            std::shared_ptr<std::ostream> os, std::shared_ptr<Environment> env) {
         // dump strings, numbers and floats only
         // in format <name> = <value>
         std::ostream &stream = *(os.get());

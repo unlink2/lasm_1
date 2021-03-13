@@ -8,7 +8,7 @@
 #include "instruction.h"
 #include "filewriter.h"
 #include "interpreter.h"
-#include "enviorment.h"
+#include "environment.h"
 
 namespace lasm {
     class CodeWriter {
@@ -45,7 +45,7 @@ namespace lasm {
 
             virtual void write(std::string path);
         private:
-            void outputSymbolsEnviorment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Enviorment> env);
+            void outputSymbolsEnvironment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Environment> env);
             Interpreter &interpreter;
             std::string hexPrefix;
     };

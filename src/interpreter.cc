@@ -9,8 +9,8 @@ namespace lasm {
     Interpreter::Interpreter(BaseError &onError, BaseInstructionSet &is, InterpreterCallback *callback,
             FileReader *reader):
         onError(onError), instructions(is), callback(callback),
-        globals(std::make_shared<Enviorment>(Enviorment())), enviorment(globals),
-        globalLabels(std::make_shared<Enviorment>(Enviorment())), labels(globalLabels), reader(reader) {
+        globals(std::make_shared<Environment>(Environment())), environment(globals),
+        globalLabels(std::make_shared<Environment>(Environment())), labels(globalLabels), reader(reader) {
         initGlobals();
     }
 
@@ -44,9 +44,9 @@ namespace lasm {
 
     void Interpreter::execPass(std::vector<std::shared_ptr<Stmt>> stmts) {
         labels = globalLabels;
-        enviorment = globals;
+        environment = globals;
 
-        enviorment->clear();
+        environment->clear();
         labelTable.clear();
         labelTable.push_back(globalLabels);
         code.clear();
@@ -245,7 +245,7 @@ namespace lasm {
     }
 
     std::any Interpreter::visitVariable(VariableExpr *expr) {
-        // label enviorment. used for n+1th pass
+        // label environment. used for n+1th pass
         // only set if it has not already been assigned
         bool wasFirstPass = false;
         if (!expr->getEnv(address).get() && pass == 0) {
@@ -254,7 +254,7 @@ namespace lasm {
         }
         try {
             // TODO can we avoid copy constructor? does it matter?
-            return LasmObject(enviorment->get(expr->name).get());
+            return LasmObject(environment->get(expr->name).get());
         } catch (LasmUndefinedReference &e) {
             // attempt getting label by name, but only on second+ pass
             if (expr->getEnv(address).get() && !wasFirstPass) {
@@ -270,7 +270,7 @@ namespace lasm {
     std::any Interpreter::visitAssign(AssignExpr *expr) {
         auto value = evaluate(expr->value);
 
-        enviorment->assign(expr->name, value);
+        environment->assign(expr->name, value);
         return value;
     }
 
@@ -385,33 +385,33 @@ namespace lasm {
             value = evaluate(stmt->init);
         }
 
-        enviorment->define(stmt->name->getLexeme(), value);
+        environment->define(stmt->name->getLexeme(), value);
         return std::any();
     }
 
     std::any Interpreter::visitBlock(BlockStmt *stmt) {
-        executeBlock(stmt->statements, std::make_shared<Enviorment>(Enviorment(enviorment)));
+        executeBlock(stmt->statements, std::make_shared<Environment>(Environment(environment)));
         return std::any();
     }
 
     void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
-            std::shared_ptr<Enviorment> enviorment, std::shared_ptr<Enviorment> labels) {
+            std::shared_ptr<Environment> environment, std::shared_ptr<Environment> labels) {
 
         if (!labels.get()) {
-            labels = std::make_shared<Enviorment>(Enviorment(this->labels));
+            labels = std::make_shared<Environment>(Environment(this->labels));
         }
 
         labelTable.push_back(labels);
 
-        auto previous = this->enviorment;
+        auto previous = this->environment;
         auto previousLabels = this->labels;
 
-        this->enviorment = enviorment;
+        this->environment = environment;
         this->labels = labels;
         for (auto statement : statements) {
             execute(statement);
         }
-        this->enviorment = previous;
+        this->environment = previous;
         this->labels = previousLabels;
     }
 
@@ -436,7 +436,7 @@ namespace lasm {
     std::any Interpreter::visitFunction(FunctionStmt *stmt) {
         auto fn = std::make_shared<LasmFunction>(LasmFunction(stmt));
         LasmObject obj(CALLABLE_O, std::static_pointer_cast<Callable>(fn));
-        enviorment->define(stmt->name->getLexeme(), obj);
+        environment->define(stmt->name->getLexeme(), obj);
         return std::any();
     }
 
@@ -451,7 +451,7 @@ namespace lasm {
     }
 
     std::any Interpreter::visitInstruction(InstructionStmt *stmt) {
-        // TODO catch unresolved labels, return a deep clone of the current enviorment
+        // TODO catch unresolved labels, return a deep clone of the current environment
         // and set unresolved flag along with the expression.
         // after assembly ends do a second pass and attempt to
         // resolve again
@@ -630,7 +630,7 @@ namespace lasm {
                 throw LasmTypeError(std::vector<ObjectType> {NUMBER_O}, value.getType(), declaration->name);
             }
             // add start address to it
-            enviorment->define(declaration->name->getLexeme(), startAddress);
+            environment->define(declaration->name->getLexeme(), startAddress);
             startAddress = LasmObject(NUMBER_O, value.toNumber() + startAddress.toNumber());
         }
 

@@ -21,15 +21,15 @@ namespace lasm {
         return visitor->visitVariable(this);
     }
 
-    std::shared_ptr<Enviorment> VariableExpr::getEnv(unsigned long address) {
+    std::shared_ptr<Environment> VariableExpr::getEnv(unsigned long address) {
         auto it = labels.find(address);
         if (it == labels.end()) {
-            return std::shared_ptr<Enviorment>(nullptr);
+            return std::shared_ptr<Environment>(nullptr);
         }
         return it->second;
     }
 
-    void VariableExpr::setEnv(unsigned long address, std::shared_ptr<Enviorment> env) {
+    void VariableExpr::setEnv(unsigned long address, std::shared_ptr<Environment> env) {
         this->labels[address] = env;
     }
 

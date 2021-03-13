@@ -7,7 +7,7 @@
 #include "filewriter.h"
 #include "instruction.h"
 #include "error.h"
-#include "enviorment.h"
+#include "environment.h"
 
 namespace lasm {
     enum CpuType {
@@ -75,4 +75,4 @@ namespace lasm {
     };
 }
 
-#endif 
+#endif

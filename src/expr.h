@@ -5,7 +5,7 @@
 #include "token.h"
 #include <any>
 #include <memory>
-#include "enviorment.h"
+#include "environment.h"
 
 namespace lasm {
     enum ExprType {
@@ -96,14 +96,14 @@ namespace lasm {
 
             virtual std::any accept(ExprVisitor *visitor);
 
-            std::shared_ptr<Enviorment> getEnv(unsigned long address);
-            void setEnv(unsigned long address, std::shared_ptr<Enviorment> env);
+            std::shared_ptr<Environment> getEnv(unsigned long address);
+            void setEnv(unsigned long address, std::shared_ptr<Environment> env);
 
             std::shared_ptr<Token> name;
         private:
             // is non-null if variable literal points to a label name
             // labels mapping address, label enviormnet
-            std::map<unsigned long, std::shared_ptr<Enviorment>> labels;
+            std::map<unsigned long, std::shared_ptr<Environment>> labels;
     };
 
     class AssignExpr: public Expr {

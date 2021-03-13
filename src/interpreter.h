@@ -10,7 +10,7 @@
 #include "object.h"
 #include "error.h"
 #include "stmt.h"
-#include "enviorment.h"
+#include "environment.h"
 #include "callable.h"
 #include "instruction.h"
 #include "filereader.h"
@@ -31,9 +31,9 @@ namespace lasm {
             void initGlobals();
 
             // TODO first pass:
-            // resolve labels by adding them to a speical enviorment
-            // each variable that was not resolvable the first time around gets a pointer to said enviorment
-            // for loops each iteration creates a new label enviorment
+            // resolve labels by adding them to a speical environment
+            // each variable that was not resolvable the first time around gets a pointer to said environment
+            // for loops each iteration creates a new label environment
             // each block creates a new label enviormnent
             // variable names shadow labels
             // second pass:
@@ -76,8 +76,8 @@ namespace lasm {
             std::any visitIncbin(IncbinStmt *stmt);
             std::any visitInclude(IncludeStmt *stmt);
 
-            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Enviorment> enviorment,
-                    std::shared_ptr<Enviorment> labels=std::shared_ptr<Enviorment>(nullptr));
+            void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment,
+                    std::shared_ptr<Environment> labels=std::shared_ptr<Environment>(nullptr));
 
 
             unsigned long getAddress() { return address; }
@@ -86,9 +86,9 @@ namespace lasm {
             std::vector<InstructionResult> getCode() { return code; }
             unsigned int getPass() { return pass; }
 
-            std::shared_ptr<Enviorment> getEnv() { return enviorment; }
-            std::vector<std::shared_ptr<Enviorment>>& getLabelTable() { return labelTable; }
-            std::shared_ptr<Enviorment> getGlobals() { return globals; }
+            std::shared_ptr<Environment> getEnv() { return environment; }
+            std::vector<std::shared_ptr<Environment>>& getLabelTable() { return labelTable; }
+            std::shared_ptr<Environment> getGlobals() { return globals; }
         private:
             void onInstructionResult(InstructionResult result);
 
@@ -96,17 +96,17 @@ namespace lasm {
             BaseInstructionSet &instructions;
             InterpreterCallback *callback;
 
-            // interpreter enviorment chain
-            std::shared_ptr<Enviorment> globals;
-            std::shared_ptr<Enviorment> enviorment;
+            // interpreter environment chain
+            std::shared_ptr<Environment> globals;
+            std::shared_ptr<Environment> environment;
 
             // interpreter label chain
-            std::shared_ptr<Enviorment> globalLabels;
-            std::shared_ptr<Enviorment> labels;
+            std::shared_ptr<Environment> globalLabels;
+            std::shared_ptr<Environment> labels;
 
             // flat list of all labels that were generated during assembly.
             // used for label list file
-            std::vector<std::shared_ptr<Enviorment>> labelTable;
+            std::vector<std::shared_ptr<Environment>> labelTable;
 
             unsigned long address = 0;
             unsigned short pass = 0;
