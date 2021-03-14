@@ -33,6 +33,10 @@ namespace lasm {
             auto obj = it->second;
             std::string name = it->first;
 
+            if (env->getName() != "") {
+                name = env->getName() + "_" + name;
+            }
+
             switch (obj->getType()) {
                 case STRING_O:
                     stream << name << " = " << obj->toString() << std::endl;

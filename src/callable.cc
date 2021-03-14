@@ -60,4 +60,11 @@ namespace lasm {
             return LasmObject(NIL_O, nullptr);
         }
     }
+
+    LasmObject NativeSetEnvName::call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr) {
+        auto c = arguments[0];
+        interpreter->getEnv()->setName(c.toString());
+        interpreter->getLabels()->setName(c.toString());
+        return LasmObject(NIL_O, nullptr);
+    }
 }

@@ -87,6 +87,15 @@ namespace lasm {
 
             virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
     };
+
+    class NativeSetEnvName: public Callable {
+        public:
+            NativeSetEnvName():
+                Callable::Callable(1) {}
+            ~NativeSetEnvName() {}
+
+            virtual LasmObject call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr);
+    };
 }
 
 #endif

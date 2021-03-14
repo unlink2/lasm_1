@@ -27,9 +27,20 @@ namespace lasm {
             void clear();
 
             std::map<std::string, std::shared_ptr<LasmObject>>& getValues() { return values; }
+
+            std::string getName() {
+                return name;
+            }
+
+            void setName(std::string newName) {
+                name = newName;
+            }
         private:
             std::map<std::string, std::shared_ptr<LasmObject>> values;
             std::shared_ptr<Environment> parent = std::shared_ptr<Environment>(nullptr);
+
+            // env's name. only used for label export
+            std::string name = "";
     };
 }
 

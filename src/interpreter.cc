@@ -32,6 +32,10 @@ namespace lasm {
         auto len = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
                     std::shared_ptr<NativeLen>(new NativeLen())));
         globals->define("len", len);
+
+        auto setEnvName = LasmObject(CALLABLE_O, std::static_pointer_cast<Callable>(
+                    std::shared_ptr<NativeSetEnvName>(new NativeSetEnvName())));
+        globals->define("setScopeName", setEnvName);
     }
 
     std::vector<InstructionResult> Interpreter::interprete(std::vector<std::shared_ptr<Stmt>> stmts,
