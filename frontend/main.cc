@@ -8,6 +8,10 @@
 #include "instruction6502.h"
 #include "token.h"
 #include <filesystem>
+#include "colors.h"
+
+// TODO cross-platform?
+#include <unistd.h>
 
 using namespace lasm;
 
@@ -64,6 +68,8 @@ class LocalFileWriter: public FileWriter {
 int main(int argc, char **argv) {
     argcc::Argparse parser("lasm");
 
+    const FormatOutput format(isatty(STDERR_FILENO) && isatty(STDOUT_FILENO));
+
     parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
     parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
@@ -84,7 +90,7 @@ int main(int argc, char **argv) {
     }
 
     if (!parsed.containsAny("consumer")) {
-        std::cerr << "Fatal: No input file" << std::endl;
+        std::cerr << format.fred() << "Fatal: " << format.reset() << "No input file" << std::endl;
         return -1;
     }
 
@@ -109,13 +115,13 @@ int main(int argc, char **argv) {
     try {
         instructions = makeInstructionSet(parseCpuType(cpuString));
     } catch (LasmBadCpuTarget &e) {
-        std::cerr << "Fatal: Unknown instruction set" << std::endl;
+        std::cerr <<  format.fred() << "Fatal: " << format.reset() << "Unknown instruction set" << std::endl;
         return -1;
     }
 
     LocalFileReader reader;
     LocalFileWriter writer;
-    Frontend frontend(*instructions.get(), reader, writer, std::cerr, hexPrefix, binPrefix);
+    Frontend frontend(*instructions.get(), reader, writer, std::cerr, hexPrefix, binPrefix, format);
 
     return frontend.assemble(infile, outfile, symbols);
 }

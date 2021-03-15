@@ -8,6 +8,7 @@
 #include "instruction.h"
 #include "error.h"
 #include "environment.h"
+#include "colors.h"
 
 namespace lasm {
     enum CpuType {
@@ -24,15 +25,16 @@ namespace lasm {
 
     class FrontendErrorHandler: public BaseError {
         public:
-            FrontendErrorHandler(std::ostream &errorOut):
-                errorOut(errorOut) {}
+            FrontendErrorHandler(std::ostream &errorOut, const FormatOutput &format):
+                errorOut(errorOut), format(format) {}
             virtual void onError(ErrorType type, unsigned long line, std::string path, LasmException *e=nullptr) {
                 hasErrored = true;
                 this->type = type;
                 this->path = path;
                 this->line = line;
 
-                errorOut << errorToString(type) << " in " << path << ":" << line << std::endl;
+                errorOut << format.fred() << errorToString(type) << format.reset()
+                    << " in " << path << ":" << line << std::endl;
             }
 
             virtual void onError(ErrorType type, std::shared_ptr<Token> token, LasmException *e=nullptr) {
@@ -46,21 +48,24 @@ namespace lasm {
                         onError(cs->getParent()->getType(), cs->getParent()->getToken(), cs->getParent());
                     }
                 }
-                errorOut << errorToString(e ? e->getType() : type) << " (" << token->getLexeme() << ")" << " in " <<
+                errorOut << format.fred() << errorToString(e ? e->getType() : type) << format.reset()
+                    << " (" << token->getLexeme() << ")" << " in " <<
                     token->getPath() << ":" << token->getLine() << std::endl;
             }
 
         private:
             std::ostream &errorOut;
+            const FormatOutput &format;
     };
 
     class Frontend {
         public:
             Frontend(BaseInstructionSet &instructions,
                     FileReader &reader, FileWriter &writer, std::ostream &errorOut=std::cerr,
-                    std::string hexPrefix="0x", std::string binPrefix="0b"):
+                    std::string hexPrefix="0x", std::string binPrefix="0b",
+                    const FormatOutput &format=FormatOutput(false)):
                 instructions(instructions), reader(reader), writer(writer), errorOut(errorOut),
-                hexPrefix(hexPrefix), binPrefix(binPrefix) {}
+                hexPrefix(hexPrefix), binPrefix(binPrefix), format(format) {}
 
             int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
@@ -72,6 +77,7 @@ namespace lasm {
             std::ostream &errorOut;
             std::string hexPrefix;
             std::string binPrefix;
+            const FormatOutput &format;
     };
 }
 

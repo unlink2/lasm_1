@@ -35,7 +35,7 @@ namespace lasm {
     int Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
         auto previousPath = reader.getDir();
 
-        FrontendErrorHandler error(errorOut);
+        FrontendErrorHandler error(errorOut, format);
         std::shared_ptr<std::istream> is;
         try {
             is = reader.openFile(inPath);
