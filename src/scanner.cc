@@ -2,8 +2,8 @@
 #include "utility.h"
 
 namespace lasm {
-    Scanner::Scanner(BaseError &error, BaseInstructionSet &instructions, std::string source, std::string path):
-        LasmCommon(error, instructions), source(source), path(path) {
+    Scanner::Scanner(BaseError &error, BaseInstructionSet &instructions, const std::string source, std::string path):
+        LasmCommon(error, instructions), source(std::make_shared<std::string>(source)), path(path) {
             addKeyword("else", ELSE);
             addKeyword("false", FALSE);
             addKeyword("for", FOR);
@@ -27,18 +27,19 @@ namespace lasm {
     }
 
     std::vector<std::shared_ptr<Token>> Scanner::scanTokens() {
+        auto lastStart = start;
         while (!isAtEnd()) {
             start = current;
             scanToken();
         }
         tokens.push_back(std::make_shared<Token>(Token(EOF_T, "",
-                        LasmObject(NIL_O, nullptr), line, path)));
+                        LasmObject(NIL_O, nullptr), line, path, lastStart, source)));
 
         return tokens;
     }
 
     bool Scanner::isAtEnd() {
-        return current >= source.size();
+        return current >= source->size();
     }
 
     void Scanner::scanToken() {
@@ -189,21 +190,21 @@ namespace lasm {
 
     char Scanner::advance() {
         current++;
-        return source.at(current-1);
+        return source->at(current-1);
     }
 
     char Scanner::peek() {
         if (isAtEnd()) {
             return '\0';
         }
-        return source.at(current);
+        return source->at(current);
     }
 
     char Scanner::peekNext() {
-        if (current+1 >= source.size()) {
+        if (current+1 >= source->size()) {
             return '\0';
         }
-        return source.at(current+1);
+        return source->at(current+1);
     }
 
     void Scanner::addToken(TokenType type) {
@@ -211,13 +212,13 @@ namespace lasm {
     }
 
     void Scanner::addToken(TokenType type, LasmObject literal) {
-        std::string text = source.substr(start, current-start);
-        tokens.push_back(std::make_shared<Token>(Token(type, text, literal, line, path)));
+        std::string text = source->substr(start, current-start);
+        tokens.push_back(std::make_shared<Token>(Token(type, text, literal, line, path, start, source)));
     }
 
     bool Scanner::match(char expected) {
         if (isAtEnd()
-                || source.at(current) != expected) {
+                || source->at(current) != expected) {
             return false;
         }
         current++;
@@ -245,7 +246,7 @@ namespace lasm {
         // closing "
         advance();
 
-        std::string value = unescape(source.substr(start+1, current-start-2));
+        std::string value = unescape(source->substr(start+1, current-start-2));
         addToken(STRING, LasmObject(STRING_O, value));
     }
 
@@ -287,16 +288,16 @@ namespace lasm {
         try {
             std::any value;
             if (isFloat) {
-                auto number = source.substr(start, current-start);
+                auto number = source->substr(start, current-start);
                 value = std::any(stringToReal(number));
             } else if (isBin) {
-                auto number = source.substr(start+2, current-start);
+                auto number = source->substr(start+2, current-start);
                 value = std::any(stringToNumber(number, 2));
             } else if (isHex) {
-                auto number = source.substr(start, current-start);
+                auto number = source->substr(start, current-start);
                 value = std::any(stringToNumber(number, 16));
             } else {
-                auto number = source.substr(start, current-start);
+                auto number = source->substr(start, current-start);
                 value = std::any(stringToNumber(number));
             }
             addToken(type, LasmObject(objType, value));
@@ -310,7 +311,7 @@ namespace lasm {
             advance();
         }
 
-        std::string text = source.substr(start, current-start);
+        std::string text = source->substr(start, current-start);
         // is it an opcode from the opcode table?
         auto opIt = instructions.isInstruction(text);
         auto keywordIt = keywords.find(text);

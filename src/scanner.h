@@ -13,7 +13,7 @@
 namespace lasm {
     class Scanner: public LasmCommon {
         public:
-            Scanner(BaseError &error, BaseInstructionSet &instructions, std::string source, std::string path);
+            Scanner(BaseError &error, BaseInstructionSet &instructions, const std::string source, std::string path);
 
             std::vector<std::shared_ptr<Token>> scanTokens();
 
@@ -43,7 +43,7 @@ namespace lasm {
 
             void addKeyword(std::string name, TokenType type);
 
-            std::string source;
+            const std::shared_ptr<std::string> source;
             std::string path;
             std::vector<std::shared_ptr<Token>> tokens;
 

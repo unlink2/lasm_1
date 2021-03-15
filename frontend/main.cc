@@ -19,7 +19,8 @@ class LocalFileReader: public FileReader {
             auto stream = std::make_shared<std::ifstream>(std::ifstream(fromPath, std::ifstream::in));
 
             if (!stream->is_open()) {
-                throw LasmException(FILE_NOT_FOUND, std::make_shared<Token>(Token(NIL, "", LasmObject(NIL_O, nullptr), 0, fromPath)));
+                auto source = std::make_shared<std::string>(std::string(""));
+                throw LasmException(FILE_NOT_FOUND, std::make_shared<Token>(Token(NIL, "", LasmObject(NIL_O, nullptr), 0, fromPath, 0, source)));
             }
 
             return stream;

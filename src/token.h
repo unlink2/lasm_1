@@ -12,7 +12,7 @@ namespace lasm {
     class Token {
         public:
             Token(TokenType type, std::string lexeme, LasmObject literal, int line,
-                    std::string path);
+                    std::string path, int tokenStart, std::shared_ptr<std::string> source);
 
             std::string toString();
 
@@ -36,12 +36,22 @@ namespace lasm {
                 return path;
             }
 
+            std::shared_ptr<std::string> getSource() {
+                return source;
+            }
+
+            unsigned long getTokenStart() {
+                return tokenStart;
+            }
+
         private:
             TokenType type;
             std::string lexeme;
             LasmObject literal;
             unsigned long line;
             std::string path;
+            unsigned long tokenStart;
+            std::shared_ptr<std::string> source;
     };
 }
 

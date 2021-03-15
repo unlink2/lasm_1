@@ -14,7 +14,7 @@ void test_expr(void **state) {
     // first member
     BinaryExpr expr;
     std::shared_ptr<UnaryExpr> l1(new UnaryExpr());
-    std::shared_ptr<Token> o1(new Token(STAR, "*", LasmObject(NIL_O, nullptr), 1, ""));
+    std::shared_ptr<Token> o1(new Token(STAR, "*", LasmObject(NIL_O, nullptr), 1, "", 0, nullptr));
     std::shared_ptr<GroupingExpr> r1(new GroupingExpr());
     expr.left = l1;
     expr.op = o1;
@@ -24,7 +24,7 @@ void test_expr(void **state) {
     auto unary = static_cast<UnaryExpr*>(expr.left.get());
     LasmObject literal1 = LasmObject(NUMBER_O, lasmNumber(123));
     std::shared_ptr<LiteralExpr> r2(new LiteralExpr(literal1));
-    std::shared_ptr<Token> o2(new Token(MINUS, "-", LasmObject(NIL_O, nullptr), 1, ""));
+    std::shared_ptr<Token> o2(new Token(MINUS, "-", LasmObject(NIL_O, nullptr), 1, "", 0, nullptr));
 
     unary->right = r2;
     unary->op = o2;
