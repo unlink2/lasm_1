@@ -33,8 +33,12 @@ namespace lasm {
             auto obj = it->second;
             std::string name = it->first;
 
-            if (env->getName() != "") {
-                name = env->getName() + "_" + name;
+            auto parent = env;
+            while (parent.get()) {
+                if (parent->getName() != "") {
+                    name = parent->getName() + "." + name;
+                }
+                parent = parent->getParent();
             }
 
             switch (obj->getType()) {

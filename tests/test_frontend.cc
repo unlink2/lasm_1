@@ -73,7 +73,7 @@ void test_frontend(void **state) {
                 "sublabel: {\nnop;\n"
                 "}\n}",
 
-            "scope1 = 0x8000\nscopeName_sublabel = 0x8000\n",
+            "scope1 = 0x8000\nscopeName.sublabel = 0x8000\n",
             {(char)0xEA});
 
 }
