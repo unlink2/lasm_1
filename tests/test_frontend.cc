@@ -65,4 +65,15 @@ void test_frontend(void **state) {
             "included_label = 0x8003\n",
             {(char)0xEA, (char)0xA9, (char)0xFF, (char)0xEA, (char)0xEA,
             'H', 'e', 'l', 'l', 'o', (char)0xEA, 'a', 0x05, 0x03});
+
+    // test label names
+    test_full("org 0x8000;\n"
+            "scope1: {\n"
+            "setScopeName(\"scopeName\");"
+                "sublabel: {\nnop;\n"
+                "}\n}",
+
+            "scope1 = 0x8000\nscopeName_sublabel = 0x8000\n",
+            {(char)0xEA});
+
 }
