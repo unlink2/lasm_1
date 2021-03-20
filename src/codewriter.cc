@@ -36,7 +36,7 @@ namespace lasm {
             auto parent = env;
             while (parent.get()) {
                 if (parent->getName() != "") {
-                    name = parent->getName() + "." + name;
+                    name = parent->getName() + delim + name;
                 }
                 parent = parent->getParent();
             }

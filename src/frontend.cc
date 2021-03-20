@@ -35,7 +35,7 @@ namespace lasm {
     int Frontend::assemble(std::string inPath, std::string outPath, std::string symbolPath) {
         auto previousPath = reader.getDir();
 
-        FrontendErrorHandler error(errorOut, format);
+        FrontendErrorHandler error(errorOut, settings.format);
         std::shared_ptr<std::istream> is;
         try {
             is = reader.openFile(inPath);
@@ -75,7 +75,7 @@ namespace lasm {
 
 
         if (symbolPath != "") {
-            SymbolsWriter symWriter(writer, interpreter, hexPrefix, binPrefix);
+            SymbolsWriter symWriter(writer, interpreter, settings.hexPrefix, settings.binPrefix, settings.delim);
             symWriter.write(symbolPath);
         }
 

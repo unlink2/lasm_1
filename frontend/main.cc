@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
     parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
     parser.addArgument("-hprefix", argcc::ARGPARSE_STRING, 1, "Hex-prefix for symbols file", "-hp");
     parser.addArgument("-bprefix", argcc::ARGPARSE_STRING, 1, "Binary-prefix for symbols file", "-bp");
+    parser.addArgument("-delim", argcc::ARGPARSE_STRING, 1, "Deliminator-prefix for symbols file", "-dp");
     parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, bf)", "-c");
 
     auto parsed = parser.parse(argc, argv);
@@ -94,6 +95,9 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    FrontendSettings settings;
+    settings.format = format;
+
     std::string cpuString = "6502";
 
     if (parsed.containsAny("-cpu")) {
@@ -101,14 +105,16 @@ int main(int argc, char **argv) {
     }
     auto infile = parsed.toString("consumer");
 
-    std::string hexPrefix = "0x";
     if (parsed.containsAny("-hprefix")) {
-        hexPrefix = parsed.toString("-hprefix");
+        settings.hexPrefix = parsed.toString("-hprefix");
     }
 
-    std::string binPrefix = "0b";
     if (parsed.containsAny("-bprefix")) {
-        binPrefix = parsed.toString("-bprefix");
+        settings.binPrefix = parsed.toString("-bprefix");
+    }
+
+    if (parsed.containsAny("-delim")) {
+        settings.delim = parsed.toString("-delim");
     }
 
     std::shared_ptr<BaseInstructionSet> instructions;
@@ -121,7 +127,7 @@ int main(int argc, char **argv) {
 
     LocalFileReader reader;
     LocalFileWriter writer;
-    Frontend frontend(*instructions.get(), reader, writer, std::cerr, hexPrefix, binPrefix, format);
+    Frontend frontend(*instructions.get(), reader, writer, settings, std::cerr);
 
     return frontend.assemble(infile, outfile, symbols);
 }

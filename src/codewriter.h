@@ -39,8 +39,9 @@ namespace lasm {
 
     class SymbolsWriter: public CodeWriter {
         public:
-            SymbolsWriter(FileWriter &writer, Interpreter &interpreter, std::string hexPrefix="0x", std::string binPrefix="0b"):
-                CodeWriter::CodeWriter(writer), interpreter(interpreter), hexPrefix(hexPrefix) {
+            SymbolsWriter(FileWriter &writer, Interpreter &interpreter,
+                    std::string hexPrefix="0x", std::string binPrefix="0b", std::string delim="."):
+                CodeWriter::CodeWriter(writer), interpreter(interpreter), hexPrefix(hexPrefix), delim(delim) {
                 }
 
             virtual void write(std::string path);
@@ -48,6 +49,7 @@ namespace lasm {
             void outputSymbolsEnvironment(FileWriter &writer, std::shared_ptr<std::ostream> os, std::shared_ptr<Environment> env);
             Interpreter &interpreter;
             std::string hexPrefix;
+            std::string delim;
     };
 }
 

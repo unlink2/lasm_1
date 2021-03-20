@@ -58,14 +58,23 @@ namespace lasm {
             const FormatOutput &format;
     };
 
+    class FrontendSettings {
+        public:
+            FrontendSettings(): format(defaultFormat) {}
+            std::string hexPrefix = "0x";
+            std::string binPrefix = "0b";
+            std::string delim = ".";
+            inline static FormatOutput defaultFormat;
+            FormatOutput &format;
+    };
+
     class Frontend {
         public:
             Frontend(BaseInstructionSet &instructions,
-                    FileReader &reader, FileWriter &writer, std::ostream &errorOut=std::cerr,
-                    std::string hexPrefix="0x", std::string binPrefix="0b",
-                    const FormatOutput &format=FormatOutput(false)):
+                    FileReader &reader, FileWriter &writer,
+                    FrontendSettings &settings=defaultSettings, std::ostream &errorOut=std::cerr):
                 instructions(instructions), reader(reader), writer(writer), errorOut(errorOut),
-                hexPrefix(hexPrefix), binPrefix(binPrefix), format(format) {}
+                settings(settings) {}
 
             int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
@@ -75,9 +84,8 @@ namespace lasm {
             FileReader &reader;
             FileWriter &writer;
             std::ostream &errorOut;
-            std::string hexPrefix;
-            std::string binPrefix;
-            const FormatOutput &format;
+            inline static FrontendSettings defaultSettings;
+            FrontendSettings &settings;
     };
 }
 
