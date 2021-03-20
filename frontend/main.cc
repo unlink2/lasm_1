@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     parser.addArgument("-hprefix", argcc::ARGPARSE_STRING, 1, "Hex-prefix for symbols file", "-hp");
     parser.addArgument("-bprefix", argcc::ARGPARSE_STRING, 1, "Binary-prefix for symbols file", "-bp");
     parser.addArgument("-delim", argcc::ARGPARSE_STRING, 1, "Deliminator-prefix for symbols file", "-dp");
-    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, bf)", "-c");
+    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, 65c816, bf)", "-c");
 
     auto parsed = parser.parse(argc, argv);
     std::string symbols = "";

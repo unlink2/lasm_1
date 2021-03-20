@@ -13,6 +13,7 @@
 namespace lasm {
     enum CpuType {
         CPU_6502,
+        CPU_65C816,
         CPU_BF,
         CPU_INVALID
     };
