@@ -43,7 +43,13 @@ namespace lasm {
             }
         }
 
-        const unsigned int size = 2;
+        unsigned int size = 2;
+        unsigned int maxValue = 0xFF;
+        // in 16 size is 3
+        if (interpreter->getInstructions().getBits() == 16) {
+            size = 3; 
+            maxValue = 0xFFFF; 
+        }
 
         std::shared_ptr<char[]> data(new char[size]);
         data[0] = info->getOpcode();
@@ -55,10 +61,17 @@ namespace lasm {
             } else {
                 throw LasmException(TYPE_ERROR, stmt->name);
             }
-        } else if (value.toNumber() > 0xFF) {
+        } else if (value.toNumber() > maxValue) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
         }
-        data[1] = value.toNumber() & 0xFF;
+
+        if (interpreter->getInstructions().getBits() == 16) {
+            data[1] = HI(value.toNumber(), 8);
+            data[2] = LO(value.toNumber(), 8);
+        } else {
+            data[1] = value.toNumber() & maxValue;
+        }
+
         interpreter->setAddress(interpreter->getAddress()+size);
         return InstructionResult(data, size, interpreter->getAddress()-size, stmt->name);
     }
@@ -152,8 +165,8 @@ namespace lasm {
             size = 3;
             data = std::shared_ptr<char[]>(new char[size]);
             data[0] = info->getOpcode("absolute");
-            data[1] = HI(value.toNumber(), interpreter->getInstructions().getBits());
-            data[2] = LO(value.toNumber(), interpreter->getInstructions().getBits());
+            data[1] = HI(value.toNumber(), 8);
+            data[2] = LO(value.toNumber(), 8);
         } else {
             if (value.toNumber() > 0xFF) {
                 throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
