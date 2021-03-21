@@ -67,6 +67,7 @@ namespace lasm {
             std::any visitFunction(FunctionStmt *stmt);
             std::any visitReturn(ReturnStmt *stmt);
             std::any visitInstruction(InstructionStmt *stmt);
+            std::any visitDirective(DirectiveStmt *stmt);
             std::any visitAlign(AlignStmt *stmt);
             std::any visitFill(FillStmt *stmt);
             std::any visitOrg(OrgStmt *stmt);
@@ -90,6 +91,8 @@ namespace lasm {
             std::shared_ptr<Environment> getLabels() { return labels; }
             std::vector<std::shared_ptr<Environment>>& getLabelTable() { return labelTable; }
             std::shared_ptr<Environment> getGlobals() { return globals; }
+
+            BaseInstructionSet& getInstructions() { return instructions; }
         private:
             void onInstructionResult(InstructionResult result);
 

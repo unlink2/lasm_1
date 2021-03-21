@@ -152,8 +152,8 @@ namespace lasm {
             size = 3;
             data = std::shared_ptr<char[]>(new char[size]);
             data[0] = info->getOpcode("absolute");
-            data[1] = HI(value.toNumber());
-            data[2] = LO(value.toNumber());
+            data[1] = HI(value.toNumber(), interpreter->getInstructions().getBits());
+            data[2] = LO(value.toNumber(), interpreter->getInstructions().getBits());
         } else {
             if (value.toNumber() > 0xFF) {
                 throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);

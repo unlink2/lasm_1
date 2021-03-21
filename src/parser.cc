@@ -85,6 +85,13 @@ namespace lasm {
                 throw ParserException(token, INVALID_INSTRUCTION);
             }
             return instr;
+        } else if (match(std::vector<TokenType> { DIRECTIVE })) {
+            auto token = previous();
+            auto instr = instructions.parse(this);
+            if (!instr.get()) {
+                throw ParserException(token, INVALID_INSTRUCTION);
+            }
+            return instr;
         } else if (match(std::vector<TokenType> {ORG})) {
             return orgDirective();
         } else if (match(std::vector<TokenType> {FILL})) {

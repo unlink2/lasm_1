@@ -463,6 +463,10 @@ namespace lasm {
         return std::any();
     }
 
+    std::any Interpreter::visitDirective(DirectiveStmt *stmt) {
+        return stmt->directive->execute(this, stmt);
+    }
+
     std::any Interpreter::visitAlign(AlignStmt *stmt) {
         auto alignTo = evaluate(stmt->alignTo);
         auto fillValue = evaluate(stmt->fillValue);

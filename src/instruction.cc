@@ -14,6 +14,10 @@ namespace lasm {
         }
     }
 
+    void BaseInstructionSet::addDirective(std::string name, std::shared_ptr<Directive> parser) {
+        directives[name] = parser;
+    }
+
     std::shared_ptr<Stmt> BaseInstructionSet::parse(Parser *parser) {
         auto name = parser->previous()->getLexeme();
         auto it = instructions.find(name);
@@ -25,6 +29,13 @@ namespace lasm {
                     return result;
                 }
             }
+        }
+
+
+        // parse directive if it exists
+        auto dirIt = directives.find(name);
+        if (dirIt != directives.end()) {
+            return dirIt->second->parse(parser);
         }
 
         return std::shared_ptr<Stmt>(nullptr);

@@ -30,7 +30,7 @@ namespace lasm {
         RETURN, TRUE, LET, WHILE, IMPORT,
 
         // assembler
-        INSTRUCTION, LABEL, ASM_DIRECTIVE,
+        INSTRUCTION, LABEL, DIRECTIVE,
         ORG, FILL, ALIGN,
         DEFINE_BYTE, DEFINE_HALF, DEFINE_WORD, DEFINE_DOUBLE,
         BSS, INCBIN, INCLUDE,

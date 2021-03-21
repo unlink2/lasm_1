@@ -314,11 +314,14 @@ namespace lasm {
         std::string text = source->substr(start, current-start);
         // is it an opcode from the opcode table?
         auto opIt = instructions.isInstruction(text);
+        auto dirIt = instructions.isDirective(text);
         auto keywordIt = keywords.find(text);
 
         TokenType type = IDENTIFIER;
         if (opIt) {
             type = INSTRUCTION;
+        } else if (dirIt) {
+            type = DIRECTIVE;
         } else if (keywordIt != keywords.end()) {
             type = keywordIt->second;
         } else if (text.back() == ':') {

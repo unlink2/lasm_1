@@ -64,4 +64,8 @@ namespace lasm {
     std::any IncludeStmt::accept(StmtVisitor *visitor) {
         return visitor->visitInclude(this);
     }
+
+    std::any DirectiveStmt::accept(StmtVisitor *visitor) {
+        return visitor->visitDirective(this);
+    }
 }

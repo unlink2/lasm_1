@@ -12,6 +12,7 @@ namespace lasm {
     class Interpreter;
     class Stmt;
     class InstructionStmt;
+    class DirectiveStmt;
     class InstructionInfo;
     class Token;
 
@@ -42,6 +43,16 @@ namespace lasm {
         public:
             virtual ~InstructionParser() {}
             virtual std::shared_ptr<Stmt> parse(Parser *parser) { return std::shared_ptr<Stmt>(nullptr); }
+    };
+
+    /**
+     * Base class for directive parsing and execution
+     */
+    class Directive {
+        public:
+            virtual ~Directive() {}
+            virtual std::shared_ptr<Stmt> parse(Parser *parser) { return std::shared_ptr<Stmt>(nullptr); }
+            virtual std::any execute(Interpreter *interpreter, DirectiveStmt *stmt) { return std::any(); }
     };
 
     /**
@@ -91,7 +102,13 @@ namespace lasm {
             bool isInstruction(std::string name) {
                 return instructions.find(name) != instructions.end();
             }
+
+            bool isDirective(std::string name) {
+                return directives.find(name) != directives.end();
+            }
+
             void addInstruction(std::string name, std::shared_ptr<InstructionParser> parser);
+            void addDirective(std::string name, std::shared_ptr<Directive> parser);
 
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
             virtual InstructionResult generate(Interpreter *interpreter,
@@ -103,8 +120,19 @@ namespace lasm {
             virtual Endianess getEndianess() {
                 return LITTLE;
             }
+
+            virtual int getBits() {
+                return bits;
+            }
+
+            virtual void setBits(int newBits) {
+                bits = newBits;
+            }
         protected:
             std::map<std::string, std::vector<std::shared_ptr<InstructionParser>>> instructions;
+            std::map<std::string, std::shared_ptr<Directive>> directives;
+
+            int bits = 8;
     };
 }
 

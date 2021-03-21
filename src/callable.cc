@@ -27,7 +27,7 @@ namespace lasm {
         if (num.getType() != NUMBER_O) {
             return LasmObject(NIL_O, nullptr);
         }
-        return LasmObject(NUMBER_O, LO(num.toNumber()));
+        return LasmObject(NUMBER_O, LO(num.toNumber(), interpreter->getInstructions().getBits()));
     }
 
     LasmObject NativeLo::call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr) {
@@ -35,7 +35,7 @@ namespace lasm {
         if (num.getType() != NUMBER_O) {
             return LasmObject(NIL_O, nullptr);
         }
-        return LasmObject(NUMBER_O, HI(num.toNumber()));
+        return LasmObject(NUMBER_O, HI(num.toNumber(), interpreter->getInstructions().getBits()));
     }
 
     LasmObject NativeAddress::call(Interpreter *interpreter, std::vector<LasmObject> arguments, CallExpr *expr) {

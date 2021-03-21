@@ -19,6 +19,7 @@ namespace lasm {
         RETURN_STMT,
         LABEL_STMT,
         INSTRUCTION_STMT,
+        DIRECTIVE_STMT,
         ORG_STMT,
         ALIGN_STMT,
         DEFINE_BYTE_STMT,
@@ -157,6 +158,19 @@ namespace lasm {
             bool fullyResolved = true;
     };
 
+    class DirectiveStmt: public Stmt {
+        public:
+            DirectiveStmt(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Expr>> args,
+                    Directive *directive):
+                Stmt::Stmt(DIRECTIVE_STMT), name(name), args(args), directive(directive) {}
+
+            virtual std::any accept(StmtVisitor *visitor);
+
+            std::shared_ptr<Token> name;
+            std::vector<std::shared_ptr<Expr>> args;
+            Directive *directive;
+    };
+
     class AlignStmt: public Stmt {
         public:
             AlignStmt(std::shared_ptr<Token> token, std::shared_ptr<Expr> alignTo, std::shared_ptr<Expr> fillValue):
@@ -269,6 +283,7 @@ namespace lasm {
             virtual std::any visitBss(BssStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitIncbin(IncbinStmt *stmt) { return std::any(nullptr); };
             virtual std::any visitInclude(IncludeStmt *stmt) { return std::any(nullptr); };
+            virtual std::any visitDirective(DirectiveStmt *stmt) { return std::any(nullptr); };
     };
 }
 
