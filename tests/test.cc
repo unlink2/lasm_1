@@ -55,7 +55,8 @@ extern "C" {
             cmocka_unit_test(test_environment),
 
             // frontend
-            cmocka_unit_test(test_frontend)
+            cmocka_unit_test(test_frontend),
+            cmocka_unit_test(test_frontend_errors)
         };
         return cmocka_run_group_tests(tests, NULL, NULL);
     }

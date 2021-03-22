@@ -79,13 +79,13 @@ namespace lasm {
 
             int assemble(std::string inPath, std::string outPath, std::string symbolPath="");
 
+            inline static FrontendSettings defaultSettings;
         private:
 
             BaseInstructionSet &instructions;
             FileReader &reader;
             FileWriter &writer;
             std::ostream &errorOut;
-            inline static FrontendSettings defaultSettings;
             FrontendSettings &settings;
     };
 }

@@ -36,15 +36,24 @@ class DummyWriter: public FileWriter {
         std::shared_ptr<std::ostringstream> bin = std::make_shared<std::ostringstream>(std::ostringstream());
 };
 
-#define test_full(code, lst, ...) {\
+#define test_full(code, lst, is, ...) {\
     auto reader = DummyReader(code);\
     auto writer = DummyWriter();\
-    InstructionSet6502 instructions;\
+    is instructions;\
     Frontend frontend(instructions, reader, writer);\
     frontend.assemble("test.asm", "test.bin", "test.lst");\
     char dataArray[] = __VA_ARGS__;\
     assert_cc_string_equal(writer.list->str(), std::string(lst));\
     assert_memory_equal(dataArray, writer.bin->str().c_str(), writer.bin->str().length());\
+}
+
+#define test_full_err(code, is, errorCode) {\
+    auto reader = DummyReader(code);\
+    auto writer = DummyWriter();\
+    is instructions;\
+    std::stringstream nopstream;\
+    Frontend frontend(instructions, reader, writer, Frontend::defaultSettings, nopstream);\
+    assert_int_equal(frontend.assemble("test.asm", "test.bin", "test.lst"), errorCode);\
 }
 
 void test_frontend(void **state) {
@@ -56,6 +65,7 @@ void test_frontend(void **state) {
             "test = 0x2\n"
             "i = 0x64\n"
             "j = 0x14\n",
+            InstructionSet6502,
             {0x69, (char)0xFF, (char)0xC5, (char)0x64});
 
 
@@ -63,6 +73,7 @@ void test_frontend(void **state) {
     test_full("org 0x8000; nop; include \"inc.asm\"\nnop;\nincbin \"inc.bin\"\nnop; db ord('a'), len(\"Hello\"),"
             "len([1, 2, 3]);",
             "included_label = 0x8003\n",
+            InstructionSet6502,
             {(char)0xEA, (char)0xA9, (char)0xFF, (char)0xEA, (char)0xEA,
             'H', 'e', 'l', 'l', 'o', (char)0xEA, 'a', 0x05, 0x03});
 
@@ -72,8 +83,13 @@ void test_frontend(void **state) {
             "setScopeName(\"scopeName\");"
                 "sublabel: {\nnop;\n"
                 "}\n}",
-
             "scope1 = 0x8000\nscopeName.sublabel = 0x8000\n",
+            InstructionSet6502,
             {(char)0xEA});
 
+}
+
+void test_frontend_errors(void **state) {
+    // test errors
+    test_full_err("noo;", InstructionSet6502, UNDEFINED_REF);
 }

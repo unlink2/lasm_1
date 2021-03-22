@@ -101,6 +101,10 @@ namespace lasm {
                     if (enableZeropageX) {
                         info->addOpcode(zeropageX, "zeropage");
                     }
+
+                    if (enableAbsoluteLongX) {
+                        info->addOpcode(absoluteLongX, "absolutelong");
+                    }
                 } else if (reg->getLexeme() == "y") {
                     if (enableAbsoluteY) {
                         info->addOpcode(absoluteY, "absolute");
@@ -123,6 +127,10 @@ namespace lasm {
             if (enableZeropage) {
                 info->addOpcode(zeropage, "zeropage");
             }
+
+            if (enableAbsoluteLong) {
+                info->addOpcode(absoluteLong, "absolutelong");
+            }
         }
 
         parser->consume(SEMICOLON, MISSING_SEMICOLON);
@@ -137,7 +145,7 @@ namespace lasm {
         unsigned int size = 3;
 
         // no opcode at all? bad instruction!
-        if (!info->hasOpcode("zeropage") && !info->hasOpcode("absolute")) {
+        if (!info->hasOpcode("zeropage") && !info->hasOpcode("absolute") && !info->hasOpcode("absolutelong")) {
             throw LasmException(INVALID_INSTRUCTION, stmt->name);
         }
 
@@ -149,6 +157,13 @@ namespace lasm {
                 throw e;
             }
         }
+
+        // out of range value
+        unsigned int outOfRange = 0xFFFF;
+        if (info->hasOpcode("absolutelong")) {
+            outOfRange = 0xFFFFFF;
+        }
+
         std::shared_ptr<char[]> data;
         if (!value.isScalar()) {
             // handle first pass
@@ -158,8 +173,17 @@ namespace lasm {
             } else {
                 throw LasmException(TYPE_ERROR, stmt->name);
             }
-        } else if (value.toNumber() > 0xFFFF) {
+        } else if (value.toNumber() > outOfRange) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
+        } else if ((value.toNumber() > 0xFFFF || !stmt->fullyResolved || !info->hasOpcode("absolute"))
+                && info->hasOpcode("absolutelong")) {
+            // TODO implement case for absolutelong
+            size = 4;
+            data = std::shared_ptr<char[]>(new char[size]);
+            data[0] = info->getOpcode("absolutelong");
+            data[1] = RDBYTE(value.toNumber(), 2, 8);
+            data[2] = RDBYTE(value.toNumber(), 1, 8);
+            data[3] = RDBYTE(value.toNumber(), 0, 8);
         } else if ((value.toNumber() > 0xFF || !stmt->fullyResolved || !info->hasOpcode("zeropage"))
                 && info->hasOpcode("absolute")) {
             size = 3;
@@ -365,8 +389,10 @@ namespace lasm {
     }
 
     InstructionSet6502::InstructionSet6502() {
-        // TODO add all instructions
+        addOfficialInstructions();
+    }
 
+    void InstructionSet6502::addOfficialInstructions() {
         addFullInstruction("adc", 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71);
         addFullInstruction("and", 0x29, 0x25, 0x35, 0x2D, 0x3D, 0x39, 0x21, 0x31);
 

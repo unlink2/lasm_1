@@ -72,6 +72,18 @@ namespace lasm {
                 enableZeropageY = true;
                 return this;
             }
+
+            InstructionParser6502AbsoluteOrZp* withAbsoluteLong(char opcode) {
+                absoluteLong = opcode;
+                enableAbsoluteLong = true;
+                return this;
+            }
+
+            InstructionParser6502AbsoluteOrZp* withAbsoluteLongX(char opcode) {
+                absoluteLongX = opcode;
+                enableAbsoluteLongX = true;
+                return this;
+            }
         private:
             char absolute;
             char absoluteX;
@@ -80,12 +92,19 @@ namespace lasm {
             char zeropageX;
             char zeropageY;
 
+            char absoluteLong;
+            char absoluteLongX;
+
             bool enableAbsolute = false;
             bool enableAbsoluteX = false;
             bool enableAbsoluteY = false;
             bool enableZeropage = false;
             bool enableZeropageX = false;
             bool enableZeropageY = false;
+
+            bool enableAbsoluteLong = false;
+            bool enableAbsoluteLongX = false;
+
             InstructionSet6502 *is;
     };
 
@@ -180,10 +199,17 @@ namespace lasm {
     class InstructionSet6502: public BaseInstructionSet {
         public:
             InstructionSet6502();
+            virtual void addOfficialInstructions();
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt);
 
+            std::shared_ptr<Immediate6502Generator> immediate = std::make_shared<Immediate6502Generator>(Immediate6502Generator());
+            std::shared_ptr<AbsoluteOrZp6502Generator> absolute = std::make_shared<AbsoluteOrZp6502Generator>(AbsoluteOrZp6502Generator());
+            std::shared_ptr<Implicit6502Generator> implicit = std::make_shared<Implicit6502Generator>(Implicit6502Generator());
+            std::shared_ptr<Relative6502Generator> relative = std::make_shared<Relative6502Generator>(Relative6502Generator());
+
+        private:
             void addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
                     char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY);
 
@@ -191,11 +217,6 @@ namespace lasm {
             // adds an instruction with zp, zpx, absolute and absolutex
             void addHalfInstruction(std::string name, char zeropage, char zeropageX,
                     char absolute, char absoluteX);
-
-            std::shared_ptr<Immediate6502Generator> immediate = std::make_shared<Immediate6502Generator>(Immediate6502Generator());
-            std::shared_ptr<AbsoluteOrZp6502Generator> absolute = std::make_shared<AbsoluteOrZp6502Generator>(AbsoluteOrZp6502Generator());
-            std::shared_ptr<Implicit6502Generator> implicit = std::make_shared<Implicit6502Generator>(Implicit6502Generator());
-            std::shared_ptr<Relative6502Generator> relative = std::make_shared<Relative6502Generator>(Relative6502Generator());
     };
 }
 

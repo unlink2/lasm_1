@@ -27,6 +27,8 @@ namespace lasm {
     class InstructionSet65816: public InstructionSet6502 {
         public:
             InstructionSet65816();
+
+            virtual void addOfficialInstructions();
     };
 }
 

@@ -36,4 +36,7 @@ namespace lasm {
             addDirective("m8", std::make_shared<Set8BitDirective85816>(Set8BitDirective85816()));
             addDirective("m16", std::make_shared<Set16BitDirective65816>(Set16BitDirective65816()));
     }
+
+    void InstructionSet65816::addOfficialInstructions() {
+    }
 }
