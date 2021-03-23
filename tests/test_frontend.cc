@@ -3,6 +3,7 @@
 #include "frontend.h"
 #include "macros.h"
 #include "instruction6502.h"
+#include "instruction65816.h"
 
 using namespace lasm;
 
@@ -86,6 +87,17 @@ void test_frontend(void **state) {
             "scope1 = 0x8000\nscopeName.sublabel = 0x8000\n",
             InstructionSet6502,
             {(char)0xEA});
+
+    // test 65816 immediate16, long and long, x
+    test_full("m16; adc #0xFFFF;\n"
+            "adc 0x1FFFF;"
+            "adc 0x1FFAA, x;",
+
+            "",
+            InstructionSet65816,
+            {0x69, (char)0xFF, (char)0xFF,
+            0x6F, (char)0xFF, (char)0xFF, (char)0x01,
+            0x7F, (char)0xAA, (char)0xFF, (char)0x01});
 
 }
 

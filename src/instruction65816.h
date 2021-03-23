@@ -29,6 +29,10 @@ namespace lasm {
             InstructionSet65816();
 
             virtual void addOfficialInstructions();
+        private:
+            void addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
+                    char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY,
+                    char absoluteLong, char absoluteLongX);
     };
 }
 

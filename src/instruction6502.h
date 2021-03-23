@@ -198,7 +198,7 @@ namespace lasm {
 
     class InstructionSet6502: public BaseInstructionSet {
         public:
-            InstructionSet6502();
+            InstructionSet6502(bool init=true);
             virtual void addOfficialInstructions();
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,

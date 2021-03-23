@@ -181,9 +181,9 @@ namespace lasm {
             size = 4;
             data = std::shared_ptr<char[]>(new char[size]);
             data[0] = info->getOpcode("absolutelong");
-            data[1] = RDBYTE(value.toNumber(), 2, 8);
+            data[1] = RDBYTE(value.toNumber(), 0, 8);
             data[2] = RDBYTE(value.toNumber(), 1, 8);
-            data[3] = RDBYTE(value.toNumber(), 0, 8);
+            data[3] = RDBYTE(value.toNumber(), 2, 8);
         } else if ((value.toNumber() > 0xFF || !stmt->fullyResolved || !info->hasOpcode("zeropage"))
                 && info->hasOpcode("absolute")) {
             size = 3;
@@ -388,8 +388,10 @@ namespace lasm {
 
     }
 
-    InstructionSet6502::InstructionSet6502() {
-        addOfficialInstructions();
+    InstructionSet6502::InstructionSet6502(bool init) {
+        if (init) {
+            addOfficialInstructions();
+        }
     }
 
     void InstructionSet6502::addOfficialInstructions() {
