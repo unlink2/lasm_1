@@ -84,6 +84,12 @@ namespace lasm {
                 enableAbsoluteLongX = true;
                 return this;
             }
+
+            InstructionParser6502AbsoluteOrZp* withStackRelative(char opcode) {
+                stackRelative = opcode;
+                enableStackRelative = true;
+                return this;
+            }
         private:
             char absolute;
             char absoluteX;
@@ -94,6 +100,7 @@ namespace lasm {
 
             char absoluteLong;
             char absoluteLongX;
+            char stackRelative;
 
             bool enableAbsolute = false;
             bool enableAbsoluteX = false;
@@ -104,6 +111,7 @@ namespace lasm {
 
             bool enableAbsoluteLong = false;
             bool enableAbsoluteLongX = false;
+            bool enableStackRelative = false;
 
             InstructionSet6502 *is;
     };
@@ -140,14 +148,22 @@ namespace lasm {
                 enableIndirect = true;
                 return this;
             }
+
+            InstructionParser6502Indirect* withStackY(char opcode) {
+                stackY = opcode;
+                enableStackY = true;
+                return this;
+            }
         private:
             char indirect;
             char indirectX;
             char indirectY;
+            char stackY;
 
             bool enableIndirect;
             bool enableIndirectX = false;
             bool enableIndirectY = false;
+            bool enableStackY = false;
             InstructionSet6502 *is;
     };
 

@@ -89,19 +89,39 @@ void test_frontend(void **state) {
             {(char)0xEA});
 
     // test 65816 immediate16, long and long, x
+    // sr, src,x block move
     test_full("m16; adc #0xFFFF;\n"
             "adc 0x1FFFF;"
-            "adc 0x1FFAA, x;",
+            "adc 0x1FFAA, x;"
+            "adc 0x1A, s;"
+            "adc (0x1A, s), y;"
+            "adc [0x11];"
+            "adc [0x12], y;"
+            "mvp 0x1, 0x2;",
 
             "",
             InstructionSet65816,
             {0x69, (char)0xFF, (char)0xFF,
             0x6F, (char)0xFF, (char)0xFF, (char)0x01,
-            0x7F, (char)0xAA, (char)0xFF, (char)0x01});
+            0x7F, (char)0xAA, (char)0xFF, (char)0x01,
+            0x63, (char)0x1A,
+            0x73, (char)0x1A,
+            0x67, (char)0x11,
+            0x77, (char)0x12,
+            0x54, (char)0x02, (char)0x01});
 
 }
 
 void test_frontend_errors(void **state) {
     // test errors
     test_full_err("noo;", InstructionSet6502, UNDEFINED_REF);
+    test_full_err("adc [0x11], x;", InstructionSet65816, INVALID_INSTRUCTION);
+    test_full_err("adc [0x1112];", InstructionSet65816, VALUE_OUT_OF_RANGE);
+
+    // block move errors
+    test_full_err("mvp 0x01;", InstructionSet65816, MISSING_COMMA);
+    test_full_err("mvp 'hi', 0x01;", InstructionSet65816, TYPE_ERROR);
+    test_full_err("mvp 0x01, 'test';", InstructionSet65816, TYPE_ERROR);
+    test_full_err("mvp 0x01, 0x256;", InstructionSet65816, VALUE_OUT_OF_RANGE);
+    test_full_err("mvp 0x256, 0x01;", InstructionSet65816, VALUE_OUT_OF_RANGE);
 }

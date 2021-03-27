@@ -308,6 +308,8 @@ void test_interpreter_errors(void **state) {
     assert_interpreter_error("adc (0xFF+1), x;", 1, INVALID_INSTRUCTION);
     assert_interpreter_error("adc (0xFF+1, y);", 1, INVALID_INSTRUCTION);
     assert_interpreter_error("adc (0xFF+1, a);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1,);", 1, INVALID_INSTRUCTION);
+    assert_interpreter_error("adc (0xFF+1),;", 1, INVALID_INSTRUCTION);
     assert_interpreter_error("adc (0xFF+1), l;", 1, INVALID_INSTRUCTION);
 
     // nop does not allow accumulator mode

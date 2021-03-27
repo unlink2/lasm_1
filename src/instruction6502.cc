@@ -113,6 +113,11 @@ namespace lasm {
                     if (enableZeropageY) {
                         info->addOpcode(zeropageY, "zeropage");
                     }
+                } else if (reg->getLexeme() == "s") {
+                    if (enableStackRelative) {
+                        // we tread stack relative like zero page since it is a 1-byte constant
+                        info->addOpcode(stackRelative, "zeropage");
+                    }
                 } else {
                     throw ParserException(parser->previous(), INVALID_INSTRUCTION);
                 }
@@ -228,7 +233,23 @@ namespace lasm {
                         if (enableIndirectX) {
                             info->addOpcode(indirectX, "zeropage");
                         }
+                        parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+                    } else if (reg->getLexeme() == "s") {
+                        // stack relative indirect, y
+                        parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+                        parser->consume(COMMA, MISSING_COMMA);
+                        if (parser->match(std::vector<TokenType> {IDENTIFIER})
+                                && parser->previous()->getLexeme() == "y") {
+                            info->addOpcode(stackY, "zeropage");
+                        } else {
+                            parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
+                        }
+                    } else {
+                        // invalid instruction
+                        parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
                     }
+                } else {
+                    // invalid instruction
                     parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
                 }
             } else if (parser->match(std::vector<TokenType> {RIGHT_PAREN})) {
