@@ -322,8 +322,9 @@ namespace lasm {
      * Relative parser (branch)
      */
 
-    InstructionParser6502Relative::InstructionParser6502Relative(char opcode, InstructionSet6502 *is):
-        opcode(opcode), is(is) {}
+    InstructionParser6502Relative::InstructionParser6502Relative(char opcode, InstructionSet6502 *is,
+            std::shared_ptr<Relative6502Generator> generator):
+        opcode(opcode), is(is), generator(generator) {}
 
     std::shared_ptr<Stmt> InstructionParser6502Relative::parse(Parser *parser) {
         auto name = parser->previous();
@@ -333,7 +334,10 @@ namespace lasm {
 
         args.push_back(expr);
 
-        auto info = std::make_shared<InstructionInfo>(InstructionInfo(is->relative));
+        // either pick a specific generaotr or use the instruction set default
+        auto gen = generator ? generator : is->relative;
+
+        auto info = std::make_shared<InstructionInfo>(InstructionInfo(gen));
         info->addOpcode(opcode);
 
         parser->consume(SEMICOLON, MISSING_SEMICOLON);
@@ -353,7 +357,7 @@ namespace lasm {
             }
         }
 
-        const unsigned int size = 2;
+        const unsigned int size = bits/8+1;
 
         if (!value.isScalar()) {
             // handle first pass
@@ -365,8 +369,8 @@ namespace lasm {
             }
         }
 
-        short offset = value.toNumber() - interpreter->getAddress() - 2;
-        if (interpreter->getPass() != 0 && (offset > 127 || offset < -128)) {
+        int offset = value.toNumber() - interpreter->getAddress() - size;
+        if (interpreter->getPass() != 0 && (offset > std::pow(2, bits-1)-1 || offset < -std::pow(2, bits-1))) {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
         } else if (interpreter->getPass() == 0) {
             stmt->fullyResolved = false;
@@ -374,7 +378,9 @@ namespace lasm {
         }
         std::shared_ptr<char[]> data(new char[size]);
         data[0] = info->getOpcode();
-        data[1] = (char)offset;
+        for (unsigned short i = 0; i < size-1; i++) {
+            data[i+1] = (char)RDBYTE(offset, i, 8);
+        }
         interpreter->setAddress(interpreter->getAddress()+size);
         return InstructionResult(data, size, interpreter->getAddress()-size, stmt->name);
     }

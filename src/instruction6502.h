@@ -191,21 +191,29 @@ namespace lasm {
     /**
      * Relative mode (branches)
      */
+    class Relative6502Generator;
+
     class InstructionParser6502Relative: public InstructionParser {
         public:
-            InstructionParser6502Relative(char opcode, InstructionSet6502 *is);
+            InstructionParser6502Relative(char opcode, InstructionSet6502 *is,
+                    std::shared_ptr<Relative6502Generator> generator=std::shared_ptr<Relative6502Generator>(nullptr));
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
 
         private:
             char opcode;
             InstructionSet6502 *is;
+            std::shared_ptr<Relative6502Generator> generator;
     };
 
     class Relative6502Generator: public InstructionGenerator {
         public:
+            Relative6502Generator(short bits=8):
+                bits(bits) {}
             virtual InstructionResult generate(Interpreter *interpreter,
                     std::shared_ptr<InstructionInfo> info,
                     InstructionStmt *stmt);
+        private:
+            short bits;
     };
 
     /**

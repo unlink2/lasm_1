@@ -97,7 +97,8 @@ void test_frontend(void **state) {
             "adc (0x1A, s), y;"
             "adc [0x11];"
             "adc [0x12], y;"
-            "mvp 0x1, 0x2;",
+            "mvp 0x1, 0x2;\n"
+            "brl _A()+0x1AB;",
 
             "",
             InstructionSet65816,
@@ -108,7 +109,8 @@ void test_frontend(void **state) {
             0x73, (char)0x1A,
             0x67, (char)0x11,
             0x77, (char)0x12,
-            0x54, (char)0x02, (char)0x01});
+            0x54, (char)0x02, (char)0x01,
+            (char)0x82, (char)0xA8, (char)0x01});
 
 }
 
@@ -124,4 +126,5 @@ void test_frontend_errors(void **state) {
     test_full_err("mvp 0x01, 'test';", InstructionSet65816, TYPE_ERROR);
     test_full_err("mvp 0x01, 0x256;", InstructionSet65816, VALUE_OUT_OF_RANGE);
     test_full_err("mvp 0x256, 0x01;", InstructionSet65816, VALUE_OUT_OF_RANGE);
+    test_full_err("brl 32772;", InstructionSet65816, VALUE_OUT_OF_RANGE);
 }

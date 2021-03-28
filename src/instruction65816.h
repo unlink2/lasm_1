@@ -82,6 +82,7 @@ namespace lasm {
             virtual void addOfficialInstructions();
 
             std::shared_ptr<BlockMove65816Generator> blockMove = std::make_shared<BlockMove65816Generator>(BlockMove65816Generator());
+            std::shared_ptr<Relative6502Generator> relativeLong = std::make_shared<Relative6502Generator>(Relative6502Generator(16));
         private:
             void addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
                     char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY,

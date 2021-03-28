@@ -170,6 +170,13 @@ namespace lasm {
         // adc
         addFullInstruction("adc", 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71, 0x6F, 0x7F, 0x63, 0x73, 0x67, 0x77);
 
+        // brl
+        {
+            auto brlParser = std::make_shared<InstructionParser6502Relative>(
+                    InstructionParser6502Relative(0x82, this, this->relativeLong));
+            addInstruction("brl", brlParser);
+        }
+
         // mvp
         {
             auto mvpParser = std::make_shared<InstructionParser65816BlockMove>(
