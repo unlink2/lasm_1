@@ -262,9 +262,15 @@ namespace lasm {
                             }
                         }
                     }
-                } else if (enableIndirect) {
-                    // this is only for (jmp). 16 bit indirect
-                    info->addOpcode(indirect, "absolute");
+                } else {
+                    if (enableIndirectZp) {
+                        // this is only for (zp). 8 bit indirect
+                        info->addOpcode(indirectZp, "zeropage");
+                    }
+                    if (enableIndirect) {
+                        // this is only for (jmp). 16 bit indirect
+                        info->addOpcode(indirect, "absolute");
+                    }
                 }
             }
 

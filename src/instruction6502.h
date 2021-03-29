@@ -149,6 +149,12 @@ namespace lasm {
                 return this;
             }
 
+            InstructionParser6502Indirect* withIndirectZp(char opcode) {
+                indirectZp = opcode;
+                enableIndirectZp = true;
+                return this;
+            }
+
             InstructionParser6502Indirect* withStackY(char opcode) {
                 stackY = opcode;
                 enableStackY = true;
@@ -159,11 +165,13 @@ namespace lasm {
             char indirectX;
             char indirectY;
             char stackY;
+            char indirectZp;
 
-            bool enableIndirect;
+            bool enableIndirect = false;
             bool enableIndirectX = false;
             bool enableIndirectY = false;
             bool enableStackY = false;
+            char enableIndirectZp = false;
             InstructionSet6502 *is;
     };
 

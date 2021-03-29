@@ -85,7 +85,7 @@ namespace lasm {
             std::shared_ptr<Relative6502Generator> relativeLong = std::make_shared<Relative6502Generator>(Relative6502Generator(16));
         private:
             void addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
-                    char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY,
+                    char absolute, char absoluteX, char absoluteY, char indirectZp, char indirectX, char indirectY,
                     char absoluteLong, char absoluteLongX, char stackRelative,
                     char stackY, char indirectLong, char indirecgLongY);
     };
