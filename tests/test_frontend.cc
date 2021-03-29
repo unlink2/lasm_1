@@ -129,4 +129,5 @@ void test_frontend_errors(void **state) {
     test_full_err("mvp 0x01, 0x256;", InstructionSet65816, VALUE_OUT_OF_RANGE);
     test_full_err("mvp 0x256, 0x01;", InstructionSet65816, VALUE_OUT_OF_RANGE);
     test_full_err("brl 32772;", InstructionSet65816, VALUE_OUT_OF_RANGE);
+    test_full_err("adc (0x1f1f);", InstructionSet65816, VALUE_OUT_OF_RANGE);
 }
