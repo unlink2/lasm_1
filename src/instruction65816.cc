@@ -140,10 +140,11 @@ namespace lasm {
      * Instructionset
      */
 
-    void InstructionSet65816::addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
-            char absolute, char absoluteX, char absoluteY, char indirectZp, char indirectX, char indirectY,
-            char absoluteLong, char absoluteLongX, char stackRelative, char stackY,
-            char indirectLong, char indirectLongY) {
+    void InstructionSet65816::addFullInstruction(std::string name, char immediate,
+            char absolute, char absoluteLong, char zeropage, char indirectZp,
+            char indirectLong, char absoluteX, char absoluteLongX, char absoluteY,
+            char zeropageX, char indirectX, char indirectY, char indirectLongY,
+            char stackRelative, char stackY) {
         addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(immediate, this)));
 
         auto ldaIndirect = std::make_shared<InstructionParser6502Indirect>(
@@ -169,10 +170,16 @@ namespace lasm {
 
     void InstructionSet65816::addOfficialInstructions() {
         // adc
-        addFullInstruction("adc", 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79,
-                0x72, 0x61, 0x71, 0x6F, 0x7F, 0x63, 0x73, 0x67, 0x77);
+        addFullInstruction("adc", 0x69, 0x6D, 0x6F, 0x65, 0x72, 0x67, 0x7D, 0x7F, 0x79, 0x75, 0x61, 0x71, 0x77, 0x63, 0x73);
+        // and
+        addFullInstruction("and", 0x29, 0x2D, 0x2F, 0x25, 0x32, 0x27, 0x3D, 0x3F, 0x39, 0x35, 0x21, 0x31, 0x37, 0x23, 0x33);
 
-
+        // asl
+        {
+            addInstruction("asl", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x0A, this, true)));
+            addHalfInstruction("asl", 0x06, 0x16, 0x0E, 0x1E);
+        }
         // brl
         {
             auto brlParser = std::make_shared<InstructionParser6502Relative>(

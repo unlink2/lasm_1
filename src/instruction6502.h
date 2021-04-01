@@ -242,6 +242,7 @@ namespace lasm {
             std::shared_ptr<Relative6502Generator> relative = std::make_shared<Relative6502Generator>(Relative6502Generator());
 
         private:
+        protected:
             void addFullInstruction(std::string name, char immediate, char zeropage, char zeropageX,
                     char absolute, char absoluteX, char absoluteY, char indirectX, char indirectY);
 
