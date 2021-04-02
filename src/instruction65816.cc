@@ -180,12 +180,119 @@ namespace lasm {
                         InstructionParser6502Implicit(0x0A, this, true)));
             addHalfInstruction("asl", 0x06, 0x16, 0x0E, 0x1E);
         }
+
+
+        // branches
+        {
+            addInstruction("bpl",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x10, this)));
+            addInstruction("bmi",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x30, this)));
+            addInstruction("bvc",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x50, this)));
+            addInstruction("bvs",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x70, this)));
+            addInstruction("bcc",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x90, this)));
+            addInstruction("bcs",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xB0, this)));
+            addInstruction("bne",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xD0, this)));
+            addInstruction("beq",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0xF0, this)));
+
+            addInstruction("bra",
+                    std::make_shared<InstructionParser6502Relative>(InstructionParser6502Relative(0x80, this)));
+        }
+
         // brl
         {
             auto brlParser = std::make_shared<InstructionParser6502Relative>(
                     InstructionParser6502Relative(0x82, this, this->relativeLong));
             addInstruction("brl", brlParser);
         }
+
+        // bit
+        {
+
+            addInstruction("bit",
+                    std::make_shared<InstructionParser6502Immediate>
+                    (InstructionParser6502Immediate(0x89, this)));
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x24)
+                ->withZeropage(0x2C)
+                ->withAbsoluteX(0x3C)
+                ->withZeropageX(0x34);
+            addInstruction("bit", absoluteOrZp);
+        }
+
+        // brk
+        addInstruction("brk", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x00, this)));
+
+        // flags
+        {
+            addInstruction("clc",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x18, this)));
+            addInstruction("sec",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x38, this)));
+            addInstruction("cli",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x58, this)));
+            addInstruction("sei",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0x78, this)));
+            addInstruction("clv",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xB8, this)));
+            addInstruction("cld",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xD8, this)));
+            addInstruction("sed",
+                    std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xF8, this)));
+        }
+
+        // cmp
+        addFullInstruction("cmp", 0xC9, 0xCD, 0xCF, 0xC5, 0xD2, 0xC7, 0xDD, 0xDF, 0xD9, 0xD5, 0xC1, 0xD1, 0xD7, 0xC3, 0xD3);
+
+        // TODO cop
+        {
+        }
+
+        // cpx
+        {
+            auto name = "cpx";
+            addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0xE0, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xEC)
+                ->withZeropage(0xE4);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // cpy
+        {
+            auto name = "cpy";
+            addInstruction(name, std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0xC0, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xCC)
+                ->withZeropage(0xC4);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // dec
+        {
+            auto name = "dec";
+
+            addInstruction(name, std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x3A, this, true)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xCE)->withAbsoluteX(0xDE)
+                ->withZeropage(0xC6)->withZeropageX(0xD6);
+            addInstruction(name, absoluteOrZp);
+        }
+
 
         // mvp
         {
