@@ -293,6 +293,42 @@ namespace lasm {
             addInstruction(name, absoluteOrZp);
         }
 
+        // eor
+        addFullInstruction("eor", 0x49, 0x4D, 0x4F, 0x45, 0x52, 0x47, 0x5D, 0x5F, 0x59, 0x55, 0x41, 0x51, 0x57, 0x43, 0x53);
+
+        // inc
+        {
+            auto name = "inc";
+
+            addInstruction(name, std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x1A, this, true)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp->withAbsolute(0xEE)->withAbsoluteX(0xFE)
+                ->withZeropage(0xE6)->withZeropageX(0xF6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // TODO add all register instructions
+        {
+            addInstruction("tax", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x4A, this)));
+            addInstruction("txa", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x8A, this)));
+            addInstruction("dex", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xCA, this)));
+            addInstruction("inx", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xE8, this)));
+            addInstruction("tay", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xA8, this)));
+            addInstruction("tya", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x98, this)));
+            addInstruction("dey", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x88, this)));
+            addInstruction("iny", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xC8, this)));
+        }
 
         // mvp
         {
