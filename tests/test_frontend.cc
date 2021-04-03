@@ -99,7 +99,8 @@ void test_frontend(void **state) {
             "adc [0x12], y;"
             "mvp 0x1, 0x2;\n"
             "brl _A()+0x1AB;\n"
-            "adc (0x1F);",
+            "adc (0x1F);"
+            "jml 0x1234;",
 
             "",
             InstructionSet65816,
@@ -112,7 +113,8 @@ void test_frontend(void **state) {
             0x77, (char)0x12,
             0x54, (char)0x02, (char)0x01,
             (char)0x82, (char)0xA8, (char)0x01,
-            0x72, 0x1F});
+            0x72, 0x1F,
+            0x5C, 0x34, 0x12, 0x00});
 
 }
 

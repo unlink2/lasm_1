@@ -310,6 +310,43 @@ namespace lasm {
             addInstruction(name, absoluteOrZp);
         }
 
+        // jmp
+        {
+            auto name = "jmp";
+
+            auto indirect = std::make_shared<InstructionParser6502Indirect>(
+                    InstructionParser6502Indirect(this));
+            indirect->withIndirect(0x6C)
+                ->withIndirectX(0x7C);
+            addInstruction(name, indirect);
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x4C)
+                ->withAbsoluteLong(0x5C);
+            addInstruction(name, absoluteOrZp);
+
+            auto indirectLong = std::make_shared<InstructionParser65816IndirectLong>(
+                    InstructionParser65816IndirectLong(this));
+            indirectLong->withIndirectLong(0xDC);
+        }
+
+        // jml
+        {
+            auto name = "jml";
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsoluteLong(0x5C);
+            addInstruction(name, absoluteOrZp);
+
+            auto indirectLong = std::make_shared<InstructionParser65816IndirectLong>(
+                    InstructionParser65816IndirectLong(this));
+            indirectLong->withIndirectLong(0xDC);
+        }
+
         // TODO add all register instructions
         {
             addInstruction("tax", std::make_shared<InstructionParser6502Implicit>(
