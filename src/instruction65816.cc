@@ -317,7 +317,7 @@ namespace lasm {
             auto indirect = std::make_shared<InstructionParser6502Indirect>(
                     InstructionParser6502Indirect(this));
             indirect->withIndirect(0x6C)
-                ->withIndirectX(0x7C);
+                ->withIndirectXAbsolute(0x7C);
             addInstruction(name, indirect);
 
             auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
@@ -345,6 +345,35 @@ namespace lasm {
             auto indirectLong = std::make_shared<InstructionParser65816IndirectLong>(
                     InstructionParser65816IndirectLong(this));
             indirectLong->withIndirectLong(0xDC);
+        }
+
+        // jsr
+        {
+            auto name = "jsr";
+
+            auto indirect = std::make_shared<InstructionParser6502Indirect>(
+                    InstructionParser6502Indirect(this));
+            indirect
+                ->withIndirectXAbsolute(0xFC);
+            addInstruction(name, indirect);
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x20)
+                ->withAbsoluteLong(0x22);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // jsl
+        {
+            auto name = "jsl";
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsoluteLong(0x22);
+            addInstruction(name, absoluteOrZp);
         }
 
         // TODO add all register instructions

@@ -160,18 +160,26 @@ namespace lasm {
                 enableStackY = true;
                 return this;
             }
+
+            InstructionParser6502Indirect* withIndirectXAbsolute(char opcode) {
+                indirectXAbsolute = opcode;
+                enableIndirectXAbsolute = true;
+                return this;
+            }
         private:
             char indirect;
             char indirectX;
             char indirectY;
             char stackY;
             char indirectZp;
+            char indirectXAbsolute;
 
             bool enableIndirect = false;
             bool enableIndirectX = false;
             bool enableIndirectY = false;
             bool enableStackY = false;
             char enableIndirectZp = false;
+            bool enableIndirectXAbsolute = false;
             InstructionSet6502 *is;
     };
 

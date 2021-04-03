@@ -100,7 +100,10 @@ void test_frontend(void **state) {
             "mvp 0x1, 0x2;\n"
             "brl _A()+0x1AB;\n"
             "adc (0x1F);"
-            "jml 0x1234;",
+            "jml 0x1234;"
+            "jsl 0x5678;"
+            "jsr (0x1234,x);"
+            "jmp (0x1234, x);",
 
             "",
             InstructionSet65816,
@@ -114,7 +117,10 @@ void test_frontend(void **state) {
             0x54, (char)0x02, (char)0x01,
             (char)0x82, (char)0xA8, (char)0x01,
             0x72, 0x1F,
-            0x5C, 0x34, 0x12, 0x00});
+            0x5C, 0x34, 0x12, 0x00,
+            0x22, 0x78, 0x56, 0x00,
+            (char)0xFC, (char)0x34, (char)0x12,
+            0x7C, 0x34, 0x12});
 
 }
 

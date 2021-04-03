@@ -233,6 +233,11 @@ namespace lasm {
                         if (enableIndirectX) {
                             info->addOpcode(indirectX, "zeropage");
                         }
+
+                        // jmp (absolute, x) or jsr (absolute, x)
+                        if (enableIndirectXAbsolute) {
+                            info->addOpcode(indirectXAbsolute, "absolute");
+                        }
                         parser->consume(RIGHT_PAREN, MISSING_RIHGT_PAREN);
                     } else if (reg->getLexeme() == "s") {
                         // stack relative indirect, y
