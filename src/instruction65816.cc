@@ -376,6 +376,115 @@ namespace lasm {
             addInstruction(name, absoluteOrZp);
         }
 
+        // lda
+        addFullInstruction("lda", 0xA9, 0xAD, 0xAF, 0xA5, 0xB2, 0xA7, 0xBD, 0xBF, 0xB9, 0xB5, 0xA1, 0xB1, 0xB7, 0xA3, 0xB3);
+
+        // ldx
+        {
+            auto name = "ldx";
+            addInstruction(name,
+                    std::make_shared<InstructionParser6502Immediate>
+                    (InstructionParser6502Immediate(0xA2, this)));
+
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0xAE)->withAbsoluteY(0xBE)
+                ->withZeropage(0xA6)->withZeropageY(0xB6);
+            addInstruction(name, absoluteOrZp);
+        }
+
+        // ldx
+        {
+            auto name = "ldy";
+            addInstruction(name,
+                    std::make_shared<InstructionParser6502Immediate>
+                    (InstructionParser6502Immediate(0xA0, this)));
+            addHalfInstruction(name, 0xA4, 0xB4, 0xAC, 0xBC);
+        }
+
+        // lsr
+        {
+            addInstruction("lsr", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x4A, this, true)));
+            addHalfInstruction("lsr", 0x46, 0x56, 0x4E, 0x5E);
+        }
+
+        // mvn
+        {
+            auto mvpParser = std::make_shared<InstructionParser65816BlockMove>(
+                    InstructionParser65816BlockMove(this, 0x54));
+            addInstruction("mvn", mvpParser);
+        }
+
+        // mvp
+        {
+            auto mvpParser = std::make_shared<InstructionParser65816BlockMove>(
+                    InstructionParser65816BlockMove(this, 0x44));
+            addInstruction("mvp", mvpParser);
+        }
+
+        // nop
+        addInstruction("nop", std::make_shared<InstructionParser6502Implicit>(InstructionParser6502Implicit(0xEA, this)));
+
+        // ora
+        addFullInstruction("ora", 0x09, 0x0D, 0x0F, 0x05, 0x12, 0x07, 0x1D, 0x1F, 0x19, 0x15, 0x01, 0x11, 0x17, 0x03, 0x13);
+
+        // pea
+        {
+            auto peaParser = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            peaParser
+                ->withAbsolute(0xF4);
+            addInstruction("pea", peaParser);
+        }
+
+        // pei
+        {
+            auto peiParser = std::make_shared<InstructionParser6502Indirect>(
+                    InstructionParser6502Indirect(this));
+            peiParser
+                ->withIndirectZp(0xD4);
+            addInstruction("pei", peiParser);
+        }
+
+        // per
+        {
+            auto peaParser = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            peaParser
+                ->withAbsolute(0x62);
+            addInstruction("per", peaParser);
+        }
+
+        // TODO add all stack
+        {
+            addInstruction("txs", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x9A, this)));
+            addInstruction("tsx", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xBA, this)));
+
+            addInstruction("pha", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x48, this)));
+            addInstruction("pla", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x68, this)));
+
+            addInstruction("php", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x08, this)));
+            addInstruction("plp", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x28, this)));
+
+            addInstruction("phx", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xDA, this)));
+            addInstruction("plx", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xFA, this)));
+
+            addInstruction("phy", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x5A, this)));
+            addInstruction("ply", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x7A, this)));
+        }
+
         // TODO add all register instructions
         {
             addInstruction("tax", std::make_shared<InstructionParser6502Implicit>(
@@ -394,13 +503,6 @@ namespace lasm {
                         InstructionParser6502Implicit(0x88, this)));
             addInstruction("iny", std::make_shared<InstructionParser6502Implicit>(
                         InstructionParser6502Implicit(0xC8, this)));
-        }
-
-        // mvp
-        {
-            auto mvpParser = std::make_shared<InstructionParser65816BlockMove>(
-                    InstructionParser65816BlockMove(this, 0x54));
-            addInstruction("mvp", mvpParser);
         }
     }
 }
