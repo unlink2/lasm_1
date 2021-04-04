@@ -16,9 +16,14 @@ namespace lasm {
             InstructionParser6502Immediate(char immediate,
                     InstructionSet6502 *is);
             virtual std::shared_ptr<Stmt> parse(Parser *parser);
+
+            void force8Bits() {
+                shouldForce8Bits = true;
+            }
         private:
             char immediate;
             InstructionSet6502 *is;
+            bool shouldForce8Bits = false;
     };
 
     class Immediate6502Generator: public InstructionGenerator {

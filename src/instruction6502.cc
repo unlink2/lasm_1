@@ -23,7 +23,12 @@ namespace lasm {
             args.push_back(expr);
 
             auto info = std::make_shared<InstructionInfo>(InstructionInfo(is->immediate));
-            info->addOpcode(immediate);
+
+            if (shouldForce8Bits) {
+                info->addOpcode(immediate, "8bit");
+            } else {
+                info->addOpcode(immediate);
+            }
 
             parser->consume(SEMICOLON, MISSING_SEMICOLON);
 
@@ -43,16 +48,25 @@ namespace lasm {
             }
         }
 
+        auto bits = interpreter->getInstructions().getBits();
+        char opcode = 0;
+        if (info->hasOpcode("8bit")) {
+            bits = 8;
+            opcode = info->getOpcode("8bit");
+        } else {
+            opcode = info->getOpcode();
+        }
+
         unsigned int size = 2;
         unsigned int maxValue = 0xFF;
         // in 16 size is 3
-        if (interpreter->getInstructions().getBits() == 16) {
-            size = 3; 
-            maxValue = 0xFFFF; 
+        if (bits == 16) {
+            size = 3;
+            maxValue = 0xFFFF;
         }
 
         std::shared_ptr<char[]> data(new char[size]);
-        data[0] = info->getOpcode();
+        data[0] = opcode;
         if (!value.isScalar()) {
             // handle first pass
             if (value.isNil() && interpreter->getPass() == 0) {
@@ -65,7 +79,7 @@ namespace lasm {
             throw LasmException(VALUE_OUT_OF_RANGE, stmt->name);
         }
 
-        if (interpreter->getInstructions().getBits() == 16) {
+        if (bits == 16) {
             data[1] = HI(value.toNumber(), 8);
             data[2] = LO(value.toNumber(), 8);
         } else {

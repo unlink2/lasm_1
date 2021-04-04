@@ -105,7 +105,8 @@ void test_frontend(void **state) {
             "jsr (0x1234,x);"
             "jmp (0x1234, x);"
             "pea 0x1232;"
-            "pei (0x12);",
+            "pei (0x12);"
+            "rep #0x33;",
 
             "",
             InstructionSet65816,
@@ -124,7 +125,8 @@ void test_frontend(void **state) {
             (char)0xFC, (char)0x34, (char)0x12,
             0x7C, 0x34, 0x12,
             (char)0xF4, 0x32, (char)0x12,
-            (char)0xD4, 0x12});
+            (char)0xD4, 0x12,
+            (char)0xC2, 0x33});
 
 }
 

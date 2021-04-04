@@ -483,7 +483,63 @@ namespace lasm {
                     InstructionParser6502Implicit(0x5A, this)));
             addInstruction("ply", std::make_shared<InstructionParser6502Implicit>(
                     InstructionParser6502Implicit(0x7A, this)));
+
+            addInstruction("phb", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x8B, this)));
+            addInstruction("phd", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x0B, this)));
+            addInstruction("phk", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x4B, this)));
+
+            addInstruction("plb", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xAB, this)));
+            addInstruction("pld", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x2B, this)));
         }
+
+        // rep
+        {
+            auto parser = std::make_shared<InstructionParser6502Immediate>(
+                    InstructionParser6502Immediate(0xC2, this));
+            parser->force8Bits();
+            addInstruction("rep", parser);
+        }
+
+        // rol
+        {
+            addInstruction("rol", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x2A, this, true)));
+            addHalfInstruction("rol", 0x26, 0x36, 0x2E, 0x3E);
+        }
+
+        // ror
+        {
+            addInstruction("ror", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x6A, this, true)));
+            addHalfInstruction("ror", 0x66, 0x76, 0x6E, 0x7E);
+        }
+
+        // rti
+        addInstruction("rti", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x40, this)));
+        // rtl
+        addInstruction("rtl", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x6B, this)));
+        // rts
+        addInstruction("rts", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x60, this)));
+
+        // sbc
+        addFullInstruction("sbc", 0xE9, 0xED, 0xEF, 0xE5, 0xF2, 0xE7, 0xFD, 0xFF, 0xF9, 0xF5, 0xE1, 0xF1, 0xF7, 0xE3, 0xF3);
+
+        // sep
+        {
+            auto parser = std::make_shared<InstructionParser6502Immediate>(
+                    InstructionParser6502Immediate(0xE2, this));
+            parser->force8Bits();
+            addInstruction("sep", parser);
+        }
+
 
         // TODO add all register instructions
         {
