@@ -540,8 +540,43 @@ namespace lasm {
             addInstruction("sep", parser);
         }
 
+        // stp
+        addInstruction("stp", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x01, this)));
 
-        // TODO add all register instructions
+        // stx
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x8E)
+                ->withZeropage(0x86)->withZeropageY(0x96);
+            addInstruction("stx", absoluteOrZp);
+        }
+
+        // sty
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x8C)
+                ->withZeropage(0x84)->withZeropageX(0x94);
+            addInstruction("sty", absoluteOrZp);
+        }
+
+        // stz
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x9C)
+                ->withAbsoluteX(0x9E)
+                ->withZeropage(0x64)
+                ->withZeropageX(0x74);
+            addInstruction("sty", absoluteOrZp);
+        }
+
+        // add all register instructions
         {
             addInstruction("tax", std::make_shared<InstructionParser6502Implicit>(
                         InstructionParser6502Implicit(0x4A, this)));
@@ -559,6 +594,36 @@ namespace lasm {
                         InstructionParser6502Implicit(0x88, this)));
             addInstruction("iny", std::make_shared<InstructionParser6502Implicit>(
                         InstructionParser6502Implicit(0xC8, this)));
+
+            addInstruction("txy", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0x9B, this)));
+            addInstruction("tyx", std::make_shared<InstructionParser6502Implicit>(
+                        InstructionParser6502Implicit(0xBB, this)));
         }
+
+        // tcd
+        addInstruction("tcd", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x5B, this)));
+        addInstruction("tad", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x5B, this)));
+
+        // tdc
+        addInstruction("tdc", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x7B, this)));
+        addInstruction("tcd", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x7B, this)));
+
+        // tcs
+        addInstruction("tcs", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x1B, this)));
+        addInstruction("tas", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x1B, this)));
+
+        // tsc
+        addInstruction("tsc", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x3B, this)));
+        addInstruction("tsa", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0x3B, this)));
+
     }
 }

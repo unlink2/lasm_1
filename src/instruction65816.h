@@ -10,6 +10,8 @@
 namespace lasm {
     /**
      * 65816
+     * TODO force instructions to only
+     * use 8/16 bit modes with a .16 or .8
      */
     class InstructionSet65816;
 
