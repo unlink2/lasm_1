@@ -17,16 +17,10 @@ To build it you will need:
 - libcmocka for unit tests
 - git
 
-To compile run
-
-``bash
-autoconf -i
-./configure
-make 
-```
 
 Run the following commands to build:
 ```bash
+autoconf -i
 ./configure
 make
 make install

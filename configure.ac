@@ -1,4 +1,4 @@
-AC_INIT([argcc], [0.1], [lukas@krickl.dev])
+AC_INIT([lasm], [0.1], [lukas@krickl.dev])
 
 # check programs
 AC_CANONICAL_TARGET

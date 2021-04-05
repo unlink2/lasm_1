@@ -1,4 +1,4 @@
-CC=g++
+CC=@CXX@
 EXT=.cc
 DBG=gdb
 BIN=lasm
@@ -22,11 +22,11 @@ ODIR_TEST=$(ODIR)/tests
 BINDIR=./bin
 
 DEBUG=-DDEBUG
-LIBS=
-CFLAGS=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/
-CFLAGS_LIB=-Wall -g
+LIBS=@LIBS@
+CFLAGS=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/ @CXXFLAGS@
+CFLAGS_LIB=-Wall -g @LDFLAGS@
 LIBS_TEST=-lm
-CFLAGS_TEST=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/
+CFLAGS_TEST=-Wall -g -std=c++17 -Ilibs/argcc/src/ -Isrc/ @CXXFLAGS@
 OTHER_FLAGS=
 MAIN = main # main for frontend
 TEST_MAIN = test # main for test
