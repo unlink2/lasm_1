@@ -2,8 +2,8 @@ AC_INIT([lasm], [0.1], [lukas@krickl.dev])
 
 # check programs
 AC_CANONICAL_TARGET
-
 AC_LANG(C++)
+${CXXFLAGS=""}
 AC_PROG_CXX
 
 define(GET_LIBS,
