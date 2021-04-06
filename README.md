@@ -26,6 +26,14 @@ make
 make install
 ```
 
+or to run unit tests run
+```bash
+autoconf -i
+./configure --with-tests
+make
+make run
+```
+
 ## Command line
 Currently lasm only has a few command line options.
 

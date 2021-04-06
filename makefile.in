@@ -54,6 +54,10 @@ $(ODIR)/%.o: $(SRCDIR_FRONT)/%$(EXT) $(FRONT_DEPS) | init
 ${BIN}: $(OBJ)
 	$(CC) $(OTHER_FLAGS) -o $(BINDIR)/$@ $^ $(LIBS)
 
+# =====================
+# unit test tasks
+# =====================
+
 run:
 	$(BINDIR)/$(BIN)
 
