@@ -15,6 +15,9 @@ testsdir="./tests"
 frontdir="./frontend"
 libPath="./libs"
 
+headerSearchDirs="-Ilibs/argcc/src/ -Isrc/"
+AC_SUBST(headerSearchDirs, "$headerSearchDirs")
+
 ext=".cc"
 AC_SUBST(ext, "$ext")
 
