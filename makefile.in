@@ -23,9 +23,6 @@ OTHER_FLAGS=
 MAIN = @main@ # main for frontend
 INSTALLDIR = @installdir@
 
-# test source modules
-MODULES_TEST = @testsObj@
-
 # modules from core that can be testsd
 TESTABLE_MODULES = @srcObj@
 

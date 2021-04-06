@@ -1,6 +1,5 @@
 AC_INIT([lasm], [0.1], [lukas@krickl.dev])
 AC_ARG_WITH(tests, [AS_HELP_STRING([--with-tests], [build makefile for tests])])
-
 name="lasm"
 
 installdir="/usr/local/bin"
@@ -41,31 +40,28 @@ GET_LIBS([Updating external libraries])
 
 if test $with_tests
 then
-    ${LIBS="-lm -l cmocka"}
     AC_SUBST(main, ["$testMain"])
     AC_SUBST(frontdir, "$testsdir")
-    AC_SUBST(name, ["$test"])
+    AC_SUBST(name, ["test"])
 
     # get obj files
     GET_OBJS([srcObj], [$srcdir], [])
     GET_OBJS([frontendObj], [$testsdir], $testMain)
 
     # test for libraries
+    AC_CHECK_HEADERS(cmocka.h, [], [AC_MSG_ERROR([libcmocka is required])],
+        [
+         [#include <setjmp.h>],
+         AC_INCLUDES_DEFAULT
+        ])
+    # search for a specific function
+    # AC_SEARCH_LIBS(cmocka_unit_test, cmocka, [], [AC_MSG_ERROR([libcmocka is required])])
 
-    testLib=1
-    AC_CHECK_HEADERS(cmocka.h, [], [testLib=0])
-    AC_SEARCH_LIBS(deflate, cmocka, [], [testLib=0])
-
-    if test $testLib == 0
-    then
-        echo "" #AC_MSG_ERROR([libcmocka is required])
-    else
-        testObjectFiles=""
-    fi
+    # set libs
+    LIBS='-lcmocka'
 else
-    ${LIBS=""}
     AC_SUBST(main, ["$main"])
-    AC_SUBST(frontdir, "$frontdir")
+    AC_SUBST(frontdir, ["$frontdir"])
     AC_SUBST(name, ["$name"])
 
     # get obj files
