@@ -251,8 +251,11 @@ namespace lasm {
         // cmp
         addFullInstruction("cmp", 0xC9, 0xCD, 0xCF, 0xC5, 0xD2, 0xC7, 0xDD, 0xDF, 0xD9, 0xD5, 0xC1, 0xD1, 0xD7, 0xC3, 0xD3);
 
-        // TODO cop
+        // cop
         {
+            // simply implemented as an immediate
+            addInstruction("cop",
+                    std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0x02, this)));
         }
 
         // cpx
@@ -457,7 +460,7 @@ namespace lasm {
             addInstruction("per", peaParser);
         }
 
-        // TODO add all stack
+        // add all stack
         {
             addInstruction("txs", std::make_shared<InstructionParser6502Implicit>(
                     InstructionParser6502Implicit(0x9A, this)));
@@ -625,5 +628,46 @@ namespace lasm {
         addInstruction("tsa", std::make_shared<InstructionParser6502Implicit>(
                     InstructionParser6502Implicit(0x3B, this)));
 
+        // trb
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x1C)
+                ->withZeropage(0x14);
+            addInstruction("trb", absoluteOrZp);
+        }
+
+        // tsb
+        {
+            auto absoluteOrZp = std::make_shared<InstructionParser6502AbsoluteOrZp>(
+                    InstructionParser6502AbsoluteOrZp(this));
+            absoluteOrZp
+                ->withAbsolute(0x0C)
+                ->withZeropage(0x04);
+            addInstruction("tsb", absoluteOrZp);
+        }
+
+
+        // wai
+        addInstruction("wai", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xCB, this)));
+
+        // wdm (don't use - it's just a fancy nop!)
+        {
+            // simply implemented as an immediate
+            addInstruction("wdm",
+                    std::make_shared<InstructionParser6502Immediate>(InstructionParser6502Immediate(0x42, this)));
+        }
+
+        // xba
+        {
+            addInstruction("xba", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xEB, this)));
+        }
+
+        // xce
+        addInstruction("xce", std::make_shared<InstructionParser6502Implicit>(
+                    InstructionParser6502Implicit(0xFB, this)));
     }
 }
