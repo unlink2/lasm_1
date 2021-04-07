@@ -106,7 +106,10 @@ void test_frontend(void **state) {
             "jmp (0x1234, x);"
             "pea 0x1232;"
             "pei (0x12);"
-            "rep #0x33;",
+            "rep #0x33;"
+            "adc.z 0x1A;"
+            "adc.w 0x1A;"
+            "adc.l 0x1A;",
 
             "",
             InstructionSet65816,
@@ -126,7 +129,10 @@ void test_frontend(void **state) {
             0x7C, 0x34, 0x12,
             (char)0xF4, 0x32, (char)0x12,
             (char)0xD4, 0x12,
-            (char)0xC2, 0x33});
+            (char)0xC2, 0x33,
+            (char)0x65, 0x1A,
+            (char)0x6D, 0x1A, 0x00,
+            (char)0x6F, 0x1A, 0x00, 0x00});
 
 }
 
@@ -144,4 +150,5 @@ void test_frontend_errors(void **state) {
     test_full_err("mvp 0x256, 0x01;", InstructionSet65816, VALUE_OUT_OF_RANGE);
     test_full_err("brl 32772;", InstructionSet65816, VALUE_OUT_OF_RANGE);
     test_full_err("adc (0x1f1f);", InstructionSet65816, VALUE_OUT_OF_RANGE);
+    test_full_err("adc.i 0x1A;", InstructionSet65816, INVALID_INSTRUCTION);
 }

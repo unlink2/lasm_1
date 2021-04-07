@@ -97,6 +97,30 @@ namespace lasm {
 
     std::shared_ptr<Stmt> InstructionParser6502AbsoluteOrZp::parse(Parser *parser) {
         auto name = parser->previous();
+
+        bool forceAbsolute = false; // 16 bit mode
+        bool forceLong = false; // 24 bit mode
+        // look for .z, .w or .l
+        if (parser->peek()->getType() == DOT) {
+            parser->consume(DOT, NO_ERROR); // this should never cause an error
+            parser->consume(IDENTIFIER, MISSING_IDENTIFIER);
+
+            auto mode = parser->previous();
+            if (mode->getLexeme() == "z") {
+                forceAbsolute = false;
+                forceLong = false;
+            } else if (mode->getLexeme() == "w") {
+                forceAbsolute = true;
+                forceLong = false;
+            } else if (mode->getLexeme() == "l") {
+                forceAbsolute = true;
+                forceLong = true;
+            } else {
+                // error state bad instruction!
+                return std::shared_ptr<Stmt>(nullptr);
+            }
+        }
+
         auto expr = parser->expression();
         std::vector<std::shared_ptr<Expr>> args;
 
@@ -153,6 +177,14 @@ namespace lasm {
         }
 
         parser->consume(SEMICOLON, MISSING_SEMICOLON);
+
+        // check if forceX is enabled, if so remove opcodes here
+        if (forceLong) {
+            info->removeOpcode("absolute");
+        }
+        if (forceAbsolute) {
+            info->removeOpcode("zeropage");
+        }
 
         return std::make_shared<InstructionStmt>(InstructionStmt(name, info, args));
     }

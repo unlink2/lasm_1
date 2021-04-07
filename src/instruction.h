@@ -84,6 +84,13 @@ namespace lasm {
                 return opcode.find(name) != opcode.end();
             }
 
+            void removeOpcode(std::string name="") {
+                auto it = opcode.find(name);
+                if (it != opcode.end()) {
+                    opcode.erase(it);
+                }
+            }
+
             unsigned long getOpcode(std::string name="") { return opcode[name]; }
             std::shared_ptr<InstructionGenerator> getGenerator() { return generator; }
         private:
