@@ -70,13 +70,13 @@ int main(int argc, char **argv) {
 
     const FormatOutput format(isatty(STDERR_FILENO) && isatty(STDOUT_FILENO));
 
-    parser.addConsumer("consumer", argcc::ARGPARSE_STRING, "Input file");
-    parser.addArgument("-output", argcc::ARGPARSE_STRING, 1, "Output file", "-o");
-    parser.addArgument("-symbols", argcc::ARGPARSE_STRING, 1, "Symbols file", "-s");
-    parser.addArgument("-hprefix", argcc::ARGPARSE_STRING, 1, "Hex-prefix for symbols file", "-hp");
-    parser.addArgument("-bprefix", argcc::ARGPARSE_STRING, 1, "Binary-prefix for symbols file", "-bp");
-    parser.addArgument("-delim", argcc::ARGPARSE_STRING, 1, "Deliminator-prefix for symbols file", "-dp");
-    parser.addArgument("-cpu", argcc::ARGPARSE_STRING, 1, "CPU type (valid options: 6502, 65816, bf)", "-c");
+    parser.addConsumer("consumer", argcc::STRING, "Input file");
+    parser.addArgument("-output", argcc::STRING, 1, "Output file", "-o");
+    parser.addArgument("-symbols", argcc::STRING, 1, "Symbols file", "-s");
+    parser.addArgument("-hprefix", argcc::STRING, 1, "Hex-prefix for symbols file", "-hp");
+    parser.addArgument("-bprefix", argcc::STRING, 1, "Binary-prefix for symbols file", "-bp");
+    parser.addArgument("-delim", argcc::STRING, 1, "Deliminator-prefix for symbols file", "-dp");
+    parser.addArgument("-cpu", argcc::STRING, 1, "CPU type (valid options: 6502, 65816, bf)", "-c");
 
     auto parsed = parser.parse(argc, argv);
     std::string symbols = "";
