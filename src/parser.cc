@@ -430,7 +430,7 @@ namespace lasm {
     }
 
     std::shared_ptr<Expr> Parser::unary() {
-        if (match(std::vector<TokenType> {BANG, MINUS, BIN_NOT})) {
+        if (match(std::vector<TokenType> {BANG, PLUS, MINUS, BIN_NOT})) {
             auto op = previous();
             auto right = unary();
             return std::make_shared<UnaryExpr>(UnaryExpr(op, right));

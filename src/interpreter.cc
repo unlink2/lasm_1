@@ -213,12 +213,15 @@ namespace lasm {
     std::any Interpreter::visitUnary(UnaryExpr *expr) {
         auto right = evaluate(expr->right);
 
+        auto sign = -1;
         switch (expr->op->getType()) {
+            case PLUS:
+                sign = 1;
             case MINUS:
                 if (right.isReal()) {
-                    return LasmObject(REAL_O, -right.toReal());
+                    return LasmObject(REAL_O, sign * right.toReal());
                 } else if (right.isNumber()) {
-                    return LasmObject(NUMBER_O, -right.toNumber());
+                    return LasmObject(NUMBER_O, sign * right.toNumber());
                 } else {
                     // type error!
                     throw LasmTypeError(std::vector<ObjectType> {NUMBER_O, REAL_O}, right.getType(), expr->op);

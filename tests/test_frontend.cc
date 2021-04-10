@@ -109,7 +109,7 @@ void test_frontend(void **state) {
             "rep #0x33;"
             "adc.z 0x1A;"
             "adc.w 0x1A;"
-            "adc.l 0x1A;",
+            "adc.l +0x1A;",
 
             "",
             InstructionSet65816,
