@@ -610,7 +610,7 @@ namespace lasm {
 
                 // is the required endianess the same as the native endianess?
                 // TODO test this! maybe on a powerpc machine?
-                if (stmt->endianess != NATIVE_BO) {
+                if (stmt->endianess != getNativeByteOrder()) {
                     // swap time!
                     std::shared_ptr<char[]> swapped(new char[stmt->size]);
                     std::reverse_copy(data.get(), data.get()+stmt->size, swapped.get());
@@ -732,5 +732,16 @@ namespace lasm {
         if (pass != 0) {
             code.push_back(result);
         }
+    }
+
+    Endianess Interpreter::getNativeByteOrder() {
+        // check endianess
+        const unsigned int x = 0x12345678;
+        if (*((char*)&x) == 0x78) {
+            // little endian
+            return LITTLE;
+        }
+        // big endian
+        return BIG;
     }
 }

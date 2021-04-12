@@ -112,6 +112,8 @@ namespace lasm {
             // used for label list file
             std::vector<std::shared_ptr<Environment>> labelTable;
 
+            Endianess getNativeByteOrder();
+
             unsigned long address = 0;
             unsigned short pass = 0;
 
