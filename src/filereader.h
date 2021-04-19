@@ -5,9 +5,10 @@
 #include <sstream>
 #include <memory>
 #include <cstring>
+#include "iohandler.h"
 
 namespace lasm {
-    class FileReader {
+    class FileReader: public IOHandler {
         public:
             virtual std::shared_ptr<std::istream> openFile(std::string fromPath) {
                 return std::make_shared<std::istringstream>(std::istringstream(std::string("")));
@@ -29,13 +30,6 @@ namespace lasm {
                 }
 
                 return buffer;
-            }
-
-            virtual void changeDir(std::string path, bool hasFilename=false) {
-            }
-
-            virtual std::string getDir() {
-                return "";
             }
 
             virtual void closeFile(std::shared_ptr<std::istream> stream) { }
