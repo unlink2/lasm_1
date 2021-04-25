@@ -1,0 +1,7 @@
+#ifndef __LASM_CONFIG_H__
+#define __LASM_CONFIG_H__
+
+
+#undef __LASM_NAME__
+
+#endif 

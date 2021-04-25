@@ -38,6 +38,11 @@ AC_LANG(C++)
 ${CXXFLAGS=""}
 AC_PROG_CXX
 
+# make directories
+mkdir -p srcdir
+mkdir -p testdir
+mkdir -p frontdir
+
 # check for programs
 define(CHECK,
 [
@@ -99,6 +104,10 @@ else
     GET_OBJS([srcObj], [$srcdir], [])
     GET_OBJS([frontendObj], [$frontdir], $main)
 fi
+
+# define header variables
+AC_DEFINE(__LASM_NAME__, [lasm])
+AC_CONFIG_HEADERS(["src/lasm_config.h":_config.h.in])
 
 AC_CONFIG_FILES([makefile])
 AC_OUTPUT

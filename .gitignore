@@ -2,6 +2,7 @@ bin/
 obj/
 libs/
 
+lasm_config.h
 autom4te.cache/
 config.log
 config.status
