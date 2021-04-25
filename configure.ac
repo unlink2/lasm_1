@@ -106,7 +106,7 @@ else
 fi
 
 # define header variables
-AC_DEFINE(__LASM_NAME__, [lasm])
+AC_DEFINE(__LASM_NAME__, ["lasm"])
 AC_CONFIG_HEADERS(["src/lasm_config.h":_config.h.in])
 
 AC_CONFIG_FILES([makefile])
